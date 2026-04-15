@@ -1,20 +1,22 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLocation } from "react-router-dom";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { generateEstimate } from "@/lib/estimateEngine";
 import { Button } from "@/components/ui/button";
 import { Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets, DollarSign } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useI18n } from "@/lib/i18n";
+import { suggestionsBn } from "@/lib/i18n";
 
 const COLORS = ["#1a3a6b", "#2a5298", "#e67e22", "#27ae60", "#8e44ad", "#e74c3c", "#3498db", "#f39c12", "#1abc9c"];
 
-const fmt = (n: number) => new Intl.NumberFormat("en-IN").format(n);
-
 const EstimatePage = () => {
   const location = useLocation();
+  const { t, lang, currency, fmt } = useI18n();
+
   const params = location.state || {
     plotLength: 40, plotWidth: 30, unit: "feet", floors: 1,
     floorHeight: 10, wallThickness: 5, projectType: "single",
@@ -24,6 +26,8 @@ const EstimatePage = () => {
 
   const data = useMemo(() => generateEstimate(params), []);
 
+  const suggestions = lang === "bn" ? suggestionsBn : data.suggestions;
+
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(18);
@@ -32,16 +36,16 @@ const EstimatePage = () => {
     doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28);
     doc.text(`Project: ${data.projectName}`, 14, 34);
     doc.text(`Plot: ${data.plotSize} | Floors: ${data.floors} | Quality: ${data.quality}`, 14, 40);
-    doc.text(`Total Area: ${fmt(data.totalFloorArea)} sqft | Total Cost: ₹${fmt(data.totalCost)}`, 14, 46);
-    doc.text(`Cost/sqft: ₹${fmt(data.costPerSqft)} | Duration: ~${data.completionMonths} months`, 14, 52);
+    doc.text(`Total Area: ${new Intl.NumberFormat("en-IN").format(data.totalFloorArea)} sqft | Total Cost: BDT ${new Intl.NumberFormat("en-IN").format(data.totalCost)}`, 14, 46);
+    doc.text(`Cost/sqft: BDT ${new Intl.NumberFormat("en-IN").format(data.costPerSqft)} | Duration: ~${data.completionMonths} months`, 14, 52);
 
     let y = 62;
     doc.setFontSize(12);
     doc.text("Material Estimate", 14, y);
     autoTable(doc, {
       startY: y + 4,
-      head: [["Material", "Qty", "Unit", "Rate (₹)", "Total (₹)"]],
-      body: Object.entries(data.materials).map(([k, v]) => [k, fmt(v.qty), v.unit, fmt(v.rate), fmt(v.total)]),
+      head: [["Material", "Qty", "Unit", "Rate (BDT)", "Total (BDT)"]],
+      body: Object.entries(data.materials).map(([k, v]) => [k, new Intl.NumberFormat("en-IN").format(v.qty), v.unit, new Intl.NumberFormat("en-IN").format(v.rate), new Intl.NumberFormat("en-IN").format(v.total)]),
       styles: { fontSize: 8 },
     });
 
@@ -49,8 +53,8 @@ const EstimatePage = () => {
     doc.text("Labor Estimate", 14, y);
     autoTable(doc, {
       startY: y + 4,
-      head: [["Labor", "Days", "Rate/Day (₹)", "Total (₹)"]],
-      body: Object.entries(data.labor).map(([k, v]) => [k, v.days, fmt(v.rate), fmt(v.total)]),
+      head: [["Labor", "Days", "Rate/Day (BDT)", "Total (BDT)"]],
+      body: Object.entries(data.labor).map(([k, v]) => [k, v.days, new Intl.NumberFormat("en-IN").format(v.rate), new Intl.NumberFormat("en-IN").format(v.total)]),
       styles: { fontSize: 8 },
     });
 
@@ -59,8 +63,8 @@ const EstimatePage = () => {
     doc.text("Cost Breakdown", 14, y);
     autoTable(doc, {
       startY: y + 4,
-      head: [["Category", "Amount (₹)"]],
-      body: data.costBreakdown.map((c) => [c.category, fmt(c.amount)]),
+      head: [["Category", "Amount (BDT)"]],
+      body: data.costBreakdown.map((c) => [c.category, new Intl.NumberFormat("en-IN").format(c.amount)]),
       styles: { fontSize: 8 },
     });
 
@@ -90,24 +94,22 @@ const EstimatePage = () => {
       <Navbar />
       <main className="flex-1 py-8">
         <div className="container space-y-6">
-          {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="font-heading text-2xl md:text-3xl font-bold">{data.projectName}</h1>
-              <p className="text-muted-foreground text-sm">{data.plotSize} • {data.floors} Floor(s) • {data.quality} Quality</p>
+              <p className="text-muted-foreground text-sm">{data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")}</p>
             </div>
             <Button onClick={generatePDF}>
-              <Download className="h-4 w-4 mr-1" /> Download PDF Report
+              <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
             </Button>
           </div>
 
-          {/* Summary cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Total Area", value: `${fmt(data.totalFloorArea)} sqft` },
-              { label: "Total Cost", value: `₹${fmt(data.totalCost)}` },
-              { label: "Cost/sqft", value: `₹${fmt(data.costPerSqft)}` },
-              { label: "Est. Duration", value: `~${data.completionMonths} months` },
+              { label: t("est.totalArea"), value: `${fmt(data.totalFloorArea)} sqft` },
+              { label: t("est.totalCost"), value: currency(data.totalCost) },
+              { label: t("est.costSqft"), value: currency(data.costPerSqft) },
+              { label: t("est.duration"), value: `~${data.completionMonths} ${t("est.months")}` },
             ].map((c) => (
               <div key={c.label} className="bg-card rounded-xl shadow-card p-4 text-center">
                 <p className="text-xs text-muted-foreground">{c.label}</p>
@@ -116,31 +118,28 @@ const EstimatePage = () => {
             ))}
           </div>
 
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SectionCard title="Cost Distribution" icon={DollarSign}>
+            <SectionCard title={t("est.costDist")} icon={DollarSign}>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={data.costBreakdown} dataKey="amount" nameKey="category" cx="50%" cy="50%" outerRadius={90} label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} fontSize={10}>
-                      {data.costBreakdown.map((_, i) => (
-                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                      ))}
+                      {data.costBreakdown.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
-                    <Tooltip formatter={(v: number) => `₹${fmt(v)}`} />
+                    <Tooltip formatter={(v: number) => currency(v)} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </SectionCard>
 
-            <SectionCard title="Category-wise Cost" icon={Layers}>
+            <SectionCard title={t("est.catCost")} icon={Layers}>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data.costBreakdown} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} fontSize={10} />
+                    <XAxis type="number" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} fontSize={10} />
                     <YAxis type="category" dataKey="category" width={80} fontSize={10} />
-                    <Tooltip formatter={(v: number) => `₹${fmt(v)}`} />
+                    <Tooltip formatter={(v: number) => currency(v)} />
                     <Bar dataKey="amount" fill="hsl(220, 70%, 25%)" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -148,11 +147,10 @@ const EstimatePage = () => {
             </SectionCard>
           </div>
 
-          {/* Civil Work */}
-          <SectionCard title="Civil Work Estimate" icon={Building}>
+          <SectionCard title={t("est.civilWork")} icon={Building}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">Item</th><th className="text-right py-2">Amount (₹)</th></tr></thead>
+                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.item")}</th><th className="text-right py-2">{t("est.amount")} (৳)</th></tr></thead>
                 <tbody>
                   {Object.entries(data.civilWork).map(([k, v]) => (
                     <tr key={k} className="border-b border-border/50"><td className="py-2">{k}</td><td className="text-right font-medium">{fmt(v)}</td></tr>
@@ -162,11 +160,10 @@ const EstimatePage = () => {
             </div>
           </SectionCard>
 
-          {/* Materials */}
-          <SectionCard title="Material Estimate" icon={Layers}>
+          <SectionCard title={t("est.materialEst")} icon={Layers}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">Material</th><th className="text-right py-2">Qty</th><th className="text-right py-2">Unit</th><th className="text-right py-2">Rate (₹)</th><th className="text-right py-2">Total (₹)</th></tr></thead>
+                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.material")}</th><th className="text-right py-2">{t("est.qty")}</th><th className="text-right py-2">{t("est.unit")}</th><th className="text-right py-2">{t("est.rate")} (৳)</th><th className="text-right py-2">{t("est.total")} (৳)</th></tr></thead>
                 <tbody>
                   {Object.entries(data.materials).map(([k, v]) => (
                     <tr key={k} className="border-b border-border/50">
@@ -178,11 +175,10 @@ const EstimatePage = () => {
             </div>
           </SectionCard>
 
-          {/* Labor */}
-          <SectionCard title="Labor Estimate" icon={Hammer}>
+          <SectionCard title={t("est.laborEst")} icon={Hammer}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">Labor Type</th><th className="text-right py-2">Days</th><th className="text-right py-2">Rate/Day (₹)</th><th className="text-right py-2">Total (₹)</th></tr></thead>
+                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.laborType")}</th><th className="text-right py-2">{t("est.days")}</th><th className="text-right py-2">{t("est.rateDay")} (৳)</th><th className="text-right py-2">{t("est.total")} (৳)</th></tr></thead>
                 <tbody>
                   {Object.entries(data.labor).map(([k, v]) => (
                     <tr key={k} className="border-b border-border/50">
@@ -194,36 +190,34 @@ const EstimatePage = () => {
             </div>
           </SectionCard>
 
-          {/* Finishing + Electrical + Plumbing */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <SectionCard title="Finishing" icon={Paintbrush}>
+            <SectionCard title={t("est.finishing")} icon={Paintbrush}>
               <div className="space-y-2 text-sm">
                 {Object.entries(data.finishing).map(([k, v]) => (
-                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">₹{fmt(v)}</span></div>
+                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">৳{fmt(v)}</span></div>
                 ))}
               </div>
             </SectionCard>
-            <SectionCard title="Electrical" icon={Zap}>
+            <SectionCard title={t("est.electrical")} icon={Zap}>
               <div className="space-y-2 text-sm">
                 {Object.entries(data.electrical).map(([k, v]) => (
-                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `₹${fmt(v)}` : v}</span></div>
+                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `৳${fmt(v)}` : v}</span></div>
                 ))}
               </div>
             </SectionCard>
-            <SectionCard title="Plumbing" icon={Droplets}>
+            <SectionCard title={t("est.plumbing")} icon={Droplets}>
               <div className="space-y-2 text-sm">
                 {Object.entries(data.plumbing).map(([k, v]) => (
-                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `₹${fmt(v)}` : v}</span></div>
+                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `৳${fmt(v)}` : v}</span></div>
                 ))}
               </div>
             </SectionCard>
           </div>
 
-          {/* Room-wise */}
-          <SectionCard title="Room-wise Details" icon={Building}>
+          <SectionCard title={t("est.roomwise")} icon={Building}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">Room</th><th className="text-right py-2">L (ft)</th><th className="text-right py-2">W (ft)</th><th className="text-right py-2">Area (sqft)</th><th className="text-right py-2">Doors</th><th className="text-right py-2">Windows</th></tr></thead>
+                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.room")}</th><th className="text-right py-2">{t("est.length")}</th><th className="text-right py-2">{t("est.width")}</th><th className="text-right py-2">{t("est.area")}</th><th className="text-right py-2">{t("est.doors")}</th><th className="text-right py-2">{t("est.windows")}</th></tr></thead>
                 <tbody>
                   {data.rooms.map((r) => (
                     <tr key={r.name} className="border-b border-border/50">
@@ -235,10 +229,9 @@ const EstimatePage = () => {
             </div>
           </SectionCard>
 
-          {/* AI Suggestions */}
-          <SectionCard title="AI Suggestions" icon={Lightbulb}>
+          <SectionCard title={t("est.aiSuggestions")} icon={Lightbulb}>
             <div className="space-y-3">
-              {data.suggestions.map((s, i) => (
+              {suggestions.map((s, i) => (
                 <div key={i} className="flex gap-3 items-start">
                   <span className="h-6 w-6 rounded-full bg-accent/10 text-accent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
                   <p className="text-sm text-muted-foreground">{s}</p>
@@ -247,11 +240,8 @@ const EstimatePage = () => {
             </div>
           </SectionCard>
 
-          {/* Disclaimer */}
           <div className="bg-muted/50 rounded-xl p-4 text-center">
-            <p className="text-xs text-muted-foreground">
-              ⚠️ This is an approximate estimate based on standard civil engineering formulas. Final structural design and BOQ should be verified by a licensed civil engineer.
-            </p>
+            <p className="text-xs text-muted-foreground">{t("est.disclaimer")}</p>
           </div>
         </div>
       </main>
