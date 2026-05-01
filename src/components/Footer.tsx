@@ -14,7 +14,17 @@ const Footer = () => {
               Smart House Estimate AI
             </div>
             <p className="text-sm text-primary-foreground/70">{t("footer.desc")}</p>
-            <p className="text-xs text-primary-foreground/50">{t("footer.developedBy")}</p>
+            <p className="text-xs text-primary-foreground/50">
+              {t("footer.developedBy").replace(/Md Zobaer Hasan|মোঃ জোবায়ের হাসান/, "")}
+              <a
+                href="https://zobaer-portfolio.lovable.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-accent hover:text-accent/80 hover:underline font-medium transition-colors"
+              >
+                👨‍💻 MD Zobaer Hasan
+              </a>
+            </p>
           </div>
           <div>
             <h4 className="font-heading font-semibold mb-3">{t("footer.platform")}</h4>
