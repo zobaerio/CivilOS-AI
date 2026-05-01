@@ -1,11 +1,29 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Building3D from "@/components/Building3D";
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import { generateEstimate } from "@/lib/estimateEngine";
+import {
+  computeBNBCLoads,
+  designBeams,
+  designColumns,
+  designSlabs,
+  buildBOQ,
+  buildTimeline,
+  buildQuotation,
+  aiRecommendations,
+} from "@/lib/engineering";
 import { Button } from "@/components/ui/button";
-import { Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets, DollarSign } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets,
+  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck
+} from "lucide-react";
+import {
+  PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid
+} from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useI18n } from "@/lib/i18n";
@@ -25,65 +43,93 @@ const EstimatePage = () => {
   };
 
   const data = useMemo(() => generateEstimate(params), []);
-
+  const loads = useMemo(() => computeBNBCLoads(data), [data]);
+  const beams = useMemo(() => designBeams(data), [data]);
+  const columns = useMemo(() => designColumns(data), [data]);
+  const slabs = useMemo(() => designSlabs(data), [data]);
+  const boq = useMemo(() => buildBOQ(data), [data]);
+  const timeline = useMemo(() => buildTimeline(data), [data]);
+  const quotation = useMemo(() => buildQuotation(data), [data]);
+  const aiRecs = useMemo(() => aiRecommendations(data, loads), [data, loads]);
   const suggestions = lang === "bn" ? suggestionsBn : data.suggestions;
+
+  const totalDuration = Math.max(...timeline.map((p) => p.startMonth + p.durationMonths));
 
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(18);
-    doc.text("Smart House Estimate AI - Report", 14, 20);
+    doc.text("Smart House Estimate AI - Engineering Report", 14, 20);
     doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28);
-    doc.text(`Project: ${data.projectName}`, 14, 34);
-    doc.text(`Plot: ${data.plotSize} | Floors: ${data.floors} | Quality: ${data.quality}`, 14, 40);
-    doc.text(`Total Area: ${new Intl.NumberFormat("en-IN").format(data.totalFloorArea)} sqft | Total Cost: BDT ${new Intl.NumberFormat("en-IN").format(data.totalCost)}`, 14, 46);
-    doc.text(`Cost/sqft: BDT ${new Intl.NumberFormat("en-IN").format(data.costPerSqft)} | Duration: ~${data.completionMonths} months`, 14, 52);
+    doc.text(`Project: ${data.projectName}`, 14, 30);
+    doc.text(`Plot: ${data.plotSize} | Floors: ${data.floors} | Quality: ${data.quality}`, 14, 36);
+    doc.text(`Total Cost: BDT ${new Intl.NumberFormat("en-IN").format(quotation.total)}`, 14, 42);
 
-    let y = 62;
-    doc.setFontSize(12);
-    doc.text("Material Estimate", 14, y);
+    doc.text("BNBC Structural Loads", 14, 52);
     autoTable(doc, {
-      startY: y + 4,
-      head: [["Material", "Qty", "Unit", "Rate (BDT)", "Total (BDT)"]],
-      body: Object.entries(data.materials).map(([k, v]) => [k, new Intl.NumberFormat("en-IN").format(v.qty), v.unit, new Intl.NumberFormat("en-IN").format(v.rate), new Intl.NumberFormat("en-IN").format(v.total)]),
+      startY: 56,
+      head: [["Parameter", "Value"]],
+      body: [
+        ["Seismic Zone", loads.zone],
+        ["Zone Factor (Z)", loads.zoneFactor.toString()],
+        ["Soil Type", loads.soilType],
+        ["Total Dead Load", `${loads.totalDeadLoad} kN`],
+        ["Total Live Load", `${loads.totalLiveLoad} kN`],
+        ["Wind Pressure", `${loads.windPressure} kN/m²`],
+        ["Base Shear", `${loads.baseShear} kN`],
+      ],
       styles: { fontSize: 8 },
     });
 
-    y = (doc as any).lastAutoTable.finalY + 10;
-    doc.text("Labor Estimate", 14, y);
+    let y = (doc as any).lastAutoTable.finalY + 8;
+    doc.text("Bill of Quantities (BOQ)", 14, y);
     autoTable(doc, {
       startY: y + 4,
-      head: [["Labor", "Days", "Rate/Day (BDT)", "Total (BDT)"]],
-      body: Object.entries(data.labor).map(([k, v]) => [k, v.days, new Intl.NumberFormat("en-IN").format(v.rate), new Intl.NumberFormat("en-IN").format(v.total)]),
-      styles: { fontSize: 8 },
-    });
-
-    y = (doc as any).lastAutoTable.finalY + 10;
-    if (y > 250) { doc.addPage(); y = 20; }
-    doc.text("Cost Breakdown", 14, y);
-    autoTable(doc, {
-      startY: y + 4,
-      head: [["Category", "Amount (BDT)"]],
-      body: data.costBreakdown.map((c) => [c.category, new Intl.NumberFormat("en-IN").format(c.amount)]),
+      head: [["Item", "Qty", "Unit", "Rate (BDT)", "Total (BDT)"]],
+      body: boq.map((b) => [
+        b.item,
+        new Intl.NumberFormat("en-IN").format(b.qty),
+        b.unit,
+        new Intl.NumberFormat("en-IN").format(b.rate),
+        new Intl.NumberFormat("en-IN").format(b.total),
+      ]),
       styles: { fontSize: 8 },
     });
 
     y = (doc as any).lastAutoTable.finalY + 8;
-    if (y > 260) { doc.addPage(); y = 20; }
-    doc.setFontSize(10);
-    doc.text("Note: This is an approximate estimate. Final BOQ should be verified by a licensed civil engineer.", 14, y);
-    doc.text("Developed by Md Zobaer Hasan | © 2026 Smart House Estimate AI", 14, y + 6);
+    if (y > 250) { doc.addPage(); y = 20; }
+    doc.text("Contractor Quotation", 14, y);
+    autoTable(doc, {
+      startY: y + 4,
+      head: [["Item", "Amount (BDT)"]],
+      body: [
+        ["Material Cost", new Intl.NumberFormat("en-IN").format(quotation.materialCost)],
+        ["Labor + Civil + Finishing", new Intl.NumberFormat("en-IN").format(quotation.laborCost)],
+        ["Overhead (8%)", new Intl.NumberFormat("en-IN").format(quotation.overhead)],
+        ["Profit (10%)", new Intl.NumberFormat("en-IN").format(quotation.profit)],
+        ["TOTAL", new Intl.NumberFormat("en-IN").format(quotation.total)],
+      ],
+      styles: { fontSize: 9 },
+    });
 
-    doc.save(`${data.projectName}_Estimate.pdf`);
+    y = (doc as any).lastAutoTable.finalY + 8;
+    if (y > 270) { doc.addPage(); y = 20; }
+    doc.setFontSize(8);
+    doc.text("Disclaimer: AI-based preliminary analysis. Verify with a licensed structural engineer.", 14, y);
+    doc.text("Developed by MD Zobaer Hasan | https://zobaer-portfolio.lovable.app", 14, y + 5);
+
+    doc.save(`${data.projectName}_EngineeringReport.pdf`);
   };
 
-  const SectionCard = ({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) => (
+  const SectionCard = ({ title, icon: Icon, children, action }: { title: string; icon: any; children: React.ReactNode; action?: React.ReactNode }) => (
     <div className="bg-card rounded-xl shadow-card p-5 space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center">
-          <Icon className="h-4 w-4 text-accent" />
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center">
+            <Icon className="h-4 w-4 text-accent" />
+          </div>
+          <h3 className="font-heading font-semibold text-lg">{title}</h3>
         </div>
-        <h3 className="font-heading font-semibold text-lg">{title}</h3>
+        {action}
       </div>
       {children}
     </div>
@@ -97,7 +143,9 @@ const EstimatePage = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="font-heading text-2xl md:text-3xl font-bold">{data.projectName}</h1>
-              <p className="text-muted-foreground text-sm">{data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")}</p>
+              <p className="text-muted-foreground text-sm">
+                {data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")} • BNBC 2020
+              </p>
             </div>
             <Button onClick={generatePDF}>
               <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
@@ -107,8 +155,8 @@ const EstimatePage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: t("est.totalArea"), value: `${fmt(data.totalFloorArea)} sqft` },
-              { label: t("est.totalCost"), value: currency(data.totalCost) },
-              { label: t("est.costSqft"), value: currency(data.costPerSqft) },
+              { label: t("est.totalCost"), value: currency(quotation.total) },
+              { label: t("est.costSqft"), value: currency(Math.round(quotation.total / data.totalFloorArea)) },
               { label: t("est.duration"), value: `~${data.completionMonths} ${t("est.months")}` },
             ].map((c) => (
               <div key={c.label} className="bg-card rounded-xl shadow-card p-4 text-center">
@@ -118,130 +166,357 @@ const EstimatePage = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SectionCard title={t("est.costDist")} icon={DollarSign}>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={data.costBreakdown} dataKey="amount" nameKey="category" cx="50%" cy="50%" outerRadius={90} label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} fontSize={10}>
-                      {data.costBreakdown.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                    </Pie>
-                    <Tooltip formatter={(v: number) => currency(v)} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </SectionCard>
-
-            <SectionCard title={t("est.catCost")} icon={Layers}>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.costBreakdown} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} fontSize={10} />
-                    <YAxis type="category" dataKey="category" width={80} fontSize={10} />
-                    <Tooltip formatter={(v: number) => currency(v)} />
-                    <Bar dataKey="amount" fill="hsl(220, 70%, 25%)" radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </SectionCard>
-          </div>
-
-          <SectionCard title={t("est.civilWork")} icon={Building}>
+          <Tabs defaultValue="estimate" className="space-y-6">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.item")}</th><th className="text-right py-2">{t("est.amount")} (৳)</th></tr></thead>
-                <tbody>
-                  {Object.entries(data.civilWork).map(([k, v]) => (
-                    <tr key={k} className="border-b border-border/50"><td className="py-2">{k}</td><td className="text-right font-medium">{fmt(v)}</td></tr>
-                  ))}
-                </tbody>
-              </table>
+              <TabsList className="h-auto flex-wrap justify-start">
+                <TabsTrigger value="estimate"><DollarSign className="h-4 w-4 mr-1" /> Estimate</TabsTrigger>
+                <TabsTrigger value="structural"><Activity className="h-4 w-4 mr-1" /> Structural</TabsTrigger>
+                <TabsTrigger value="rebar"><Construction className="h-4 w-4 mr-1" /> Rebar</TabsTrigger>
+                <TabsTrigger value="boq"><FileText className="h-4 w-4 mr-1" /> BOQ</TabsTrigger>
+                <TabsTrigger value="3d"><Box className="h-4 w-4 mr-1" /> 3D View</TabsTrigger>
+                <TabsTrigger value="timeline"><Calendar className="h-4 w-4 mr-1" /> Timeline</TabsTrigger>
+                <TabsTrigger value="quotation"><ShieldCheck className="h-4 w-4 mr-1" /> Quotation</TabsTrigger>
+              </TabsList>
             </div>
-          </SectionCard>
 
-          <SectionCard title={t("est.materialEst")} icon={Layers}>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.material")}</th><th className="text-right py-2">{t("est.qty")}</th><th className="text-right py-2">{t("est.unit")}</th><th className="text-right py-2">{t("est.rate")} (৳)</th><th className="text-right py-2">{t("est.total")} (৳)</th></tr></thead>
-                <tbody>
-                  {Object.entries(data.materials).map(([k, v]) => (
-                    <tr key={k} className="border-b border-border/50">
-                      <td className="py-2">{k}</td><td className="text-right">{fmt(v.qty)}</td><td className="text-right">{v.unit}</td><td className="text-right">{fmt(v.rate)}</td><td className="text-right font-medium">{fmt(v.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </SectionCard>
-
-          <SectionCard title={t("est.laborEst")} icon={Hammer}>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.laborType")}</th><th className="text-right py-2">{t("est.days")}</th><th className="text-right py-2">{t("est.rateDay")} (৳)</th><th className="text-right py-2">{t("est.total")} (৳)</th></tr></thead>
-                <tbody>
-                  {Object.entries(data.labor).map(([k, v]) => (
-                    <tr key={k} className="border-b border-border/50">
-                      <td className="py-2">{k}</td><td className="text-right">{v.days}</td><td className="text-right">{fmt(v.rate)}</td><td className="text-right font-medium">{fmt(v.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </SectionCard>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <SectionCard title={t("est.finishing")} icon={Paintbrush}>
-              <div className="space-y-2 text-sm">
-                {Object.entries(data.finishing).map(([k, v]) => (
-                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">৳{fmt(v)}</span></div>
-                ))}
+            {/* ESTIMATE TAB */}
+            <TabsContent value="estimate" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <SectionCard title={t("est.costDist")} icon={DollarSign}>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={data.costBreakdown} dataKey="amount" nameKey="category" cx="50%" cy="50%" outerRadius={90} label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} fontSize={10}>
+                          {data.costBreakdown.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                        </Pie>
+                        <Tooltip formatter={(v: number) => currency(v)} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </SectionCard>
+                <SectionCard title={t("est.catCost")} icon={Layers}>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={data.costBreakdown} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} fontSize={10} />
+                        <YAxis type="category" dataKey="category" width={80} fontSize={10} />
+                        <Tooltip formatter={(v: number) => currency(v)} />
+                        <Bar dataKey="amount" fill="hsl(220, 70%, 25%)" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </SectionCard>
               </div>
-            </SectionCard>
-            <SectionCard title={t("est.electrical")} icon={Zap}>
-              <div className="space-y-2 text-sm">
-                {Object.entries(data.electrical).map(([k, v]) => (
-                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `৳${fmt(v)}` : v}</span></div>
-                ))}
-              </div>
-            </SectionCard>
-            <SectionCard title={t("est.plumbing")} icon={Droplets}>
-              <div className="space-y-2 text-sm">
-                {Object.entries(data.plumbing).map(([k, v]) => (
-                  <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `৳${fmt(v)}` : v}</span></div>
-                ))}
-              </div>
-            </SectionCard>
-          </div>
 
-          <SectionCard title={t("est.roomwise")} icon={Building}>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.room")}</th><th className="text-right py-2">{t("est.length")}</th><th className="text-right py-2">{t("est.width")}</th><th className="text-right py-2">{t("est.area")}</th><th className="text-right py-2">{t("est.doors")}</th><th className="text-right py-2">{t("est.windows")}</th></tr></thead>
-                <tbody>
-                  {data.rooms.map((r) => (
-                    <tr key={r.name} className="border-b border-border/50">
-                      <td className="py-2">{r.name}</td><td className="text-right">{r.length.toFixed(0)}</td><td className="text-right">{r.width.toFixed(0)}</td><td className="text-right">{r.area.toFixed(0)}</td><td className="text-right">{r.doors}</td><td className="text-right">{r.windows}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </SectionCard>
-
-          <SectionCard title={t("est.aiSuggestions")} icon={Lightbulb}>
-            <div className="space-y-3">
-              {suggestions.map((s, i) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <span className="h-6 w-6 rounded-full bg-accent/10 text-accent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                  <p className="text-sm text-muted-foreground">{s}</p>
+              <SectionCard title={t("est.civilWork")} icon={Building}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground"><th className="text-left py-2">{t("est.item")}</th><th className="text-right py-2">{t("est.amount")} (৳)</th></tr></thead>
+                    <tbody>
+                      {Object.entries(data.civilWork).map(([k, v]) => (
+                        <tr key={k} className="border-b border-border/50"><td className="py-2">{k}</td><td className="text-right font-medium">{fmt(v)}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-            </div>
-          </SectionCard>
+              </SectionCard>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <SectionCard title={t("est.finishing")} icon={Paintbrush}>
+                  <div className="space-y-2 text-sm">
+                    {Object.entries(data.finishing).map(([k, v]) => (
+                      <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">৳{fmt(v)}</span></div>
+                    ))}
+                  </div>
+                </SectionCard>
+                <SectionCard title={t("est.electrical")} icon={Zap}>
+                  <div className="space-y-2 text-sm">
+                    {Object.entries(data.electrical).map(([k, v]) => (
+                      <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `৳${fmt(v)}` : v}</span></div>
+                    ))}
+                  </div>
+                </SectionCard>
+                <SectionCard title={t("est.plumbing")} icon={Droplets}>
+                  <div className="space-y-2 text-sm">
+                    {Object.entries(data.plumbing).map(([k, v]) => (
+                      <div key={k} className="flex justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium">{typeof v === "number" && k.includes("Cost") ? `৳${fmt(v)}` : v}</span></div>
+                    ))}
+                  </div>
+                </SectionCard>
+              </div>
+
+              <SectionCard title={t("est.aiSuggestions")} icon={Lightbulb}>
+                <div className="space-y-3">
+                  {suggestions.map((s, i) => (
+                    <div key={i} className="flex gap-3 items-start">
+                      <span className="h-6 w-6 rounded-full bg-accent/10 text-accent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                      <p className="text-sm text-muted-foreground">{s}</p>
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            </TabsContent>
+
+            {/* STRUCTURAL TAB */}
+            <TabsContent value="structural" className="space-y-6">
+              <SectionCard title="BNBC 2020 Load Analysis" icon={Activity}>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Seismic Zone</p><p className="font-bold mt-1">{loads.zone}</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Zone Factor (Z)</p><p className="font-bold mt-1">{loads.zoneFactor}</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Soil Type</p><p className="font-bold mt-1">{loads.soilType} (S={loads.soilFactor})</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Importance (I)</p><p className="font-bold mt-1">{loads.importanceFactor}</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Dead Load</p><p className="font-bold mt-1">{fmt(loads.totalDeadLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Live Load</p><p className="font-bold mt-1">{fmt(loads.totalLiveLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Wind Pressure</p><p className="font-bold mt-1">{loads.windPressure} kN/m²</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Base Shear (V)</p><p className="font-bold mt-1 text-accent">{fmt(loads.baseShear)} kN</p></div>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 text-xs space-y-1 font-mono">
+                  <p>Dead Load = Σ(Unit Weight × Volume)</p>
+                  <p>Wind Pressure: P = 0.6V² → P = 0.6 × {loads.windSpeed}² = {(0.6 * loads.windSpeed * loads.windSpeed).toFixed(0)} N/m²</p>
+                  <p>Base Shear: V = Cs·W → V = {loads.seismicCoeff} × {fmt(loads.buildingWeight)} = {fmt(loads.baseShear)} kN</p>
+                </div>
+              </SectionCard>
+
+              <SectionCard title="Beam Design (Bending & Shear)" icon={Layers}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">Span (ft)</th>
+                      <th className="text-right py-2">Size (in)</th>
+                      <th className="text-right py-2">M = wL²/8 (kN·m)</th>
+                      <th className="text-right py-2">V = wL/2 (kN)</th>
+                      <th className="text-right py-2">Status</th>
+                    </tr></thead>
+                    <tbody>
+                      {beams.map((b, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="py-2">{b.span}</td>
+                          <td className="text-right">{b.width} × {b.depth}</td>
+                          <td className="text-right font-medium">{b.maxMoment}</td>
+                          <td className="text-right font-medium">{b.maxShear}</td>
+                          <td className="text-right">
+                            <Badge variant={b.status === "Safe" ? "default" : "destructive"} className={b.status === "Safe" ? "bg-green-600" : ""}>{b.status}</Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+
+              <SectionCard title="Column Analysis" icon={Building}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">Section</th>
+                      <th className="text-right py-2">Axial Load (kN)</th>
+                      <th className="text-right py-2">Status</th>
+                    </tr></thead>
+                    <tbody>
+                      {columns.map((c, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="py-2 font-medium">{c.size}</td>
+                          <td className="text-right">{fmt(c.axialLoad)}</td>
+                          <td className="text-right"><Badge className="bg-green-600">{c.status}</Badge></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+
+              <SectionCard title="AI Engineering Recommendations" icon={Lightbulb}>
+                <div className="space-y-2">
+                  {aiRecs.map((r, i) => (
+                    <div key={i} className="flex gap-2 items-start text-sm">
+                      <span className="text-accent">▸</span><span className="text-muted-foreground">{r}</span>
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            </TabsContent>
+
+            {/* REBAR TAB */}
+            <TabsContent value="rebar" className="space-y-6">
+              <SectionCard title="Beam Reinforcement" icon={Construction}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">Beam (Span)</th>
+                      <th className="text-left py-2">Top Bars</th>
+                      <th className="text-left py-2">Bottom Bars</th>
+                      <th className="text-left py-2">Stirrups</th>
+                    </tr></thead>
+                    <tbody>
+                      {beams.map((b, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="py-2 font-medium">{b.span} ft</td>
+                          <td>{b.topRebar}</td>
+                          <td>{b.bottomRebar}</td>
+                          <td>{b.stirrups}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+
+              <SectionCard title="Column Reinforcement" icon={Construction}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">Section</th>
+                      <th className="text-left py-2">Main Bars</th>
+                      <th className="text-left py-2">Ties</th>
+                    </tr></thead>
+                    <tbody>
+                      {columns.map((c, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="py-2 font-medium">{c.size}</td>
+                          <td>{c.mainBars}</td>
+                          <td>{c.ties}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+
+              <SectionCard title="Slab Reinforcement" icon={Construction}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">Panel</th>
+                      <th className="text-right py-2">Thickness</th>
+                      <th className="text-left py-2">Main Rebar</th>
+                      <th className="text-left py-2">Distribution</th>
+                    </tr></thead>
+                    <tbody>
+                      {slabs.map((s, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="py-2 font-medium">{s.panel}</td>
+                          <td className="text-right">{s.thickness}"</td>
+                          <td>{s.mainRebar}</td>
+                          <td>{s.distRebar}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+            </TabsContent>
+
+            {/* BOQ TAB */}
+            <TabsContent value="boq" className="space-y-6">
+              <SectionCard title="Bill of Quantities (BOQ)" icon={FileText}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">Item</th>
+                      <th className="text-right py-2">Qty</th>
+                      <th className="text-right py-2">Unit</th>
+                      <th className="text-right py-2">Rate (৳)</th>
+                      <th className="text-right py-2">Total (৳)</th>
+                    </tr></thead>
+                    <tbody>
+                      {boq.map((b, i) => (
+                        <tr key={i} className="border-b border-border/50">
+                          <td className="py-2">{b.item}</td>
+                          <td className="text-right">{fmt(b.qty)}</td>
+                          <td className="text-right">{b.unit}</td>
+                          <td className="text-right">{fmt(b.rate)}</td>
+                          <td className="text-right font-semibold">{fmt(b.total)}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-muted/40">
+                        <td colSpan={4} className="py-3 text-right font-bold">BOQ TOTAL</td>
+                        <td className="text-right font-bold text-accent py-3">৳{fmt(boq.reduce((s, b) => s + b.total, 0))}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+            </TabsContent>
+
+            {/* 3D VIEW TAB */}
+            <TabsContent value="3d" className="space-y-6">
+              <SectionCard title="Interactive 3D Building Model" icon={Box}>
+                <p className="text-xs text-muted-foreground">Drag to rotate • scroll to zoom • right-click to pan</p>
+                <Building3D
+                  plotLength={params.plotLength}
+                  plotWidth={params.plotWidth}
+                  floors={params.floors}
+                  floorHeight={params.floorHeight}
+                />
+                <div className="grid grid-cols-3 gap-3 text-xs">
+                  <div className="bg-muted/40 rounded-lg p-2 text-center"><span className="text-muted-foreground">Walls</span><br/><span className="font-bold">RCC</span></div>
+                  <div className="bg-muted/40 rounded-lg p-2 text-center"><span className="text-muted-foreground">Slabs</span><br/><span className="font-bold">{slabs[0].thickness}"</span></div>
+                  <div className="bg-muted/40 rounded-lg p-2 text-center"><span className="text-muted-foreground">Floors</span><br/><span className="font-bold">{params.floors}</span></div>
+                </div>
+              </SectionCard>
+            </TabsContent>
+
+            {/* TIMELINE TAB */}
+            <TabsContent value="timeline" className="space-y-6">
+              <SectionCard title="Construction Timeline (Gantt)" icon={Calendar}>
+                <div className="space-y-3">
+                  {timeline.map((p, i) => {
+                    const leftPct = (p.startMonth / totalDuration) * 100;
+                    const widthPct = (p.durationMonths / totalDuration) * 100;
+                    return (
+                      <div key={i} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="font-medium">{p.name}</span>
+                          <span className="text-muted-foreground">M{p.startMonth.toFixed(1)} – M{(p.startMonth + p.durationMonths).toFixed(1)}</span>
+                        </div>
+                        <div className="relative h-6 bg-muted/40 rounded-md overflow-hidden">
+                          <div
+                            className="absolute h-full rounded-md"
+                            style={{ left: `${leftPct}%`, width: `${widthPct}%`, background: p.color }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground pt-2 border-t">
+                  <span>Month 0</span>
+                  <span>Month {Math.ceil(totalDuration)}</span>
+                </div>
+              </SectionCard>
+            </TabsContent>
+
+            {/* QUOTATION TAB */}
+            <TabsContent value="quotation" className="space-y-6">
+              <SectionCard title="Contractor Quotation" icon={ShieldCheck}>
+                <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-6 space-y-3">
+                  <div className="flex justify-between text-sm"><span>Material Cost</span><span className="font-semibold">৳{fmt(quotation.materialCost)}</span></div>
+                  <div className="flex justify-between text-sm"><span>Labor + Civil + Finishing</span><span className="font-semibold">৳{fmt(quotation.laborCost)}</span></div>
+                  <div className="flex justify-between text-sm"><span>Overhead (8%)</span><span className="font-semibold">৳{fmt(quotation.overhead)}</span></div>
+                  <div className="flex justify-between text-sm"><span>Profit Margin (10%)</span><span className="font-semibold">৳{fmt(quotation.profit)}</span></div>
+                  <div className="border-t pt-3 flex justify-between text-lg"><span className="font-bold">TOTAL QUOTATION</span><span className="font-bold text-accent">৳{fmt(quotation.total)}</span></div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Project Duration</p><p className="font-bold mt-1">{quotation.durationMonths} months</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Quote Validity</p><p className="font-bold mt-1">{quotation.validityDays} days</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Cost / sqft</p><p className="font-bold mt-1">৳{fmt(Math.round(quotation.total / data.totalFloorArea))}</p></div>
+                </div>
+                <div className="bg-muted/40 rounded-lg p-3 text-sm">
+                  <p className="text-xs text-muted-foreground mb-1">Payment Terms</p>
+                  <p className="font-medium">{quotation.paymentTerms}</p>
+                </div>
+                <Button onClick={generatePDF} className="w-full">
+                  <Download className="h-4 w-4 mr-1" /> Download Full Quotation (PDF)
+                </Button>
+              </SectionCard>
+            </TabsContent>
+          </Tabs>
 
           <div className="bg-muted/50 rounded-xl p-4 text-center">
-            <p className="text-xs text-muted-foreground">{t("est.disclaimer")}</p>
+            <p className="text-xs text-muted-foreground">
+              ⚠️ This system provides AI-based preliminary structural analysis and estimation. Final engineering design must be verified by a licensed structural engineer.
+            </p>
           </div>
         </div>
       </main>
