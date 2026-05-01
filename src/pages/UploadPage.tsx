@@ -1,12 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Upload as UploadIcon, FileImage, ArrowRight } from "lucide-react";
+import { FileImage, ArrowRight, FileCode } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
+import { parseDXF, type DxfSummary } from "@/lib/dxfParser";
+import { toast } from "sonner";
 
 const UploadPage = () => {
+  const [dxfSummary, setDxfSummary] = useState<DxfSummary | null>(null);
   const navigate = useNavigate();
   const { t } = useI18n();
   const [file, setFile] = useState<File | null>(null);
@@ -26,10 +29,27 @@ const UploadPage = () => {
 
   const handleFile = useCallback((f: File) => {
     setFile(f);
+    setDxfSummary(null);
     if (f.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
       reader.readAsDataURL(f);
+    } else if (/\.dxf$/i.test(f.name)) {
+      setPreview(null);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const summary = parseDXF(String(e.target?.result || ""));
+          setDxfSummary(summary);
+          toast.success(`DXF parsed: ${summary.totalEntities} entities, ${Object.keys(summary.layers).length} layers`);
+        } catch {
+          toast.error("Could not parse DXF file");
+        }
+      };
+      reader.readAsText(f);
+    } else if (/\.dwg$/i.test(f.name)) {
+      setPreview(null);
+      toast.info("DWG accepted. Binary DWG parsing coming soon — please export as DXF for full detection.");
     } else {
       setPreview(null);
     }
@@ -79,17 +99,40 @@ const UploadPage = () => {
               <div className="space-y-4">
                 <img src={preview} alt="Preview" className="max-h-48 mx-auto rounded-lg shadow-card" />
                 <p className="text-sm text-muted-foreground">{file?.name}</p>
-                <Button variant="outline" size="sm" onClick={() => { setFile(null); setPreview(null); }}>{t("upload.remove")}</Button>
+                <Button variant="outline" size="sm" onClick={() => { setFile(null); setPreview(null); setDxfSummary(null); }}>{t("upload.remove")}</Button>
+              </div>
+            ) : file && !preview ? (
+              <div className="space-y-3">
+                <FileCode className="h-12 w-12 text-accent mx-auto" />
+                <p className="font-medium">{file.name}</p>
+                <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
+                <Button variant="outline" size="sm" onClick={() => { setFile(null); setDxfSummary(null); }}>{t("upload.remove")}</Button>
               </div>
             ) : (
               <label className="cursor-pointer space-y-3 block">
                 <FileImage className="h-12 w-12 text-muted-foreground/40 mx-auto" />
                 <p className="font-medium text-foreground">{t("upload.dragDrop")}</p>
-                <p className="text-sm text-muted-foreground">{t("upload.browse")}</p>
-                <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+                <p className="text-sm text-muted-foreground">JPG, PNG, PDF, DXF, DWG supported</p>
+                <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf,.dxf,.dwg" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
               </label>
             )}
           </div>
+
+          {dxfSummary && (
+            <div className="bg-card rounded-xl shadow-card p-6 space-y-3">
+              <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+                <FileCode className="h-5 w-5 text-accent" /> DXF Detection Summary
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                <div className="bg-muted/40 rounded-lg p-3"><p className="text-xs text-muted-foreground">Lines</p><p className="font-bold">{dxfSummary.totalEntities}</p></div>
+                <div className="bg-muted/40 rounded-lg p-3"><p className="text-xs text-muted-foreground">Layers</p><p className="font-bold">{Object.keys(dxfSummary.layers).length}</p></div>
+                <div className="bg-muted/40 rounded-lg p-3"><p className="text-xs text-muted-foreground">Wall Length</p><p className="font-bold">{dxfSummary.estimatedWallLength.toFixed(0)}</p></div>
+                <div className="bg-muted/40 rounded-lg p-3"><p className="text-xs text-muted-foreground">Detected Columns</p><p className="font-bold">{dxfSummary.detectedColumns}</p></div>
+              </div>
+              <p className="text-xs text-muted-foreground">Layers found: {Object.keys(dxfSummary.layers).slice(0, 8).join(", ")}</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400">⚠ Approximate detection — please verify dimensions below.</p>
+            </div>
+          )}
 
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
             <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
