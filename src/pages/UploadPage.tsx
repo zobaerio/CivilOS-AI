@@ -1,12 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Upload as UploadIcon, FileImage, ArrowRight } from "lucide-react";
+import { FileImage, ArrowRight, FileCode } from "lucide-react";
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
+import { parseDXF, type DxfSummary } from "@/lib/dxfParser";
+import { toast } from "sonner";
 
 const UploadPage = () => {
+  const [dxfSummary, setDxfSummary] = useState<DxfSummary | null>(null);
   const navigate = useNavigate();
   const { t } = useI18n();
   const [file, setFile] = useState<File | null>(null);
