@@ -29,10 +29,27 @@ const UploadPage = () => {
 
   const handleFile = useCallback((f: File) => {
     setFile(f);
+    setDxfSummary(null);
     if (f.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
       reader.readAsDataURL(f);
+    } else if (/\.dxf$/i.test(f.name)) {
+      setPreview(null);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const summary = parseDXF(String(e.target?.result || ""));
+          setDxfSummary(summary);
+          toast.success(`DXF parsed: ${summary.totalEntities} entities, ${Object.keys(summary.layers).length} layers`);
+        } catch {
+          toast.error("Could not parse DXF file");
+        }
+      };
+      reader.readAsText(f);
+    } else if (/\.dwg$/i.test(f.name)) {
+      setPreview(null);
+      toast.info("DWG accepted. Binary DWG parsing coming soon — please export as DXF for full detection.");
     } else {
       setPreview(null);
     }
