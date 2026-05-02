@@ -1,13 +1,17 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building2, Menu, X, Globe } from "lucide-react";
+import { Building2, Menu, X, Globe, LogOut, FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { t, lang, setLang } = useI18n();
+  const { user, signOut } = useAuth();
+  const handleSignOut = async () => { await signOut(); navigate("/"); };
 
   const links = [
     { href: "/", label: t("nav.home") },
@@ -48,9 +52,20 @@ const Navbar = () => {
             <Globe className="h-4 w-4" />
             {lang === "en" ? "বাংলা" : "English"}
           </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">{t("nav.login")}</Link>
-          </Button>
+          {user ? (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/projects"><FolderOpen className="h-4 w-4 mr-1" /> Projects</Link>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-1" /> Sign out
+              </Button>
+            </>
+          ) : (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/auth">{t("nav.login")}</Link>
+            </Button>
+          )}
           <Button size="sm" asChild>
             <Link to="/upload">{t("nav.getEstimate")}</Link>
           </Button>
@@ -78,12 +93,23 @@ const Navbar = () => {
               {l.label}
             </Link>
           ))}
+          {user && (
+            <Link to="/projects" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted">
+              My Projects
+            </Link>
+          )}
           <div className="pt-2 flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1" asChild>
-              <Link to="/login">{t("nav.login")}</Link>
-            </Button>
+            {user ? (
+              <Button variant="outline" size="sm" className="flex-1" onClick={() => { handleSignOut(); setOpen(false); }}>
+                Sign out
+              </Button>
+            ) : (
+              <Button variant="outline" size="sm" className="flex-1" asChild>
+                <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.login")}</Link>
+              </Button>
+            )}
             <Button size="sm" className="flex-1" asChild>
-              <Link to="/upload">{t("nav.getEstimate")}</Link>
+              <Link to="/upload" onClick={() => setOpen(false)}>{t("nav.getEstimate")}</Link>
             </Button>
           </div>
         </div>
