@@ -158,6 +158,15 @@ const EstimatePage = () => {
     });
 
     let y = (doc as any).lastAutoTable.finalY + 8;
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.text("BNBC 2020 Load Combinations", 14, y);
+    autoTable(doc, {
+      startY: y + 4,
+      head: [["#", "Combination", "Factored (kN)", "Governs"]],
+      body: loads.combos.map((c) => [c.name, c.formula, c.factoredLoad.toString(), c.governs ? "YES" : ""]),
+      styles: { fontSize: 8 },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
     doc.text("Bill of Quantities (BOQ)", 14, y);
     autoTable(doc, {
       startY: y + 4,
