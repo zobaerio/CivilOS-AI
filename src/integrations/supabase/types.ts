@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          bnbc_loads: Json | null
+          created_at: string
+          estimate: Json | null
+          file_name: string | null
+          id: string
+          inputs: Json
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bnbc_loads?: Json | null
+          created_at?: string
+          estimate?: Json | null
+          file_name?: string | null
+          id?: string
+          inputs?: Json
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bnbc_loads?: Json | null
+          created_at?: string
+          estimate?: Json | null
+          file_name?: string | null
+          id?: string
+          inputs?: Json
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
