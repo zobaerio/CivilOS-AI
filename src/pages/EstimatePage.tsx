@@ -218,15 +218,24 @@ const EstimatePage = () => {
       <main className="flex-1 py-8">
         <div className="container space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="font-heading text-2xl md:text-3xl font-bold">{data.projectName}</h1>
+            <div className="space-y-1">
+              <Input
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                className="font-heading text-2xl md:text-3xl font-bold border-0 px-0 h-auto bg-transparent focus-visible:ring-0 shadow-none"
+              />
               <p className="text-muted-foreground text-sm">
                 {data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")} • BNBC 2020
               </p>
             </div>
-            <Button onClick={generatePDF}>
-              <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
-            </Button>
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="outline" onClick={saveProject} disabled={saving}>
+                <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : user ? "Save Project" : "Sign in to Save"}
+              </Button>
+              <Button onClick={generatePDF}>
+                <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
