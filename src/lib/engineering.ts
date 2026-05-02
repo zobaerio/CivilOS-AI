@@ -1,6 +1,13 @@
 // Civil engineering calculations: BNBC loads, structural design, rebar, BOQ, timeline.
 import type { EstimateData } from "./estimateEngine";
 
+export interface LoadCombo {
+  name: string;
+  formula: string;
+  factoredLoad: number; // kN — equivalent total factored vertical/lateral resultant
+  governs: boolean;
+}
+
 export interface BNBCLoads {
   zone: string;
   zoneFactor: number;
@@ -14,10 +21,29 @@ export interface BNBCLoads {
   totalLiveLoad: number; // kN
   windSpeed: number; // m/s
   windPressure: number; // kN/m²
-  baseShear: number; // kN
+  windLoad: number; // kN — total lateral wind
+  baseShear: number; // kN — earthquake
   seismicCoeff: number;
   buildingWeight: number; // kN
+  combos: LoadCombo[];
+  governingCombo: string;
+  governingValue: number;
 }
+
+export const BNBC_ZONES: Record<string, number> = {
+  "Zone 1 (Sylhet)": 0.36,
+  "Zone 2 (Dhaka)": 0.28,
+  "Zone 3 (Rajshahi)": 0.20,
+  "Zone 4 (Barisal)": 0.12,
+};
+
+export const BNBC_SOILS: Record<string, { factor: number; label: string }> = {
+  SA: { factor: 1.0, label: "SA — Hard rock" },
+  SB: { factor: 1.2, label: "SB — Rock" },
+  SC: { factor: 1.15, label: "SC — Dense soil / soft rock" },
+  SD: { factor: 1.35, label: "SD — Stiff soil" },
+  SE: { factor: 1.5, label: "SE — Soft soil" },
+};
 
 export interface BeamDesign {
   span: number; // ft
@@ -78,31 +104,48 @@ export function computeBNBCLoads(
   estimate: EstimateData,
   zone: string = "Zone 2 (Dhaka)",
   soil: string = "SC",
+  importance: number = 1.0,
 ): BNBCLoads {
-  const zoneFactor: Record<string, number> = {
-    "Zone 1 (Sylhet)": 0.36,
-    "Zone 2 (Dhaka)": 0.28,
-    "Zone 3 (Rajshahi)": 0.20,
-    "Zone 4 (Barisal)": 0.12,
-  };
-  const soilFactor: Record<string, number> = { SA: 1.0, SB: 1.2, SC: 1.15, SD: 1.35, SE: 1.5 };
-  const z = zoneFactor[zone] ?? 0.28;
-  const s = soilFactor[soil] ?? 1.15;
-  const I = 1.0;
+  const z = BNBC_ZONES[zone] ?? 0.28;
+  const s = BNBC_SOILS[soil]?.factor ?? 1.15;
+  const I = importance;
   const R = 5.0;
 
   const deadLoadPsf = 110;
   const liveLoadPsf = 40;
   const area = estimate.totalFloorArea;
-  const totalDeadLoad = (deadLoadPsf * area * 4.45) / 1000; // psf*sqft → lb → kN
-  const totalLiveLoad = (liveLoadPsf * area * 4.45) / 1000;
+  const D = (deadLoadPsf * area * 4.45) / 1000; // kN
+  const L = (liveLoadPsf * area * 4.45) / 1000; // kN
 
-  const windSpeed = 50; // m/s, BNBC basic for Dhaka
+  // Wind: BNBC basic wind speed, exposure B, building height ≈ floors × 10 ft
+  const windSpeed = 50; // m/s, conservative for coastal/Dhaka mix
   const windPressure = (0.6 * windSpeed * windSpeed) / 1000; // kN/m²
+  const heightM = estimate.floors * 3.0;
+  const facadeArea =
+    (Math.sqrt(area / Math.max(estimate.floors, 1)) * 0.3048) * heightM * 4 * 0.5; // m²
+  const W = windPressure * facadeArea; // total lateral wind kN
 
-  const buildingWeight = totalDeadLoad + 0.25 * totalLiveLoad;
+  // Earthquake (BNBC 2020 ELF): V = Cs * W_seismic
+  const buildingWeight = D + 0.25 * L;
   const Cs = (z * I * 2.5) / R;
-  const baseShear = Cs * buildingWeight * s;
+  const E = Cs * buildingWeight * s; // kN
+
+  // BNBC 2020 strength load combinations (clause 2.7.3.1)
+  // Output "factoredLoad" is the resultant magnitude of vertical + 0.5 × lateral
+  // for ranking; in real design these stay separate.
+  const mag = (vert: number, lat: number) => vert + 0.5 * lat;
+  const combos: LoadCombo[] = [
+    { name: "Comb-1", formula: "1.4 D",                       factoredLoad: 1.4 * D,                  governs: false },
+    { name: "Comb-2", formula: "1.2 D + 1.6 L",               factoredLoad: 1.2 * D + 1.6 * L,        governs: false },
+    { name: "Comb-3", formula: "1.2 D + 1.0 L + 1.0 W",       factoredLoad: mag(1.2 * D + 1.0 * L, 1.0 * W), governs: false },
+    { name: "Comb-4", formula: "1.2 D + 1.0 L + 1.0 E",       factoredLoad: mag(1.2 * D + 1.0 * L, 1.0 * E), governs: false },
+    { name: "Comb-5", formula: "0.9 D + 1.0 W",               factoredLoad: mag(0.9 * D, 1.0 * W),    governs: false },
+    { name: "Comb-6", formula: "0.9 D + 1.0 E",               factoredLoad: mag(0.9 * D, 1.0 * E),    governs: false },
+  ].map((c) => ({ ...c, factoredLoad: Math.round(c.factoredLoad) }));
+
+  let governing = combos[0];
+  for (const c of combos) if (c.factoredLoad > governing.factoredLoad) governing = c;
+  governing.governs = true;
 
   return {
     zone,
@@ -113,13 +156,17 @@ export function computeBNBCLoads(
     responseFactor: R,
     deadLoadPsf,
     liveLoadPsf,
-    totalDeadLoad: Math.round(totalDeadLoad),
-    totalLiveLoad: Math.round(totalLiveLoad),
+    totalDeadLoad: Math.round(D),
+    totalLiveLoad: Math.round(L),
     windSpeed,
     windPressure: parseFloat(windPressure.toFixed(2)),
-    baseShear: Math.round(baseShear),
+    windLoad: Math.round(W),
+    baseShear: Math.round(E),
     seismicCoeff: parseFloat(Cs.toFixed(3)),
     buildingWeight: Math.round(buildingWeight),
+    combos,
+    governingCombo: governing.name,
+    governingValue: governing.factoredLoad,
   };
 }
 
