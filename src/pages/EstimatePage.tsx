@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Building3D from "@/components/Building3D";
 import { useLocation } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { generateEstimate } from "@/lib/estimateEngine";
 import {
   computeBNBCLoads,
@@ -13,13 +13,16 @@ import {
   buildTimeline,
   buildQuotation,
   aiRecommendations,
+  BNBC_ZONES,
+  BNBC_SOILS,
 } from "@/lib/engineering";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets,
-  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck
+  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck, Save
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid
@@ -28,12 +31,16 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useI18n } from "@/lib/i18n";
 import { suggestionsBn } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const COLORS = ["#1a3a6b", "#2a5298", "#e67e22", "#27ae60", "#8e44ad", "#e74c3c", "#3498db", "#f39c12", "#1abc9c"];
 
 const EstimatePage = () => {
   const location = useLocation();
   const { t, lang, currency, fmt } = useI18n();
+  const { user } = useAuth();
 
   const params = location.state || {
     plotLength: 40, plotWidth: 30, unit: "feet", floors: 1,
@@ -42,8 +49,14 @@ const EstimatePage = () => {
     fileName: "Demo House Project",
   };
 
+  const [zone, setZone] = useState<string>("Zone 2 (Dhaka)");
+  const [soil, setSoil] = useState<string>("SC");
+  const [importance, setImportance] = useState<number>(1.0);
+  const [saving, setSaving] = useState(false);
+  const [projectName, setProjectName] = useState<string>(params._projectName || params.fileName || "House Project");
+
   const data = useMemo(() => generateEstimate(params), []);
-  const loads = useMemo(() => computeBNBCLoads(data), [data]);
+  const loads = useMemo(() => computeBNBCLoads(data, zone, soil, importance), [data, zone, soil, importance]);
   const beams = useMemo(() => designBeams(data), [data]);
   const columns = useMemo(() => designColumns(data), [data]);
   const slabs = useMemo(() => designSlabs(data), [data]);
@@ -54,6 +67,70 @@ const EstimatePage = () => {
   const suggestions = lang === "bn" ? suggestionsBn : data.suggestions;
 
   const totalDuration = Math.max(...timeline.map((p) => p.startMonth + p.durationMonths));
+
+  const downloadCSV = (filename: string, rows: (string | number)[][]) => {
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportBOQCsv = () => {
+    const rows: (string | number)[][] = [["Item", "Qty", "Unit", "Rate (BDT)", "Total (BDT)"]];
+    boq.forEach((b) => rows.push([b.item, b.qty, b.unit, b.rate, b.total]));
+    rows.push(["", "", "", "TOTAL", boq.reduce((s, b) => s + b.total, 0)]);
+    downloadCSV(`${projectName}_BOQ.csv`, rows);
+    toast.success("BOQ exported as CSV");
+  };
+
+  const exportQuotationCsv = () => {
+    const rows: (string | number)[][] = [
+      ["Smart House Estimate AI – Contractor Quotation"],
+      ["Project", projectName], ["Plot", data.plotSize], ["Floors", data.floors], ["Quality", data.quality],
+      [],
+      ["Item", "Amount (BDT)"],
+      ["Material Cost", quotation.materialCost],
+      ["Labor + Civil + Finishing", quotation.laborCost],
+      ["Overhead (8%)", quotation.overhead],
+      ["Profit (10%)", quotation.profit],
+      ["TOTAL", quotation.total],
+      [],
+      ["Duration (months)", quotation.durationMonths],
+      ["Validity (days)", quotation.validityDays],
+      ["Payment Terms", quotation.paymentTerms],
+    ];
+    downloadCSV(`${projectName}_Quotation.csv`, rows);
+    toast.success("Quotation exported as CSV");
+  };
+
+  const saveProject = async () => {
+    if (!user) { toast.info("Please sign in to save projects."); return; }
+    setSaving(true);
+    try {
+      const payload = {
+        user_id: user.id,
+        name: projectName,
+        file_name: params.fileName || null,
+        inputs: { ...params, _zone: zone, _soil: soil, _importance: importance },
+        estimate: data as any,
+        bnbc_loads: loads as any,
+      };
+      if (params._projectId) {
+        const { error } = await supabase.from("projects").update(payload).eq("id", params._projectId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("projects").insert(payload);
+        if (error) throw error;
+      }
+      toast.success("Project saved to your account");
+    } catch (e: any) {
+      toast.error(e.message || "Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   const generatePDF = () => {
     const doc = new jsPDF();
