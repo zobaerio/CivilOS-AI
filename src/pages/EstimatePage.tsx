@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Building3D from "@/components/Building3D";
 import { useLocation } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { generateEstimate } from "@/lib/estimateEngine";
 import {
   computeBNBCLoads,
@@ -13,13 +13,16 @@ import {
   buildTimeline,
   buildQuotation,
   aiRecommendations,
+  BNBC_ZONES,
+  BNBC_SOILS,
 } from "@/lib/engineering";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets,
-  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck
+  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck, Save
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid
@@ -28,12 +31,16 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useI18n } from "@/lib/i18n";
 import { suggestionsBn } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const COLORS = ["#1a3a6b", "#2a5298", "#e67e22", "#27ae60", "#8e44ad", "#e74c3c", "#3498db", "#f39c12", "#1abc9c"];
 
 const EstimatePage = () => {
   const location = useLocation();
   const { t, lang, currency, fmt } = useI18n();
+  const { user } = useAuth();
 
   const params = location.state || {
     plotLength: 40, plotWidth: 30, unit: "feet", floors: 1,
@@ -42,8 +49,14 @@ const EstimatePage = () => {
     fileName: "Demo House Project",
   };
 
+  const [zone, setZone] = useState<string>("Zone 2 (Dhaka)");
+  const [soil, setSoil] = useState<string>("SC");
+  const [importance, setImportance] = useState<number>(1.0);
+  const [saving, setSaving] = useState(false);
+  const [projectName, setProjectName] = useState<string>(params._projectName || params.fileName || "House Project");
+
   const data = useMemo(() => generateEstimate(params), []);
-  const loads = useMemo(() => computeBNBCLoads(data), [data]);
+  const loads = useMemo(() => computeBNBCLoads(data, zone, soil, importance), [data, zone, soil, importance]);
   const beams = useMemo(() => designBeams(data), [data]);
   const columns = useMemo(() => designColumns(data), [data]);
   const slabs = useMemo(() => designSlabs(data), [data]);
@@ -54,6 +67,70 @@ const EstimatePage = () => {
   const suggestions = lang === "bn" ? suggestionsBn : data.suggestions;
 
   const totalDuration = Math.max(...timeline.map((p) => p.startMonth + p.durationMonths));
+
+  const downloadCSV = (filename: string, rows: (string | number)[][]) => {
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportBOQCsv = () => {
+    const rows: (string | number)[][] = [["Item", "Qty", "Unit", "Rate (BDT)", "Total (BDT)"]];
+    boq.forEach((b) => rows.push([b.item, b.qty, b.unit, b.rate, b.total]));
+    rows.push(["", "", "", "TOTAL", boq.reduce((s, b) => s + b.total, 0)]);
+    downloadCSV(`${projectName}_BOQ.csv`, rows);
+    toast.success("BOQ exported as CSV");
+  };
+
+  const exportQuotationCsv = () => {
+    const rows: (string | number)[][] = [
+      ["Smart House Estimate AI – Contractor Quotation"],
+      ["Project", projectName], ["Plot", data.plotSize], ["Floors", data.floors], ["Quality", data.quality],
+      [],
+      ["Item", "Amount (BDT)"],
+      ["Material Cost", quotation.materialCost],
+      ["Labor + Civil + Finishing", quotation.laborCost],
+      ["Overhead (8%)", quotation.overhead],
+      ["Profit (10%)", quotation.profit],
+      ["TOTAL", quotation.total],
+      [],
+      ["Duration (months)", quotation.durationMonths],
+      ["Validity (days)", quotation.validityDays],
+      ["Payment Terms", quotation.paymentTerms],
+    ];
+    downloadCSV(`${projectName}_Quotation.csv`, rows);
+    toast.success("Quotation exported as CSV");
+  };
+
+  const saveProject = async () => {
+    if (!user) { toast.info("Please sign in to save projects."); return; }
+    setSaving(true);
+    try {
+      const payload = {
+        user_id: user.id,
+        name: projectName,
+        file_name: params.fileName || null,
+        inputs: { ...params, _zone: zone, _soil: soil, _importance: importance },
+        estimate: data as any,
+        bnbc_loads: loads as any,
+      };
+      if (params._projectId) {
+        const { error } = await supabase.from("projects").update(payload).eq("id", params._projectId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("projects").insert(payload);
+        if (error) throw error;
+      }
+      toast.success("Project saved to your account");
+    } catch (e: any) {
+      toast.error(e.message || "Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -81,6 +158,15 @@ const EstimatePage = () => {
     });
 
     let y = (doc as any).lastAutoTable.finalY + 8;
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.text("BNBC 2020 Load Combinations", 14, y);
+    autoTable(doc, {
+      startY: y + 4,
+      head: [["#", "Combination", "Factored (kN)", "Governs"]],
+      body: loads.combos.map((c) => [c.name, c.formula, c.factoredLoad.toString(), c.governs ? "YES" : ""]),
+      styles: { fontSize: 8 },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
     doc.text("Bill of Quantities (BOQ)", 14, y);
     autoTable(doc, {
       startY: y + 4,
@@ -141,15 +227,24 @@ const EstimatePage = () => {
       <main className="flex-1 py-8">
         <div className="container space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="font-heading text-2xl md:text-3xl font-bold">{data.projectName}</h1>
+            <div className="space-y-1">
+              <Input
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                className="font-heading text-2xl md:text-3xl font-bold border-0 px-0 h-auto bg-transparent focus-visible:ring-0 shadow-none"
+              />
               <p className="text-muted-foreground text-sm">
                 {data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")} • BNBC 2020
               </p>
             </div>
-            <Button onClick={generatePDF}>
-              <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
-            </Button>
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="outline" onClick={saveProject} disabled={saving}>
+                <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : user ? "Save Project" : "Sign in to Save"}
+              </Button>
+              <Button onClick={generatePDF}>
+                <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -260,22 +355,76 @@ const EstimatePage = () => {
 
             {/* STRUCTURAL TAB */}
             <TabsContent value="structural" className="space-y-6">
+              <SectionCard title="BNBC 2020 Site & Importance Inputs" icon={ShieldCheck}>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Seismic Zone</label>
+                    <select value={zone} onChange={(e) => setZone(e.target.value)} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm">
+                      {Object.entries(BNBC_ZONES).map(([k, v]) => <option key={k} value={k}>{k} (Z={v})</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Soil Classification</label>
+                    <select value={soil} onChange={(e) => setSoil(e.target.value)} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm">
+                      {Object.entries(BNBC_SOILS).map(([k, v]) => <option key={k} value={k}>{v.label} (S={v.factor})</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Importance Factor (I)</label>
+                    <select value={importance} onChange={(e) => setImportance(parseFloat(e.target.value))} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm">
+                      <option value={1.0}>1.00 — Standard occupancy</option>
+                      <option value={1.25}>1.25 — Important / schools</option>
+                      <option value={1.5}>1.50 — Essential facilities</option>
+                    </select>
+                  </div>
+                </div>
+              </SectionCard>
+
               <SectionCard title="BNBC 2020 Load Analysis" icon={Activity}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Seismic Zone</p><p className="font-bold mt-1">{loads.zone}</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Zone Factor (Z)</p><p className="font-bold mt-1">{loads.zoneFactor}</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Soil Type</p><p className="font-bold mt-1">{loads.soilType} (S={loads.soilFactor})</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Importance (I)</p><p className="font-bold mt-1">{loads.importanceFactor}</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Dead Load</p><p className="font-bold mt-1">{fmt(loads.totalDeadLoad)} kN</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Live Load</p><p className="font-bold mt-1">{fmt(loads.totalLiveLoad)} kN</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Wind Pressure</p><p className="font-bold mt-1">{loads.windPressure} kN/m²</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Base Shear (V)</p><p className="font-bold mt-1 text-accent">{fmt(loads.baseShear)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Dead Load (D)</p><p className="font-bold mt-1">{fmt(loads.totalDeadLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Live Load (L)</p><p className="font-bold mt-1">{fmt(loads.totalLiveLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Wind Load (W)</p><p className="font-bold mt-1">{fmt(loads.windLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Earthquake (E)</p><p className="font-bold mt-1 text-accent">{fmt(loads.baseShear)} kN</p></div>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 text-xs space-y-1 font-mono">
-                  <p>Dead Load = Σ(Unit Weight × Volume)</p>
-                  <p>Wind Pressure: P = 0.6V² → P = 0.6 × {loads.windSpeed}² = {(0.6 * loads.windSpeed * loads.windSpeed).toFixed(0)} N/m²</p>
-                  <p>Base Shear: V = Cs·W → V = {loads.seismicCoeff} × {fmt(loads.buildingWeight)} = {fmt(loads.baseShear)} kN</p>
+                  <p>Wind Pressure: P = 0.6V² → P = 0.6 × {loads.windSpeed}² = {(0.6 * loads.windSpeed * loads.windSpeed).toFixed(0)} N/m² = {loads.windPressure} kN/m²</p>
+                  <p>Cs = (Z·I·2.5)/R = ({loads.zoneFactor}·{loads.importanceFactor}·2.5)/{loads.responseFactor} = {loads.seismicCoeff}</p>
+                  <p>Base Shear: V = Cs·W·S = {loads.seismicCoeff} × {fmt(loads.buildingWeight)} × {loads.soilFactor} = {fmt(loads.baseShear)} kN</p>
                 </div>
+              </SectionCard>
+
+              <SectionCard title="BNBC 2020 Strength Load Combinations" icon={Layers}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">#</th>
+                      <th className="text-left py-2">Combination</th>
+                      <th className="text-right py-2">Factored Resultant (kN)</th>
+                      <th className="text-right py-2">Status</th>
+                    </tr></thead>
+                    <tbody>
+                      {loads.combos.map((c) => (
+                        <tr key={c.name} className={`border-b border-border/50 ${c.governs ? "bg-accent/5" : ""}`}>
+                          <td className="py-2 font-mono text-xs">{c.name}</td>
+                          <td className="py-2 font-mono">{c.formula}</td>
+                          <td className="text-right font-semibold">{fmt(c.factoredLoad)}</td>
+                          <td className="text-right">
+                            {c.governs ? <Badge className="bg-accent">Governs</Badge> : <span className="text-muted-foreground text-xs">—</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Reference: BNBC 2020, Part 6, Chapter 2 — Loads on Buildings (clause 2.7.3.1).
+                  Resultant = vertical + 0.5 × lateral, used only for ranking. In design, vertical and lateral effects remain separate.
+                </p>
               </SectionCard>
 
               <SectionCard title="Beam Design (Bending & Shear)" icon={Layers}>
@@ -409,7 +558,9 @@ const EstimatePage = () => {
 
             {/* BOQ TAB */}
             <TabsContent value="boq" className="space-y-6">
-              <SectionCard title="Bill of Quantities (BOQ)" icon={FileText}>
+              <SectionCard title="Bill of Quantities (BOQ)" icon={FileText} action={
+                <Button size="sm" variant="outline" onClick={exportBOQCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+              }>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead><tr className="border-b text-muted-foreground">
@@ -489,7 +640,9 @@ const EstimatePage = () => {
 
             {/* QUOTATION TAB */}
             <TabsContent value="quotation" className="space-y-6">
-              <SectionCard title="Contractor Quotation" icon={ShieldCheck}>
+              <SectionCard title="Contractor Quotation" icon={ShieldCheck} action={
+                <Button size="sm" variant="outline" onClick={exportQuotationCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+              }>
                 <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-6 space-y-3">
                   <div className="flex justify-between text-sm"><span>Material Cost</span><span className="font-semibold">৳{fmt(quotation.materialCost)}</span></div>
                   <div className="flex justify-between text-sm"><span>Labor + Civil + Finishing</span><span className="font-semibold">৳{fmt(quotation.laborCost)}</span></div>
