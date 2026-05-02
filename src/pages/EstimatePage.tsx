@@ -549,7 +549,9 @@ const EstimatePage = () => {
 
             {/* BOQ TAB */}
             <TabsContent value="boq" className="space-y-6">
-              <SectionCard title="Bill of Quantities (BOQ)" icon={FileText}>
+              <SectionCard title="Bill of Quantities (BOQ)" icon={FileText} action={
+                <Button size="sm" variant="outline" onClick={exportBOQCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+              }>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead><tr className="border-b text-muted-foreground">
@@ -629,7 +631,9 @@ const EstimatePage = () => {
 
             {/* QUOTATION TAB */}
             <TabsContent value="quotation" className="space-y-6">
-              <SectionCard title="Contractor Quotation" icon={ShieldCheck}>
+              <SectionCard title="Contractor Quotation" icon={ShieldCheck} action={
+                <Button size="sm" variant="outline" onClick={exportQuotationCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+              }>
                 <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-6 space-y-3">
                   <div className="flex justify-between text-sm"><span>Material Cost</span><span className="font-semibold">৳{fmt(quotation.materialCost)}</span></div>
                   <div className="flex justify-between text-sm"><span>Labor + Civil + Finishing</span><span className="font-semibold">৳{fmt(quotation.laborCost)}</span></div>
