@@ -346,22 +346,76 @@ const EstimatePage = () => {
 
             {/* STRUCTURAL TAB */}
             <TabsContent value="structural" className="space-y-6">
+              <SectionCard title="BNBC 2020 Site & Importance Inputs" icon={ShieldCheck}>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Seismic Zone</label>
+                    <select value={zone} onChange={(e) => setZone(e.target.value)} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm">
+                      {Object.entries(BNBC_ZONES).map(([k, v]) => <option key={k} value={k}>{k} (Z={v})</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Soil Classification</label>
+                    <select value={soil} onChange={(e) => setSoil(e.target.value)} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm">
+                      {Object.entries(BNBC_SOILS).map(([k, v]) => <option key={k} value={k}>{v.label} (S={v.factor})</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Importance Factor (I)</label>
+                    <select value={importance} onChange={(e) => setImportance(parseFloat(e.target.value))} className="w-full h-10 rounded-lg border border-input bg-card px-3 text-sm">
+                      <option value={1.0}>1.00 — Standard occupancy</option>
+                      <option value={1.25}>1.25 — Important / schools</option>
+                      <option value={1.5}>1.50 — Essential facilities</option>
+                    </select>
+                  </div>
+                </div>
+              </SectionCard>
+
               <SectionCard title="BNBC 2020 Load Analysis" icon={Activity}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Seismic Zone</p><p className="font-bold mt-1">{loads.zone}</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Zone Factor (Z)</p><p className="font-bold mt-1">{loads.zoneFactor}</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Soil Type</p><p className="font-bold mt-1">{loads.soilType} (S={loads.soilFactor})</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Importance (I)</p><p className="font-bold mt-1">{loads.importanceFactor}</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Dead Load</p><p className="font-bold mt-1">{fmt(loads.totalDeadLoad)} kN</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Live Load</p><p className="font-bold mt-1">{fmt(loads.totalLiveLoad)} kN</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Wind Pressure</p><p className="font-bold mt-1">{loads.windPressure} kN/m²</p></div>
-                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Base Shear (V)</p><p className="font-bold mt-1 text-accent">{fmt(loads.baseShear)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Dead Load (D)</p><p className="font-bold mt-1">{fmt(loads.totalDeadLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Live Load (L)</p><p className="font-bold mt-1">{fmt(loads.totalLiveLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Wind Load (W)</p><p className="font-bold mt-1">{fmt(loads.windLoad)} kN</p></div>
+                  <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Earthquake (E)</p><p className="font-bold mt-1 text-accent">{fmt(loads.baseShear)} kN</p></div>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 text-xs space-y-1 font-mono">
-                  <p>Dead Load = Σ(Unit Weight × Volume)</p>
-                  <p>Wind Pressure: P = 0.6V² → P = 0.6 × {loads.windSpeed}² = {(0.6 * loads.windSpeed * loads.windSpeed).toFixed(0)} N/m²</p>
-                  <p>Base Shear: V = Cs·W → V = {loads.seismicCoeff} × {fmt(loads.buildingWeight)} = {fmt(loads.baseShear)} kN</p>
+                  <p>Wind Pressure: P = 0.6V² → P = 0.6 × {loads.windSpeed}² = {(0.6 * loads.windSpeed * loads.windSpeed).toFixed(0)} N/m² = {loads.windPressure} kN/m²</p>
+                  <p>Cs = (Z·I·2.5)/R = ({loads.zoneFactor}·{loads.importanceFactor}·2.5)/{loads.responseFactor} = {loads.seismicCoeff}</p>
+                  <p>Base Shear: V = Cs·W·S = {loads.seismicCoeff} × {fmt(loads.buildingWeight)} × {loads.soilFactor} = {fmt(loads.baseShear)} kN</p>
                 </div>
+              </SectionCard>
+
+              <SectionCard title="BNBC 2020 Strength Load Combinations" icon={Layers}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2">#</th>
+                      <th className="text-left py-2">Combination</th>
+                      <th className="text-right py-2">Factored Resultant (kN)</th>
+                      <th className="text-right py-2">Status</th>
+                    </tr></thead>
+                    <tbody>
+                      {loads.combos.map((c) => (
+                        <tr key={c.name} className={`border-b border-border/50 ${c.governs ? "bg-accent/5" : ""}`}>
+                          <td className="py-2 font-mono text-xs">{c.name}</td>
+                          <td className="py-2 font-mono">{c.formula}</td>
+                          <td className="text-right font-semibold">{fmt(c.factoredLoad)}</td>
+                          <td className="text-right">
+                            {c.governs ? <Badge className="bg-accent">Governs</Badge> : <span className="text-muted-foreground text-xs">—</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Reference: BNBC 2020, Part 6, Chapter 2 — Loads on Buildings (clause 2.7.3.1).
+                  Resultant = vertical + 0.5 × lateral, used only for ranking. In design, vertical and lateral effects remain separate.
+                </p>
               </SectionCard>
 
               <SectionCard title="Beam Design (Bending & Shear)" icon={Layers}>
