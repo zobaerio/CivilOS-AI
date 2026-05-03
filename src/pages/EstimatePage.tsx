@@ -146,6 +146,8 @@ const EstimatePage = () => {
     await navigator.clipboard.writeText(url);
     toast.success("Public link copied to clipboard!");
   };
+
+  const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("Smart House Estimate AI - Engineering Report", 14, 20);
