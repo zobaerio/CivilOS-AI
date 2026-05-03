@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets,
-  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck, Save
+  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck, Save, Share2
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid
@@ -131,8 +131,21 @@ const EstimatePage = () => {
     }
   };
 
-
-  const generatePDF = () => {
+  const shareProject = async () => {
+    if (!user) { toast.info("Sign in and save the project first to share it."); return; }
+    if (!params._projectId) { toast.info("Save the project first, then share."); return; }
+    let token = (params as any)._shareToken as string | undefined;
+    if (!token) {
+      token = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+      const { error } = await supabase.from("projects")
+        .update({ share_token: token, is_public: true } as any)
+        .eq("id", params._projectId);
+      if (error) { toast.error(error.message); return; }
+    }
+    const url = `${window.location.origin}/share/${token}`;
+    await navigator.clipboard.writeText(url);
+    toast.success("Public link copied to clipboard!");
+  };
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("Smart House Estimate AI - Engineering Report", 14, 20);
