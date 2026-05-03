@@ -13,6 +13,10 @@ import AboutPage from "./pages/AboutPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import ProjectsPage from "./pages/ProjectsPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
+import SponsorPage from "./pages/SponsorPage.tsx";
+import AdminPage from "./pages/AdminPage.tsx";
+import SharedEstimatePage from "./pages/SharedEstimatePage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +36,10 @@ const App = () => (
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/sponsor" element={<SponsorPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/share/:token" element={<SharedEstimatePage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
