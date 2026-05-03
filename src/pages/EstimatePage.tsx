@@ -256,6 +256,9 @@ const EstimatePage = () => {
               <Button variant="outline" onClick={saveProject} disabled={saving}>
                 <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : user ? "Save Project" : "Sign in to Save"}
               </Button>
+              <Button variant="outline" onClick={shareProject}>
+                <Share2 className="h-4 w-4 mr-1" /> Share Link
+              </Button>
               <Button onClick={generatePDF}>
                 <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
               </Button>
