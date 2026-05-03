@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Download, Lightbulb, Building, Layers, Hammer, Paintbrush, Zap, Droplets,
-  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck, Save
+  DollarSign, Activity, Construction, FileText, Calendar, Box, ShieldCheck, Save, Share2
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid
@@ -131,6 +131,21 @@ const EstimatePage = () => {
     }
   };
 
+  const shareProject = async () => {
+    if (!user) { toast.info("Sign in and save the project first to share it."); return; }
+    if (!params._projectId) { toast.info("Save the project first, then share."); return; }
+    let token = (params as any)._shareToken as string | undefined;
+    if (!token) {
+      token = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+      const { error } = await supabase.from("projects")
+        .update({ share_token: token, is_public: true } as any)
+        .eq("id", params._projectId);
+      if (error) { toast.error(error.message); return; }
+    }
+    const url = `${window.location.origin}/share/${token}`;
+    await navigator.clipboard.writeText(url);
+    toast.success("Public link copied to clipboard!");
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -240,6 +255,9 @@ const EstimatePage = () => {
             <div className="flex gap-2 flex-wrap">
               <Button variant="outline" onClick={saveProject} disabled={saving}>
                 <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : user ? "Save Project" : "Sign in to Save"}
+              </Button>
+              <Button variant="outline" onClick={shareProject}>
+                <Share2 className="h-4 w-4 mr-1" /> Share Link
               </Button>
               <Button onClick={generatePDF}>
                 <Download className="h-4 w-4 mr-1" /> {t("est.downloadPdf")}
