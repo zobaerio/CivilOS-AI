@@ -27,13 +27,14 @@ const SponsorPage = () => {
       return toast.error(parsed.error.errors[0].message);
     }
     setSubmitting(true);
-    const { error } = await supabase.from("sponsors").insert({
+    const payload: any = {
       ...parsed.data,
       website: parsed.data.website || null,
       logo_url: parsed.data.logo_url || null,
       description: parsed.data.description || null,
       status: "pending",
-    });
+    };
+    const { error } = await supabase.from("sponsors").insert(payload);
     setSubmitting(false);
     if (error) return toast.error(error.message);
     toast.success("Sponsorship request submitted! We'll review and contact you.");
