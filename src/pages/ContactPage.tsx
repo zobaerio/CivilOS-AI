@@ -24,6 +24,10 @@ const ContactPage = () => {
         <div className="container max-w-lg space-y-6">
           <h1 className="font-heading text-3xl font-bold text-center">{t("contact.title")}</h1>
           <p className="text-center text-muted-foreground">{t("contact.subtitle")}</p>
+          <a href="https://wa.me/8801832313998" target="_blank" rel="noopener noreferrer"
+            className="block bg-[#25D366] hover:bg-[#1ebe57] text-white font-semibold rounded-xl p-4 text-center transition-colors">
+            💬 WhatsApp: +880 1832-313998
+          </a>
           <form onSubmit={handleSubmit} className="bg-card rounded-xl shadow-card p-6 space-y-4">
             <input className={inputClass} placeholder={t("contact.name")} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <input className={inputClass} type="email" placeholder={t("contact.email")} required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
