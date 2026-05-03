@@ -1,4 +1,4 @@
-import { Building2 } from "lucide-react";
+import { Building2, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 
@@ -47,12 +47,17 @@ const Footer = () => {
             <h4 className="font-heading font-semibold mb-3">{t("footer.contactTitle")}</h4>
             <div className="space-y-2 text-sm text-primary-foreground/70">
               <p>support@smarthouseai.com</p>
+              <a href="https://wa.me/8801832313998" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent">
+                <Phone className="h-3.5 w-3.5" /> +880 1832-313998 (WhatsApp)
+              </a>
               <p>Dhaka, Bangladesh</p>
+              <Link to="/sponsor" className="block hover:text-accent">Become a Sponsor</Link>
             </div>
           </div>
         </div>
         <div className="mt-10 pt-6 border-t border-primary-foreground/10 text-center text-xs text-primary-foreground/50">
-          {t("footer.copyright")}
+          <Link to="/admin" title="Admin" className="hover:text-accent transition-colors cursor-pointer">©</Link>{" "}
+          2026 Smart House Estimate AI. All rights reserved.
         </div>
       </div>
     </footer>
