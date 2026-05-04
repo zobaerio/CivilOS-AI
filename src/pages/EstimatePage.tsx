@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import Building3D from "@/components/Building3D";
 import { useLocation } from "react-router-dom";
 import { useMemo, useState } from "react";
