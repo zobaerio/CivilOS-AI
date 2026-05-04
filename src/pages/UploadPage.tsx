@@ -149,6 +149,8 @@ const UploadPage = () => {
             </div>
           )}
 
+          {file && <AIThinking file={file} fileName={file.name} textContent={dxfText || undefined} />}
+
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
             <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
