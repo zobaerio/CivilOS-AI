@@ -81,4 +81,8 @@
   .glass {
     @apply bg-card/80 backdrop-blur-xl;
   }
+  .mask-fade {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
 }
