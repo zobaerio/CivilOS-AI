@@ -95,6 +95,7 @@ const UploadPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO title="Upload Building Design" description="Upload your floor plan, photo, PDF, or DXF — our AI instantly analyzes it for BNBC-compliant construction estimation." />
       <Navbar />
       <main className="flex-1 py-10">
         <div className="container max-w-4xl space-y-8">
@@ -126,8 +127,8 @@ const UploadPage = () => {
               <label className="cursor-pointer space-y-3 block">
                 <FileImage className="h-12 w-12 text-muted-foreground/40 mx-auto" />
                 <p className="font-medium text-foreground">{t("upload.dragDrop")}</p>
-                <p className="text-sm text-muted-foreground">JPG, PNG, PDF, DXF, DWG supported</p>
-                <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf,.dxf,.dwg" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+                <p className="text-sm text-muted-foreground">Any file: JPG, PNG, PDF, DXF, DWG, DOCX, TXT — AI will inspect it</p>
+                <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
               </label>
             )}
           </div>
