@@ -241,7 +241,7 @@ const EstimatePage = () => {
     <div className="min-h-screen flex flex-col">
       <SEO
         title={projectName ? `${projectName} — Construction Estimate` : "Construction Estimate"}
-        description={`AI-generated BNBC 2020 construction estimate${state?.area ? ` for a ${state.area} sqft house` : ""}: full BOQ, structural analysis, and 3D model.`}
+        description={`AI-generated BNBC 2020 construction estimate${params?.area ? ` for a ${params.area} sqft house` : ""}: full BOQ, structural analysis, and 3D model.`}
         type="article"
       />
       <Navbar />
