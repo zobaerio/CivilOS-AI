@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import AIThinking from "@/components/AIThinking";
 import { Button } from "@/components/ui/button";
 import { FileImage, ArrowRight, FileCode } from "lucide-react";
 import { useState, useCallback } from "react";
@@ -14,6 +16,7 @@ const UploadPage = () => {
   const { t } = useI18n();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [dxfText, setDxfText] = useState<string>("");
   const [dragging, setDragging] = useState(false);
 
   const [plotLength, setPlotLength] = useState("40");
@@ -30,6 +33,11 @@ const UploadPage = () => {
   const handleFile = useCallback((f: File) => {
     setFile(f);
     setDxfSummary(null);
+    setDxfText("");
+    if (f.size > 20 * 1024 * 1024) {
+      toast.error("File too large (max 20MB)");
+      return;
+    }
     if (f.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
@@ -38,8 +46,10 @@ const UploadPage = () => {
       setPreview(null);
       const reader = new FileReader();
       reader.onload = (e) => {
+        const txt = String(e.target?.result || "");
+        setDxfText(txt);
         try {
-          const summary = parseDXF(String(e.target?.result || ""));
+          const summary = parseDXF(txt);
           setDxfSummary(summary);
           toast.success(`DXF parsed: ${summary.totalEntities} entities, ${Object.keys(summary.layers).length} layers`);
         } catch {
@@ -49,9 +59,13 @@ const UploadPage = () => {
       reader.readAsText(f);
     } else if (/\.dwg$/i.test(f.name)) {
       setPreview(null);
-      toast.info("DWG accepted. Binary DWG parsing coming soon — please export as DXF for full detection.");
+      toast.info("DWG accepted. AI will still analyze metadata — for full geometry please export as DXF.");
+    } else if (f.type === "application/pdf" || /\.(pdf|txt|doc|docx)$/i.test(f.name)) {
+      setPreview(null);
+      toast.success(`${f.name} ready for AI analysis`);
     } else {
       setPreview(null);
+      toast.success(`${f.name} ready — AI will inspect this file`);
     }
   }, []);
 
