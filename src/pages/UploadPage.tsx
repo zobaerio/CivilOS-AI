@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import AIThinking from "@/components/AIThinking";
 import { Button } from "@/components/ui/button";
 import { FileImage, ArrowRight, FileCode } from "lucide-react";
 import { useState, useCallback } from "react";
@@ -14,6 +16,7 @@ const UploadPage = () => {
   const { t } = useI18n();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [dxfText, setDxfText] = useState<string>("");
   const [dragging, setDragging] = useState(false);
 
   const [plotLength, setPlotLength] = useState("40");
@@ -30,6 +33,11 @@ const UploadPage = () => {
   const handleFile = useCallback((f: File) => {
     setFile(f);
     setDxfSummary(null);
+    setDxfText("");
+    if (f.size > 20 * 1024 * 1024) {
+      toast.error("File too large (max 20MB)");
+      return;
+    }
     if (f.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
@@ -38,8 +46,10 @@ const UploadPage = () => {
       setPreview(null);
       const reader = new FileReader();
       reader.onload = (e) => {
+        const txt = String(e.target?.result || "");
+        setDxfText(txt);
         try {
-          const summary = parseDXF(String(e.target?.result || ""));
+          const summary = parseDXF(txt);
           setDxfSummary(summary);
           toast.success(`DXF parsed: ${summary.totalEntities} entities, ${Object.keys(summary.layers).length} layers`);
         } catch {
@@ -49,9 +59,13 @@ const UploadPage = () => {
       reader.readAsText(f);
     } else if (/\.dwg$/i.test(f.name)) {
       setPreview(null);
-      toast.info("DWG accepted. Binary DWG parsing coming soon — please export as DXF for full detection.");
+      toast.info("DWG accepted. AI will still analyze metadata — for full geometry please export as DXF.");
+    } else if (f.type === "application/pdf" || /\.(pdf|txt|doc|docx)$/i.test(f.name)) {
+      setPreview(null);
+      toast.success(`${f.name} ready for AI analysis`);
     } else {
       setPreview(null);
+      toast.success(`${f.name} ready — AI will inspect this file`);
     }
   }, []);
 
@@ -81,6 +95,7 @@ const UploadPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO title="Upload Building Design" description="Upload your floor plan, photo, PDF, or DXF — our AI instantly analyzes it for BNBC-compliant construction estimation." />
       <Navbar />
       <main className="flex-1 py-10">
         <div className="container max-w-4xl space-y-8">
@@ -112,8 +127,8 @@ const UploadPage = () => {
               <label className="cursor-pointer space-y-3 block">
                 <FileImage className="h-12 w-12 text-muted-foreground/40 mx-auto" />
                 <p className="font-medium text-foreground">{t("upload.dragDrop")}</p>
-                <p className="text-sm text-muted-foreground">JPG, PNG, PDF, DXF, DWG supported</p>
-                <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf,.dxf,.dwg" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
+                <p className="text-sm text-muted-foreground">Any file: JPG, PNG, PDF, DXF, DWG, DOCX, TXT — AI will inspect it</p>
+                <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
               </label>
             )}
           </div>
@@ -133,6 +148,8 @@ const UploadPage = () => {
               <p className="text-xs text-amber-700 dark:text-amber-400">⚠ Approximate detection — please verify dimensions below.</p>
             </div>
           )}
+
+          {file && <AIThinking file={file} fileName={file.name} textContent={dxfText || undefined} />}
 
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
             <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
