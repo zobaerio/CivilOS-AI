@@ -200,13 +200,11 @@ const EstimatePage = () => {
     doc.text("Contractor Quotation", 14, y);
     autoTable(doc, {
       startY: y + 4,
-      head: [["Item", "Amount (BDT)"]],
+      head: [["Item", "Amount (BDT)", "Justification"]],
       body: [
-        ["Material Cost", new Intl.NumberFormat("en-IN").format(quotation.materialCost)],
-        ["Labor + Civil + Finishing", new Intl.NumberFormat("en-IN").format(quotation.laborCost)],
-        ["Overhead (8%)", new Intl.NumberFormat("en-IN").format(quotation.overhead)],
-        ["Profit (10%)", new Intl.NumberFormat("en-IN").format(quotation.profit)],
-        ["TOTAL", new Intl.NumberFormat("en-IN").format(quotation.total)],
+        ...quotation.justification.map((j) => [j.label, new Intl.NumberFormat("en-IN").format(j.amount), j.note]),
+        ["Full Project Cost", new Intl.NumberFormat("en-IN").format(quotation.baseProjectCost), "Sum before contractor profit"],
+        ["TOTAL (with profit)", new Intl.NumberFormat("en-IN").format(quotation.total), "Final quotation"],
       ],
       styles: { fontSize: 9 },
     });
