@@ -179,7 +179,14 @@ const UploadPage = () => {
           )}
 
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
-            <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
+            <div className="flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  AI Thinking will auto-fill these from your upload — you can also edit any field manually.
+                </p>
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">{t("upload.plotLength")}</label>
