@@ -90,12 +90,10 @@ const EstimatePage = () => {
       ["Smart House Estimate AI – Contractor Quotation"],
       ["Project", projectName], ["Plot", data.plotSize], ["Floors", data.floors], ["Quality", data.quality],
       [],
-      ["Item", "Amount (BDT)"],
-      ["Material Cost", quotation.materialCost],
-      ["Labor + Civil + Finishing", quotation.laborCost],
-      ["Overhead (8%)", quotation.overhead],
-      ["Profit (10%)", quotation.profit],
-      ["TOTAL", quotation.total],
+      ["Item", "Amount (BDT)", "Justification"],
+      ...quotation.justification.map((j) => [j.label, j.amount, j.note]),
+      ["Full Project Cost (before profit)", quotation.baseProjectCost, "Materials + Labor + Civil + Finishing + E&P + Transport + Contingency + Overhead"],
+      ["TOTAL (with 10% contractor profit)", quotation.total, "Single profit margin — no double counting"],
       [],
       ["Duration (months)", quotation.durationMonths],
       ["Validity (days)", quotation.validityDays],
@@ -202,13 +200,11 @@ const EstimatePage = () => {
     doc.text("Contractor Quotation", 14, y);
     autoTable(doc, {
       startY: y + 4,
-      head: [["Item", "Amount (BDT)"]],
+      head: [["Item", "Amount (BDT)", "Justification"]],
       body: [
-        ["Material Cost", new Intl.NumberFormat("en-IN").format(quotation.materialCost)],
-        ["Labor + Civil + Finishing", new Intl.NumberFormat("en-IN").format(quotation.laborCost)],
-        ["Overhead (8%)", new Intl.NumberFormat("en-IN").format(quotation.overhead)],
-        ["Profit (10%)", new Intl.NumberFormat("en-IN").format(quotation.profit)],
-        ["TOTAL", new Intl.NumberFormat("en-IN").format(quotation.total)],
+        ...quotation.justification.map((j) => [j.label, new Intl.NumberFormat("en-IN").format(j.amount), j.note]),
+        ["Full Project Cost", new Intl.NumberFormat("en-IN").format(quotation.baseProjectCost), "Sum before contractor profit"],
+        ["TOTAL (with profit)", new Intl.NumberFormat("en-IN").format(quotation.total), "Final quotation"],
       ],
       styles: { fontSize: 9 },
     });
@@ -664,15 +660,30 @@ const EstimatePage = () => {
 
             {/* QUOTATION TAB */}
             <TabsContent value="quotation" className="space-y-6">
-              <SectionCard title="Contractor Quotation" icon={ShieldCheck} action={
+              <SectionCard title="Contractor Quotation — Fully Justified" icon={ShieldCheck} action={
                 <Button size="sm" variant="outline" onClick={exportQuotationCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
               }>
-                <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-6 space-y-3">
-                  <div className="flex justify-between text-sm"><span>Material Cost</span><span className="font-semibold">৳{fmt(quotation.materialCost)}</span></div>
-                  <div className="flex justify-between text-sm"><span>Labor + Civil + Finishing</span><span className="font-semibold">৳{fmt(quotation.laborCost)}</span></div>
-                  <div className="flex justify-between text-sm"><span>Overhead (8%)</span><span className="font-semibold">৳{fmt(quotation.overhead)}</span></div>
-                  <div className="flex justify-between text-sm"><span>Profit Margin (10%)</span><span className="font-semibold">৳{fmt(quotation.profit)}</span></div>
-                  <div className="border-t pt-3 flex justify-between text-lg"><span className="font-bold">TOTAL QUOTATION</span><span className="font-bold text-accent">৳{fmt(quotation.total)}</span></div>
+                <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-6 space-y-2">
+                  {quotation.justification.map((j) => (
+                    <div key={j.label} className="border-b border-border/40 last:border-0 pb-2 last:pb-0">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium">{j.label}</span>
+                        <span className="font-semibold">৳{fmt(j.amount)}</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{j.note}</p>
+                    </div>
+                  ))}
+                  <div className="border-t pt-3 flex justify-between text-sm">
+                    <span>Full Project Cost (before profit)</span>
+                    <span className="font-semibold">৳{fmt(quotation.baseProjectCost)}</span>
+                  </div>
+                  <div className="flex justify-between text-lg pt-1">
+                    <span className="font-bold">TOTAL QUOTATION</span>
+                    <span className="font-bold text-accent">৳{fmt(quotation.total)}</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground pt-1">
+                    ✓ Single 10% contractor profit applied on full project cost — overhead/contingency are NOT double counted.
+                  </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Project Duration</p><p className="font-bold mt-1">{quotation.durationMonths} months</p></div>
