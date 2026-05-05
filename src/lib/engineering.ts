@@ -272,18 +272,44 @@ export function buildQuotation(estimate: EstimateData): Quotation {
   const laborCost = Object.values(estimate.labor).reduce((s, l) => s + l.total, 0);
   const civil = Object.values(estimate.civilWork).reduce((s, v) => s + v, 0);
   const finishing = Object.values(estimate.finishing).reduce((s, v) => s + v, 0);
-  const subtotal = materialCost + laborCost + civil + finishing;
-  const overhead = Math.round(subtotal * 0.08);
-  const profit = Math.round(subtotal * 0.10);
+  const elec = typeof estimate.electrical["Estimated Cost"] === "number" ? (estimate.electrical["Estimated Cost"] as number) : 0;
+  const plumb = typeof estimate.plumbing["Estimated Cost"] === "number" ? (estimate.plumbing["Estimated Cost"] as number) : 0;
+
+  // Use the engine's already-justified totalCost (which includes transport, overhead, contingency).
+  const baseProjectCost = estimate.totalCost;
+  const subtotalRaw = materialCost + laborCost + civil + finishing + elec + plumb;
+  const transport = Math.round(subtotalRaw * 0.03);
+  const contingency = Math.round(subtotalRaw * 0.05);
+  const overhead = Math.round(subtotalRaw * 0.08);
+
+  // Contractor margin (profit) — applied ONCE on top of full project cost.
+  const profit = Math.round(baseProjectCost * 0.10);
+  const total = baseProjectCost + profit;
+
+  const justification = [
+    { label: "Materials", amount: materialCost, note: "Cement, steel, brick, sand, stone, tiles, paint, doors, windows — quantities derived from built-up area & wall volume." },
+    { label: "Labor", amount: laborCost + civil + finishing, note: "Mason, rod-binder, carpenter, electrician, plumber, painter, tiles & general labor — civil + finishing crews included." },
+    { label: "Electrical & Plumbing", amount: elec + plumb, note: "Wiring, switches, DB box, fan/light points, pipes, water tank, fittings as per total floor area." },
+    { label: "Transport", amount: transport, note: "≈3% of subtotal for material transport & site logistics." },
+    { label: "Contingency", amount: contingency, note: "≈5% safety buffer for price fluctuation & unforeseen work." },
+    { label: "Overhead", amount: overhead, note: "≈8% for site supervision, equipment, scaffolding, utilities." },
+    { label: "Contractor Profit", amount: profit, note: "10% margin on full project cost — single application, no double counting." },
+  ];
+
   return {
     materialCost,
     laborCost: laborCost + civil + finishing,
+    electricalPlumbing: elec + plumb,
+    transport,
+    contingency,
     overhead,
+    baseProjectCost,
     profit,
-    total: subtotal + overhead + profit,
+    total,
     durationMonths: estimate.completionMonths,
     validityDays: 30,
     paymentTerms: "30% Advance · 40% on Roof Casting · 30% on Handover",
+    justification,
   };
 }
 
