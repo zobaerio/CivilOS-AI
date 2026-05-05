@@ -92,12 +92,17 @@ export interface TimelinePhase {
 export interface Quotation {
   materialCost: number;
   laborCost: number;
+  electricalPlumbing: number;
+  transport: number;
+  contingency: number;
   overhead: number;
+  baseProjectCost: number; // = estimate.totalCost (full project cost before contractor margin)
   profit: number;
   total: number;
   durationMonths: number;
   validityDays: number;
   paymentTerms: string;
+  justification: { label: string; amount: number; note: string }[];
 }
 
 export function computeBNBCLoads(
