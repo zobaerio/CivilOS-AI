@@ -149,7 +149,34 @@ const UploadPage = () => {
             </div>
           )}
 
-          {file && <AIThinking file={file} fileName={file.name} textContent={dxfText || undefined} />}
+          {file && (
+            <AIThinking
+              file={file}
+              fileName={file.name}
+              textContent={dxfText || undefined}
+              onAnalysis={(a) => {
+                const d = a?.detected || {};
+                if (d.estimatedFloors) setFloors(String(d.estimatedFloors));
+                if (d.estimatedArea_sqft) {
+                  // derive a square-ish plot from area (sqft) so the form is plausible
+                  const side = Math.round(Math.sqrt(d.estimatedArea_sqft));
+                  setPlotLength(String(side));
+                  setPlotWidth(String(side));
+                  setUnit("feet");
+                }
+                const q = a?.estimateHints?.suggestedQuality;
+                if (q === "premium" || q === "luxury") setQuality("premium");
+                else if (q === "standard") setQuality("standard");
+                const bt = (d.buildingType || "").toLowerCase();
+                if (bt.includes("duplex")) setProjectType("duplex");
+                else if (bt.includes("commerc")) setProjectType("commercial");
+                else if (bt.includes("apartment") || bt.includes("multi")) setProjectType("multi");
+                else if (bt.includes("shop")) setProjectType("shop_home");
+                else if (bt) setProjectType("single");
+                toast.success("Project Details auto-filled — review or edit manually");
+              }}
+            />
+          )}
 
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
             <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
