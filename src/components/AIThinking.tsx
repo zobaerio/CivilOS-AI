@@ -22,6 +22,7 @@ interface Props {
   file?: File | null;
   textContent?: string;
   fileName?: string;
+  onAnalysis?: (analysis: Analysis) => void;
 }
 
 const fileToDataUrl = (file: File) =>
@@ -32,7 +33,7 @@ const fileToDataUrl = (file: File) =>
     r.readAsDataURL(file);
   });
 
-const AIThinking = ({ file, textContent, fileName }: Props) => {
+const AIThinking = ({ file, textContent, fileName, onAnalysis }: Props) => {
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [thinkSteps, setThinkSteps] = useState<string[]>([]);
@@ -66,7 +67,8 @@ const AIThinking = ({ file, textContent, fileName }: Props) => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setAnalysis(data.analysis);
-      toast.success("AI analysis complete");
+      onAnalysis?.(data.analysis);
+      toast.success("AI analysis complete — Project Details auto-filled");
     } catch (e: any) {
       toast.error(e.message || "AI analysis failed");
     } finally {

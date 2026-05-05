@@ -149,10 +149,44 @@ const UploadPage = () => {
             </div>
           )}
 
-          {file && <AIThinking file={file} fileName={file.name} textContent={dxfText || undefined} />}
+          {file && (
+            <AIThinking
+              file={file}
+              fileName={file.name}
+              textContent={dxfText || undefined}
+              onAnalysis={(a) => {
+                const d = a?.detected || {};
+                if (d.estimatedFloors) setFloors(String(d.estimatedFloors));
+                if (d.estimatedArea_sqft) {
+                  // derive a square-ish plot from area (sqft) so the form is plausible
+                  const side = Math.round(Math.sqrt(d.estimatedArea_sqft));
+                  setPlotLength(String(side));
+                  setPlotWidth(String(side));
+                  setUnit("feet");
+                }
+                const q = a?.estimateHints?.suggestedQuality;
+                if (q === "premium" || q === "luxury") setQuality("premium");
+                else if (q === "standard") setQuality("standard");
+                const bt = (d.buildingType || "").toLowerCase();
+                if (bt.includes("duplex")) setProjectType("duplex");
+                else if (bt.includes("commerc")) setProjectType("commercial");
+                else if (bt.includes("apartment") || bt.includes("multi")) setProjectType("multi");
+                else if (bt.includes("shop")) setProjectType("shop_home");
+                else if (bt) setProjectType("single");
+                toast.success("Project Details auto-filled — review or edit manually");
+              }}
+            />
+          )}
 
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
-            <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
+            <div className="flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <h2 className="font-heading text-xl font-semibold">{t("upload.projectDetails")}</h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  AI Thinking will auto-fill these from your upload — you can also edit any field manually.
+                </p>
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">{t("upload.plotLength")}</label>
