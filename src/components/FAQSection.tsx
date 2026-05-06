@@ -30,19 +30,35 @@ const categories: { id: Category; labelEn: string; labelBn: string }[] = [
 const FAQSection = () => {
   const { t, lang } = useI18n();
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [active, setActive] = useState<Category>("all");
 
+  // Debounce search input (200ms)
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => clearTimeout(id);
+  }, [query]);
+
+  // Pre-compute searchable index once per language change
+  const index = useMemo(
+    () =>
+      faqItems.map((f) => ({
+        item: f,
+        haystack: `${t(f.qKey)} ${t(f.aKey)}`.toLowerCase(),
+      })),
+    [t, lang]
+  );
+
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return faqItems.filter((f) => {
-      if (active !== "all" && f.category !== active) return false;
-      if (!q) return true;
-      return (
-        t(f.qKey).toLowerCase().includes(q) ||
-        t(f.aKey).toLowerCase().includes(q)
-      );
-    });
-  }, [query, active, t, lang]);
+    const q = debouncedQuery.trim().toLowerCase();
+    return index
+      .filter(({ item, haystack }) => {
+        if (active !== "all" && item.category !== active) return false;
+        if (!q) return true;
+        return haystack.includes(q);
+      })
+      .map(({ item }) => item);
+  }, [debouncedQuery, active, index]);
 
   return (
     <section className="py-16 md:py-20 bg-background relative overflow-hidden">
