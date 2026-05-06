@@ -4,6 +4,7 @@ import { Building2, Menu, X, Globe, LogOut, FolderOpen, User } from "lucide-reac
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
