@@ -63,6 +63,41 @@ const FAQSection = () => {
       .map(({ item }) => item);
   }, [debouncedQuery, active, index]);
 
+  // Reset highlight when filtered list changes
+  useEffect(() => {
+    setHighlight(0);
+  }, [debouncedQuery, active]);
+
+  const handleSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (filtered.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight((h) => Math.min(h + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((h) => Math.max(h - 1, 0));
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setHighlight(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setHighlight(filtered.length - 1);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const value = `faq-${highlight}`;
+      setOpenValue((v) => (v === value ? "" : value));
+    } else if (e.key === "Escape") {
+      setOpenValue("");
+    }
+  };
+
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (!listRef.current) return;
+    const el = listRef.current.querySelector<HTMLElement>(`[data-faq-index="${highlight}"]`);
+    el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [highlight]);
+
   return (
     <section className="py-16 md:py-20 bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" />
