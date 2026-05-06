@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, KeyboardEvent } from "react";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -32,6 +32,9 @@ const FAQSection = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [active, setActive] = useState<Category>("all");
+  const [highlight, setHighlight] = useState(0);
+  const [openValue, setOpenValue] = useState<string>("");
+  const listRef = useRef<HTMLDivElement>(null);
 
   // Debounce search input (200ms)
   useEffect(() => {
@@ -60,6 +63,41 @@ const FAQSection = () => {
       .map(({ item }) => item);
   }, [debouncedQuery, active, index]);
 
+  // Reset highlight when filtered list changes
+  useEffect(() => {
+    setHighlight(0);
+  }, [debouncedQuery, active]);
+
+  const handleSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (filtered.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight((h) => Math.min(h + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((h) => Math.max(h - 1, 0));
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setHighlight(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setHighlight(filtered.length - 1);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const value = `faq-${highlight}`;
+      setOpenValue((v) => (v === value ? "" : value));
+    } else if (e.key === "Escape") {
+      setOpenValue("");
+    }
+  };
+
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (!listRef.current) return;
+    const el = listRef.current.querySelector<HTMLElement>(`[data-faq-index="${highlight}"]`);
+    el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [highlight]);
+
   return (
     <section className="py-16 md:py-20 bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" />
@@ -80,8 +118,12 @@ const FAQSection = () => {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={lang === "bn" ? "প্রশ্ন খুঁজুন..." : "Search questions..."}
+            onKeyDown={handleSearchKeyDown}
+            placeholder={lang === "bn" ? "প্রশ্ন খুঁজুন... (↑ ↓ Enter)" : "Search questions... (↑ ↓ Enter)"}
             className="pl-9 h-11 rounded-xl bg-card/70 backdrop-blur border-border/70 focus-visible:ring-accent"
+            aria-label={lang === "bn" ? "প্রশ্ন খুঁজুন" : "Search questions"}
+            aria-controls="faq-list"
+            aria-activedescendant={filtered.length ? `faq-item-${highlight}` : undefined}
           />
         </div>
 
@@ -116,17 +158,30 @@ const FAQSection = () => {
               {lang === "bn" ? "কোনো ফলাফল পাওয়া যায়নি" : "No results found"}
             </motion.div>
           ) : (
-            <Accordion type="single" collapsible className="space-y-3">
+            <Accordion
+              type="single"
+              collapsible
+              value={openValue}
+              onValueChange={setOpenValue}
+              className="space-y-3"
+              id="faq-list"
+              ref={listRef as any}
+            >
               {filtered.map((f, i) => (
                 <motion.div
                   key={`${f.qKey}-${active}`}
+                  data-faq-index={i}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: i * 0.04 }}
                 >
                   <AccordionItem
                     value={`faq-${i}`}
-                    className="group bg-card/80 backdrop-blur rounded-xl shadow-card border border-border/60 px-4 md:px-5 hover:border-accent/40 hover:shadow-card-hover transition-all data-[state=open]:border-accent/60 data-[state=open]:shadow-glow-accent"
+                    id={`faq-item-${i}`}
+                    className={`group bg-card/80 backdrop-blur rounded-xl shadow-card border px-4 md:px-5 hover:border-accent/40 hover:shadow-card-hover transition-all data-[state=open]:border-accent/60 data-[state=open]:shadow-glow-accent ${
+                      i === highlight ? "border-accent/60 ring-2 ring-accent/30" : "border-border/60"
+                    }`}
+                    onMouseEnter={() => setHighlight(i)}
                   >
                     <AccordionTrigger className="text-sm md:text-base font-semibold hover:no-underline text-left gap-3">
                       <span className="flex items-center gap-3 flex-1">
