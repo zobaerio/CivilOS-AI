@@ -158,17 +158,30 @@ const FAQSection = () => {
               {lang === "bn" ? "কোনো ফলাফল পাওয়া যায়নি" : "No results found"}
             </motion.div>
           ) : (
-            <Accordion type="single" collapsible className="space-y-3">
+            <Accordion
+              type="single"
+              collapsible
+              value={openValue}
+              onValueChange={setOpenValue}
+              className="space-y-3"
+              id="faq-list"
+              ref={listRef as any}
+            >
               {filtered.map((f, i) => (
                 <motion.div
                   key={`${f.qKey}-${active}`}
+                  data-faq-index={i}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: i * 0.04 }}
                 >
                   <AccordionItem
                     value={`faq-${i}`}
-                    className="group bg-card/80 backdrop-blur rounded-xl shadow-card border border-border/60 px-4 md:px-5 hover:border-accent/40 hover:shadow-card-hover transition-all data-[state=open]:border-accent/60 data-[state=open]:shadow-glow-accent"
+                    id={`faq-item-${i}`}
+                    className={`group bg-card/80 backdrop-blur rounded-xl shadow-card border px-4 md:px-5 hover:border-accent/40 hover:shadow-card-hover transition-all data-[state=open]:border-accent/60 data-[state=open]:shadow-glow-accent ${
+                      i === highlight ? "border-accent/60 ring-2 ring-accent/30" : "border-border/60"
+                    }`}
+                    onMouseEnter={() => setHighlight(i)}
                   >
                     <AccordionTrigger className="text-sm md:text-base font-semibold hover:no-underline text-left gap-3">
                       <span className="flex items-center gap-3 flex-1">
