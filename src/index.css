@@ -89,6 +89,7 @@
     --sidebar-border: 230 22% 18%;
     --sidebar-ring: 235 80% 65%;
   }
+}
 
 @layer base {
   * {
