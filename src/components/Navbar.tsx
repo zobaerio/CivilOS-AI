@@ -4,6 +4,7 @@ import { Building2, Menu, X, Globe, LogOut, FolderOpen, User } from "lucide-reac
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -48,6 +49,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="outline" size="sm" onClick={toggleLang} className="gap-1.5">
             <Globe className="h-4 w-4" />
             {lang === "en" ? "বাংলা" : "English"}
@@ -75,6 +77,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
           <Button variant="outline" size="icon" className="h-9 w-9" onClick={toggleLang}>
             <Globe className="h-4 w-4" />
           </Button>
