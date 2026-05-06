@@ -32,6 +32,9 @@ const FAQSection = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [active, setActive] = useState<Category>("all");
+  const [highlight, setHighlight] = useState(0);
+  const [openValue, setOpenValue] = useState<string>("");
+  const listRef = useRef<HTMLDivElement>(null);
 
   // Debounce search input (200ms)
   useEffect(() => {
