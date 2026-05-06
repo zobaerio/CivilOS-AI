@@ -77,6 +77,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
           <Button variant="outline" size="icon" className="h-9 w-9" onClick={toggleLang}>
             <Globe className="h-4 w-4" />
           </Button>
