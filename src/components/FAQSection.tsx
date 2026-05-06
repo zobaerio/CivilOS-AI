@@ -118,8 +118,12 @@ const FAQSection = () => {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={lang === "bn" ? "প্রশ্ন খুঁজুন..." : "Search questions..."}
+            onKeyDown={handleSearchKeyDown}
+            placeholder={lang === "bn" ? "প্রশ্ন খুঁজুন... (↑ ↓ Enter)" : "Search questions... (↑ ↓ Enter)"}
             className="pl-9 h-11 rounded-xl bg-card/70 backdrop-blur border-border/70 focus-visible:ring-accent"
+            aria-label={lang === "bn" ? "প্রশ্ন খুঁজুন" : "Search questions"}
+            aria-controls="faq-list"
+            aria-activedescendant={filtered.length ? `faq-item-${highlight}` : undefined}
           />
         </div>
 
