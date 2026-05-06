@@ -49,6 +49,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="outline" size="sm" onClick={toggleLang} className="gap-1.5">
             <Globe className="h-4 w-4" />
             {lang === "en" ? "বাংলা" : "English"}
