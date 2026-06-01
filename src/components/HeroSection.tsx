@@ -3,6 +3,7 @@ import { Upload, Play, ArrowRight, Sparkles, Zap, ShieldCheck } from "lucide-rea
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
+import LiveUsers from "@/components/LiveUsers";
 
 const HeroSection = () => {
   const { t } = useI18n();
@@ -65,6 +66,15 @@ const HeroSection = () => {
                 <Play className="h-5 w-5 mr-1" /> {t("hero.tryDemo")}
               </Link>
             </Button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+            className="flex justify-center pt-2"
+          >
+            <LiveUsers />
           </motion.div>
 
           <motion.div

@@ -1,10 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building2, Menu, X, Globe, LogOut, FolderOpen, User } from "lucide-react";
+import { Menu, X, Globe, LogOut, FolderOpen, User } from "lucide-react";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import ThemeToggle from "@/components/ThemeToggle";
+import LiveUsers from "@/components/LiveUsers";
+import aiLogo from "@/assets/ai-logo.png";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -28,9 +30,10 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 glass border-b">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-heading text-lg font-bold text-primary">
-          <Building2 className="h-6 w-6 text-accent" />
-          Smart House Estimate AI
+          <img src={aiLogo} alt="Plan Pro Estimate AI logo" width={32} height={32} className="h-8 w-8 drop-shadow-md" />
+          <span className="hidden sm:inline">Plan Pro Estimate</span>
         </Link>
+        <div className="hidden lg:flex"><LiveUsers compact /></div>
 
         <div className="hidden md:flex items-center gap-1">
           {links.map((l) => (
