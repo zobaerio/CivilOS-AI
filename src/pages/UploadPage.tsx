@@ -32,6 +32,8 @@ const UploadPage = () => {
   const [foundationType, setFoundationType] = useState("strip");
   const [roofType, setRoofType] = useState("rcc_slab");
   const [sector, setSector] = useState("private");
+  const [district, setDistrict] = useState("Dhaka");
+  const [rates, setRates] = useState<DistrictRatesT>(() => getTodayRates("Dhaka"));
 
   const handleFile = useCallback((f: File) => {
     setFile(f);
