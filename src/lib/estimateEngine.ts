@@ -111,15 +111,17 @@ export function generateEstimate(params: {
     "Windows": { qty: rooms.reduce((s, r) => s + r.windows, 0) * floors, unit: "pcs", rate: Math.round(5000 * mult), total: rooms.reduce((s, r) => s + r.windows, 0) * floors * Math.round(5000 * mult) },
   };
 
+  const masonRate = rates?.labor ?? 800;
+  const lr = (factor: number) => Math.max(300, Math.round(masonRate * factor));
   const labor: Record<string, { days: number; rate: number; total: number }> = {
-    "Mason": { days: Math.round(totalFloorArea * 0.12), rate: 800, total: Math.round(totalFloorArea * 0.12) * 800 },
-    "Rod Binder": { days: Math.round(totalFloorArea * 0.05), rate: 700, total: Math.round(totalFloorArea * 0.05) * 700 },
-    "Carpenter": { days: Math.round(totalFloorArea * 0.04), rate: 750, total: Math.round(totalFloorArea * 0.04) * 750 },
-    "Electrician": { days: Math.round(totalFloorArea * 0.03), rate: 700, total: Math.round(totalFloorArea * 0.03) * 700 },
-    "Plumber": { days: Math.round(totalFloorArea * 0.02), rate: 700, total: Math.round(totalFloorArea * 0.02) * 700 },
-    "Painter": { days: Math.round(totalFloorArea * 0.04), rate: 650, total: Math.round(totalFloorArea * 0.04) * 650 },
-    "Tiles Worker": { days: Math.round(totalFloorArea * 0.03), rate: 700, total: Math.round(totalFloorArea * 0.03) * 700 },
-    "General Labor": { days: Math.round(totalFloorArea * 0.15), rate: 500, total: Math.round(totalFloorArea * 0.15) * 500 },
+    "Mason": { days: Math.round(totalFloorArea * 0.12), rate: lr(1.00), total: Math.round(totalFloorArea * 0.12) * lr(1.00) },
+    "Rod Binder": { days: Math.round(totalFloorArea * 0.05), rate: lr(0.88), total: Math.round(totalFloorArea * 0.05) * lr(0.88) },
+    "Carpenter": { days: Math.round(totalFloorArea * 0.04), rate: lr(0.94), total: Math.round(totalFloorArea * 0.04) * lr(0.94) },
+    "Electrician": { days: Math.round(totalFloorArea * 0.03), rate: lr(0.88), total: Math.round(totalFloorArea * 0.03) * lr(0.88) },
+    "Plumber": { days: Math.round(totalFloorArea * 0.02), rate: lr(0.88), total: Math.round(totalFloorArea * 0.02) * lr(0.88) },
+    "Painter": { days: Math.round(totalFloorArea * 0.04), rate: lr(0.81), total: Math.round(totalFloorArea * 0.04) * lr(0.81) },
+    "Tiles Worker": { days: Math.round(totalFloorArea * 0.03), rate: lr(0.88), total: Math.round(totalFloorArea * 0.03) * lr(0.88) },
+    "General Labor": { days: Math.round(totalFloorArea * 0.15), rate: lr(0.63), total: Math.round(totalFloorArea * 0.15) * lr(0.63) },
   };
 
   const finishing: Record<string, number> = {
