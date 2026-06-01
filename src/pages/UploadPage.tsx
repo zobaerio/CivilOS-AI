@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 import { parseDXF, type DxfSummary } from "@/lib/dxfParser";
 import { toast } from "sonner";
+import DistrictRates from "@/components/DistrictRates";
+import { getTodayRates, type DistrictRates as DistrictRatesT } from "@/lib/marketRates";
 
 const UploadPage = () => {
   const [dxfSummary, setDxfSummary] = useState<DxfSummary | null>(null);
