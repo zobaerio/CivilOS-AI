@@ -90,6 +90,7 @@ const UploadPage = () => {
         floorHeight: parseFloat(floorHeight),
         wallThickness: parseFloat(wallThickness),
         projectType, quality, foundationType, roofType, sector,
+        district, rates,
         fileName: file?.name || "Demo Project",
       },
     });
