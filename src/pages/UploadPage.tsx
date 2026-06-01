@@ -184,6 +184,11 @@ const UploadPage = () => {
             />
           )}
 
+          <DistrictRates
+            district={district}
+            onChange={(d, r) => { setDistrict(d); setRates(r); }}
+          />
+
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div>
