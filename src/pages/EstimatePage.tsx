@@ -35,6 +35,7 @@ import { suggestionsBn } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import DistrictRates from "@/components/DistrictRates";
 
 const COLORS = ["#1a3a6b", "#2a5298", "#e67e22", "#27ae60", "#8e44ad", "#e74c3c", "#3498db", "#f39c12", "#1abc9c"];
 
@@ -55,8 +56,10 @@ const EstimatePage = () => {
   const [importance, setImportance] = useState<number>(1.0);
   const [saving, setSaving] = useState(false);
   const [projectName, setProjectName] = useState<string>(params._projectName || params.fileName || "House Project");
+  const [district, setDistrict] = useState<string>(params.district || "Dhaka");
+  const [rates, setRates] = useState(params.rates || undefined);
 
-  const data = useMemo(() => generateEstimate(params), []);
+  const data = useMemo(() => generateEstimate({ ...params, rates }), [rates, district]);
   const loads = useMemo(() => computeBNBCLoads(data, zone, soil, importance), [data, zone, soil, importance]);
   const beams = useMemo(() => designBeams(data), [data]);
   const columns = useMemo(() => designColumns(data), [data]);
@@ -280,6 +283,11 @@ const EstimatePage = () => {
               </div>
             ))}
           </div>
+
+          <DistrictRates
+            district={district}
+            onChange={(d, r) => { setDistrict(d); setRates(r); }}
+          />
 
           <Tabs defaultValue="estimate" className="space-y-6">
             <div className="overflow-x-auto">

@@ -30,6 +30,15 @@ export interface EstimateData {
 
 const qualityMultiplier: Record<string, number> = { economy: 0.75, standard: 1, premium: 1.4 };
 
+export interface RateOverrides {
+  cement?: number;
+  steel?: number;
+  brick?: number;
+  sand?: number;
+  stoneChips?: number;
+  labor?: number; // mason daily rate; other crews scale proportionally
+}
+
 export function generateEstimate(params: {
   plotLength: number;
   plotWidth: number;
@@ -40,8 +49,9 @@ export function generateEstimate(params: {
   projectType: string;
   unit: string;
   fileName: string;
+  rates?: RateOverrides;
 }): EstimateData {
-  const { plotLength, plotWidth, floors, floorHeight, wallThickness, quality, fileName } = params;
+  const { plotLength, plotWidth, floors, floorHeight, wallThickness, quality, fileName, rates } = params;
   const mult = qualityMultiplier[quality] || 1;
   const plotArea = plotLength * plotWidth;
   const builtUpArea = plotArea * 0.7; // 70% coverage
@@ -81,12 +91,19 @@ export function generateEstimate(params: {
   const bricks = Math.round(wallVolume * 13.5);
   const steel = Math.round(totalFloorArea * 4.2 * mult);
 
+  const r = {
+    cement: rates?.cement ?? 420,
+    sand: rates?.sand ?? 45,
+    stoneChips: rates?.stoneChips ?? 65,
+    brick: rates?.brick ?? 12,
+    steel: rates?.steel ?? 85,
+  };
   const materials: Record<string, { qty: number; unit: string; rate: number; total: number }> = {
-    "Cement": { qty: cementBags, unit: "bags", rate: 420, total: cementBags * 420 },
-    "Sand": { qty: sand, unit: "cft", rate: 45, total: sand * 45 },
-    "Stone Chips": { qty: stone, unit: "cft", rate: 65, total: stone * 65 },
-    "Bricks": { qty: bricks, unit: "pcs", rate: 12, total: bricks * 12 },
-    "Steel Rods": { qty: steel, unit: "kg", rate: 85, total: steel * 85 },
+    "Cement": { qty: cementBags, unit: "bags", rate: r.cement, total: cementBags * r.cement },
+    "Sand": { qty: sand, unit: "cft", rate: r.sand, total: sand * r.sand },
+    "Stone Chips": { qty: stone, unit: "cft", rate: r.stoneChips, total: stone * r.stoneChips },
+    "Bricks": { qty: bricks, unit: "pcs", rate: r.brick, total: bricks * r.brick },
+    "Steel Rods": { qty: steel, unit: "kg", rate: r.steel, total: steel * r.steel },
     "Paint (Interior)": { qty: Math.round(wallArea * 0.8), unit: "sqft", rate: 8, total: Math.round(wallArea * 0.8) * 8 },
     "Paint (Exterior)": { qty: Math.round(wallArea * 0.3), unit: "sqft", rate: 10, total: Math.round(wallArea * 0.3) * 10 },
     "Tiles": { qty: Math.round(totalFloorArea * 1.08), unit: "sqft", rate: Math.round(25 * mult), total: Math.round(totalFloorArea * 1.08) * Math.round(25 * mult) },
@@ -94,15 +111,17 @@ export function generateEstimate(params: {
     "Windows": { qty: rooms.reduce((s, r) => s + r.windows, 0) * floors, unit: "pcs", rate: Math.round(5000 * mult), total: rooms.reduce((s, r) => s + r.windows, 0) * floors * Math.round(5000 * mult) },
   };
 
+  const masonRate = rates?.labor ?? 800;
+  const lr = (factor: number) => Math.max(300, Math.round(masonRate * factor));
   const labor: Record<string, { days: number; rate: number; total: number }> = {
-    "Mason": { days: Math.round(totalFloorArea * 0.12), rate: 800, total: Math.round(totalFloorArea * 0.12) * 800 },
-    "Rod Binder": { days: Math.round(totalFloorArea * 0.05), rate: 700, total: Math.round(totalFloorArea * 0.05) * 700 },
-    "Carpenter": { days: Math.round(totalFloorArea * 0.04), rate: 750, total: Math.round(totalFloorArea * 0.04) * 750 },
-    "Electrician": { days: Math.round(totalFloorArea * 0.03), rate: 700, total: Math.round(totalFloorArea * 0.03) * 700 },
-    "Plumber": { days: Math.round(totalFloorArea * 0.02), rate: 700, total: Math.round(totalFloorArea * 0.02) * 700 },
-    "Painter": { days: Math.round(totalFloorArea * 0.04), rate: 650, total: Math.round(totalFloorArea * 0.04) * 650 },
-    "Tiles Worker": { days: Math.round(totalFloorArea * 0.03), rate: 700, total: Math.round(totalFloorArea * 0.03) * 700 },
-    "General Labor": { days: Math.round(totalFloorArea * 0.15), rate: 500, total: Math.round(totalFloorArea * 0.15) * 500 },
+    "Mason": { days: Math.round(totalFloorArea * 0.12), rate: lr(1.00), total: Math.round(totalFloorArea * 0.12) * lr(1.00) },
+    "Rod Binder": { days: Math.round(totalFloorArea * 0.05), rate: lr(0.88), total: Math.round(totalFloorArea * 0.05) * lr(0.88) },
+    "Carpenter": { days: Math.round(totalFloorArea * 0.04), rate: lr(0.94), total: Math.round(totalFloorArea * 0.04) * lr(0.94) },
+    "Electrician": { days: Math.round(totalFloorArea * 0.03), rate: lr(0.88), total: Math.round(totalFloorArea * 0.03) * lr(0.88) },
+    "Plumber": { days: Math.round(totalFloorArea * 0.02), rate: lr(0.88), total: Math.round(totalFloorArea * 0.02) * lr(0.88) },
+    "Painter": { days: Math.round(totalFloorArea * 0.04), rate: lr(0.81), total: Math.round(totalFloorArea * 0.04) * lr(0.81) },
+    "Tiles Worker": { days: Math.round(totalFloorArea * 0.03), rate: lr(0.88), total: Math.round(totalFloorArea * 0.03) * lr(0.88) },
+    "General Labor": { days: Math.round(totalFloorArea * 0.15), rate: lr(0.63), total: Math.round(totalFloorArea * 0.15) * lr(0.63) },
   };
 
   const finishing: Record<string, number> = {

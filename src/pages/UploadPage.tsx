@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 import { parseDXF, type DxfSummary } from "@/lib/dxfParser";
 import { toast } from "sonner";
+import DistrictRates from "@/components/DistrictRates";
+import { getTodayRates, type DistrictRates as DistrictRatesT } from "@/lib/marketRates";
 
 const UploadPage = () => {
   const [dxfSummary, setDxfSummary] = useState<DxfSummary | null>(null);
@@ -30,6 +32,8 @@ const UploadPage = () => {
   const [foundationType, setFoundationType] = useState("strip");
   const [roofType, setRoofType] = useState("rcc_slab");
   const [sector, setSector] = useState("private");
+  const [district, setDistrict] = useState("Dhaka");
+  const [rates, setRates] = useState<DistrictRatesT>(() => getTodayRates("Dhaka"));
 
   const handleFile = useCallback((f: File) => {
     setFile(f);
@@ -86,6 +90,7 @@ const UploadPage = () => {
         floorHeight: parseFloat(floorHeight),
         wallThickness: parseFloat(wallThickness),
         projectType, quality, foundationType, roofType, sector,
+        district, rates,
         fileName: file?.name || "Demo Project",
       },
     });
@@ -178,6 +183,11 @@ const UploadPage = () => {
               }}
             />
           )}
+
+          <DistrictRates
+            district={district}
+            onChange={(d, r) => { setDistrict(d); setRates(r); }}
+          />
 
           <div className="bg-card rounded-xl shadow-card p-6 space-y-6">
             <div className="flex items-start justify-between gap-3 flex-wrap">
