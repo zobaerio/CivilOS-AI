@@ -286,7 +286,7 @@ const EstimatePage = () => {
 
           <DistrictRates
             district={district}
-            onChange={(d, r) => { setDistrict(d); setRates(r); toast.success(`Rates updated for ${d} — auto-recalculated`); }}
+            onChange={(d, r) => { setDistrict(d); setRates(r); }}
           />
 
           <Tabs defaultValue="estimate" className="space-y-6">
