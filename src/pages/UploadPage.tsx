@@ -29,6 +29,7 @@ const UploadPage = () => {
   const [quality, setQuality] = useState("standard");
   const [foundationType, setFoundationType] = useState("strip");
   const [roofType, setRoofType] = useState("rcc_slab");
+  const [sector, setSector] = useState("private");
 
   const handleFile = useCallback((f: File) => {
     setFile(f);
@@ -84,7 +85,7 @@ const UploadPage = () => {
         unit, floors: parseInt(floors),
         floorHeight: parseFloat(floorHeight),
         wallThickness: parseFloat(wallThickness),
-        projectType, quality, foundationType, roofType,
+        projectType, quality, foundationType, roofType, sector,
         fileName: file?.name || "Demo Project",
       },
     });
@@ -248,6 +249,15 @@ const UploadPage = () => {
                   <option value="rcc_slab">{t("upload.rccSlab")}</option>
                   <option value="tin_shade">{t("upload.tinShade")}</option>
                   <option value="flat_roof">{t("upload.flatRoof")}</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Project Sector / প্রকল্পের ধরন</label>
+                <select className={selectClass} value={sector} onChange={(e) => setSector(e.target.value)}>
+                  <option value="private">Private (বেসরকারি)</option>
+                  <option value="government">Government (সরকারি)</option>
+                  <option value="semi_government">Semi-Government (আধা-সরকারি)</option>
+                  <option value="ngo">NGO / Non-profit</option>
                 </select>
               </div>
             </div>
