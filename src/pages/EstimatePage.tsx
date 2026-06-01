@@ -284,6 +284,11 @@ const EstimatePage = () => {
             ))}
           </div>
 
+          <DistrictRates
+            district={district}
+            onChange={(d, r) => { setDistrict(d); setRates(r); toast.success(`Rates updated for ${d} — auto-recalculated`); }}
+          />
+
           <Tabs defaultValue="estimate" className="space-y-6">
             <div className="overflow-x-auto">
               <TabsList className="h-auto flex-wrap justify-start">
