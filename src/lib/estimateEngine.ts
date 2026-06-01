@@ -30,6 +30,15 @@ export interface EstimateData {
 
 const qualityMultiplier: Record<string, number> = { economy: 0.75, standard: 1, premium: 1.4 };
 
+export interface RateOverrides {
+  cement?: number;
+  steel?: number;
+  brick?: number;
+  sand?: number;
+  stoneChips?: number;
+  labor?: number; // mason daily rate; other crews scale proportionally
+}
+
 export function generateEstimate(params: {
   plotLength: number;
   plotWidth: number;
@@ -40,8 +49,9 @@ export function generateEstimate(params: {
   projectType: string;
   unit: string;
   fileName: string;
+  rates?: RateOverrides;
 }): EstimateData {
-  const { plotLength, plotWidth, floors, floorHeight, wallThickness, quality, fileName } = params;
+  const { plotLength, plotWidth, floors, floorHeight, wallThickness, quality, fileName, rates } = params;
   const mult = qualityMultiplier[quality] || 1;
   const plotArea = plotLength * plotWidth;
   const builtUpArea = plotArea * 0.7; // 70% coverage
