@@ -143,10 +143,6 @@ export function computeBNBCLoads(
     (Math.sqrt(area / Math.max(estimate.floors, 1)) * 0.3048) * heightM * 4 * 0.5; // m²
   const W = windPressure * facadeArea; // total lateral wind kN
 
-  // Earthquake (BNBC 2020 ELF): V = Cs * W_seismic
-  const buildingWeight = D + 0.25 * L;
-  const Cs = (z * I * 2.5) / R;
-  const E = Cs * buildingWeight * s; // kN
 
   // Snow load (BNBC 2020 §2.5): Bangladesh plains → 0 kN/m².
   const S = 0;
