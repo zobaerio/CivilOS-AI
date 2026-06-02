@@ -148,17 +148,45 @@ export function computeBNBCLoads(
   const Cs = (z * I * 2.5) / R;
   const E = Cs * buildingWeight * s; // kN
 
+  // Snow load (BNBC 2020 §2.5): Bangladesh plains → 0 kN/m².
+  const S = 0;
+
+  // Lateral earth pressure (BNBC 2020 §2.6.5): only when basement / retaining present.
+  const basementDepth = 0; // m — extend via input later
+  const Ka = 0.33;
+  const gammaSoil = 18; // kN/m³
+  const wallPerim = Math.sqrt(area) * 0.3048 * 4; // m
+  const H = 0.5 * Ka * gammaSoil * basementDepth * basementDepth * wallPerim;
+
+  // Hydrostatic / fluid load (BNBC 2020 §2.6.6): roof tank ≈ 1 m³ per floor.
+  const tankVol = estimate.floors * 1.0; // m³
+  const F = 9.81 * tankVol;
+
+  // Earthquake (BNBC 2020 ELF §2.5.7): V = Cs·W·S
+  const buildingWeight = D + 0.25 * L;
+  const Cs = (z * I * 2.5) / R;
+  const E = Cs * buildingWeight * s; // kN
+
+  const loadDetails: LoadDetail[] = [
+    { code: "D", name: "Dead Load",         intensity: `${deadLoadPsf} psf (5.27 kN/m²)`,            total: Math.round(D), formula: `${deadLoadPsf} psf × ${Math.round(area)} sqft × 4.45/1000 = ${Math.round(D)} kN`, reference: "BNBC 2020 §2.2" },
+    { code: "L", name: "Live Load",         intensity: `${liveLoadPsf} psf (1.92 kN/m²)`,            total: Math.round(L), formula: `${liveLoadPsf} psf × ${Math.round(area)} sqft × 4.45/1000 = ${Math.round(L)} kN`, reference: "BNBC 2020 §2.3 Table 6.2.3" },
+    { code: "W", name: "Wind Load",         intensity: `${windPressure.toFixed(2)} kN/m² @ V=${windSpeed} m/s`, total: Math.round(W), formula: `qz = 0.6V² → W = qz × Aface = ${windPressure.toFixed(2)} × ${facadeArea.toFixed(1)} = ${Math.round(W)} kN`, reference: "BNBC 2020 §2.4" },
+    { code: "S", name: "Snow Load",         intensity: `0 kN/m² (BD plains)`,                        total: Math.round(S), formula: `Ground snow pg = 0 → S = 0`, reference: "BNBC 2020 §2.5" },
+    { code: "H", name: "Earth Pressure",    intensity: basementDepth > 0 ? `Ka=${Ka}, γ=${gammaSoil} kN/m³, h=${basementDepth} m` : "N/A — no basement", total: Math.round(H), formula: `H = ½·Ka·γ·h²·Perim = ½·${Ka}·${gammaSoil}·${basementDepth}²·${wallPerim.toFixed(1)} = ${Math.round(H)} kN`, reference: "BNBC 2020 §2.6.5" },
+    { code: "F", name: "Water / Fluid Load",intensity: `Roof tank ${tankVol.toFixed(1)} m³, γw=9.81 kN/m³`, total: Math.round(F), formula: `F = γw × V = 9.81 × ${tankVol.toFixed(1)} = ${F.toFixed(1)} kN`, reference: "BNBC 2020 §2.6.6" },
+    { code: "E", name: "Earthquake Load",   intensity: `Cs = ${Cs.toFixed(3)}, Wseis = ${Math.round(buildingWeight)} kN`, total: Math.round(E), formula: `V = Cs·W·S = ${Cs.toFixed(3)} × ${Math.round(buildingWeight)} × ${s} = ${Math.round(E)} kN`, reference: "BNBC 2020 §2.5.7" },
+  ];
+
   // BNBC 2020 strength load combinations (clause 2.7.3.1)
-  // Output "factoredLoad" is the resultant magnitude of vertical + 0.5 × lateral
-  // for ranking; in real design these stay separate.
   const mag = (vert: number, lat: number) => vert + 0.5 * lat;
   const combos: LoadCombo[] = [
-    { name: "Comb-1", formula: "1.4 D",                       factoredLoad: 1.4 * D,                  governs: false },
-    { name: "Comb-2", formula: "1.2 D + 1.6 L",               factoredLoad: 1.2 * D + 1.6 * L,        governs: false },
-    { name: "Comb-3", formula: "1.2 D + 1.0 L + 1.0 W",       factoredLoad: mag(1.2 * D + 1.0 * L, 1.0 * W), governs: false },
-    { name: "Comb-4", formula: "1.2 D + 1.0 L + 1.0 E",       factoredLoad: mag(1.2 * D + 1.0 * L, 1.0 * E), governs: false },
-    { name: "Comb-5", formula: "0.9 D + 1.0 W",               factoredLoad: mag(0.9 * D, 1.0 * W),    governs: false },
-    { name: "Comb-6", formula: "0.9 D + 1.0 E",               factoredLoad: mag(0.9 * D, 1.0 * E),    governs: false },
+    { name: "Comb-1", formula: "1.4 D",                        factoredLoad: 1.4 * D,                            governs: false },
+    { name: "Comb-2", formula: "1.2 D + 1.6 L + 0.5 S",        factoredLoad: 1.2 * D + 1.6 * L + 0.5 * S,        governs: false },
+    { name: "Comb-3", formula: "1.2 D + 1.0 L + 1.0 W",        factoredLoad: mag(1.2 * D + 1.0 * L, 1.0 * W),    governs: false },
+    { name: "Comb-4", formula: "1.2 D + 1.0 L + 1.0 E",        factoredLoad: mag(1.2 * D + 1.0 * L, 1.0 * E),    governs: false },
+    { name: "Comb-5", formula: "0.9 D + 1.0 W + 1.6 H",        factoredLoad: mag(0.9 * D, 1.0 * W + 1.6 * H),    governs: false },
+    { name: "Comb-6", formula: "0.9 D + 1.0 E + 1.6 H",        factoredLoad: mag(0.9 * D, 1.0 * E + 1.6 * H),    governs: false },
+    { name: "Comb-7", formula: "1.2 D + 1.0 F + 1.0 L",        factoredLoad: 1.2 * D + 1.0 * F + 1.0 * L,        governs: false },
   ].map((c) => ({ ...c, factoredLoad: Math.round(c.factoredLoad) }));
 
   let governing = combos[0];
@@ -179,9 +207,13 @@ export function computeBNBCLoads(
     windSpeed,
     windPressure: parseFloat(windPressure.toFixed(2)),
     windLoad: Math.round(W),
+    snowLoad: Math.round(S),
+    earthPressure: Math.round(H),
+    waterLoad: Math.round(F),
     baseShear: Math.round(E),
     seismicCoeff: parseFloat(Cs.toFixed(3)),
     buildingWeight: Math.round(buildingWeight),
+    loadDetails,
     combos,
     governingCombo: governing.name,
     governingValue: governing.factoredLoad,
