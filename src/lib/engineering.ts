@@ -8,6 +8,15 @@ export interface LoadCombo {
   governs: boolean;
 }
 
+export interface LoadDetail {
+  code: string;        // D, L, W, S, H, F, E
+  name: string;
+  intensity: string;
+  total: number;       // kN
+  formula: string;
+  reference: string;   // BNBC clause
+}
+
 export interface BNBCLoads {
   zone: string;
   zoneFactor: number;
@@ -17,14 +26,18 @@ export interface BNBCLoads {
   responseFactor: number;
   deadLoadPsf: number;
   liveLoadPsf: number;
-  totalDeadLoad: number; // kN
-  totalLiveLoad: number; // kN
+  totalDeadLoad: number; // kN  (D)
+  totalLiveLoad: number; // kN  (L)
   windSpeed: number; // m/s
   windPressure: number; // kN/m²
-  windLoad: number; // kN — total lateral wind
-  baseShear: number; // kN — earthquake
+  windLoad: number; // kN — lateral wind (W)
+  snowLoad: number; // kN  (S)
+  earthPressure: number; // kN  (H)
+  waterLoad: number; // kN  (F)
+  baseShear: number; // kN  (E)
   seismicCoeff: number;
   buildingWeight: number; // kN
+  loadDetails: LoadDetail[];
   combos: LoadCombo[];
   governingCombo: string;
   governingValue: number;
