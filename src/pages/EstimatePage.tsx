@@ -426,6 +426,38 @@ const EstimatePage = () => {
                 </div>
               </SectionCard>
 
+              <SectionCard title="Complete BNBC 2020 Load Spectrum (D · L · W · S · H · F · E)" icon={Activity}>
+                <p className="text-xs text-muted-foreground">
+                  Every code-mandated load on the structure — Dead, Live, Wind, Snow, Lateral Earth Pressure,
+                  Hydrostatic/Fluid, and Earthquake — computed per BNBC 2020 Part 6 Chapter 2.
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b text-muted-foreground">
+                      <th className="text-left py-2 w-12">Code</th>
+                      <th className="text-left py-2">Load Type</th>
+                      <th className="text-left py-2">Intensity / Basis</th>
+                      <th className="text-right py-2">Total (kN)</th>
+                      <th className="text-left py-2 hidden md:table-cell">Reference</th>
+                    </tr></thead>
+                    <tbody>
+                      {loads.loadDetails.map((d) => (
+                        <tr key={d.code} className="border-b border-border/50 align-top">
+                          <td className="py-2 font-mono font-bold text-accent">{d.code}</td>
+                          <td className="py-2 font-medium">
+                            {d.name}
+                            <p className="text-[11px] font-mono text-muted-foreground mt-0.5">{d.formula}</p>
+                          </td>
+                          <td className="py-2 text-xs text-muted-foreground">{d.intensity}</td>
+                          <td className="py-2 text-right font-semibold">{fmt(d.total)}</td>
+                          <td className="py-2 text-xs text-muted-foreground hidden md:table-cell">{d.reference}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </SectionCard>
+
               <SectionCard title="BNBC 2020 Strength Load Combinations" icon={Layers}>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
