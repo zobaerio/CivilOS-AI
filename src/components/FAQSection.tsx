@@ -17,7 +17,14 @@ const faqItems: { qKey: string; aKey: string; category: Exclude<Category, "all">
   { qKey: "faq.4.q", aKey: "faq.4.a", category: "security" },
   { qKey: "faq.5.q", aKey: "faq.5.a", category: "pricing" },
   { qKey: "faq.6.q", aKey: "faq.6.a", category: "files" },
+  { qKey: "faq.7.q", aKey: "faq.7.a", category: "general" },
+  { qKey: "faq.8.q", aKey: "faq.8.a", category: "pricing" },
+  { qKey: "faq.9.q", aKey: "faq.9.a", category: "general" },
+  { qKey: "faq.10.q", aKey: "faq.10.a", category: "security" },
+  { qKey: "faq.11.q", aKey: "faq.11.a", category: "files" },
+  { qKey: "faq.12.q", aKey: "faq.12.a", category: "general" },
 ];
+
 
 const categories: { id: Category; labelEn: string; labelBn: string }[] = [
   { id: "all", labelEn: "All", labelBn: "সব" },
