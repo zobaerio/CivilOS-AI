@@ -18,6 +18,9 @@ import ProfilePage from "./pages/ProfilePage.tsx";
 import SponsorPage from "./pages/SponsorPage.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import SharedEstimatePage from "./pages/SharedEstimatePage.tsx";
+import ScrollToTop from "./components/ScrollToTop";
+
+
 
 const queryClient = new QueryClient();
 
