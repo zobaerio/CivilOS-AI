@@ -8,7 +8,7 @@ import LiveUsers from "@/components/LiveUsers";
 const HeroSection = () => {
   const { t } = useI18n();
   return (
-    <section className="bg-hero relative overflow-hidden">
+    <section className="bg-hero relative overflow-hidden min-h-[100svh] flex items-center">
       {/* Decorative grid + blobs */}
       <div className="absolute inset-0 bg-grid opacity-40" />
       <div className="absolute inset-0">
