@@ -96,6 +96,19 @@ const translations: Record<string, Record<Lang, string>> = {
   "faq.5.a": { en: "Absolutely. The estimate dashboard includes sliders for material rates, labor costs, and other factors.", bn: "অবশ্যই। এস্টিমেট ড্যাশবোর্ডে মালামালের দর, শ্রমিক খরচ এবং অন্যান্য ফ্যাক্টরের জন্য স্লাইডার আছে।" },
   "faq.6.q": { en: "Do I need to provide dimensions?", bn: "আমাকে কি মাপ দিতে হবে?" },
   "faq.6.a": { en: "If the uploaded drawing has visible dimensions, they'll be used. Otherwise, you'll be asked to enter plot size and key measurements.", bn: "আপলোড করা ড্রইংয়ে মাপ দৃশ্যমান থাকলে সেগুলো ব্যবহার হবে। অন্যথায়, প্লটের আকার এবং মূল মাপ দিতে বলা হবে।" },
+  "faq.7.q": { en: "Does it follow BNBC 2022 code?", bn: "এটা কি BNBC 2022 কোড মেনে চলে?" },
+  "faq.7.a": { en: "Yes. Dead, Live, Wind, Snow, Earth Pressure, Water and Earthquake loads are computed per BNBC 2022 with full clause references and factored combinations.", bn: "হ্যাঁ। Dead, Live, Wind, Snow, Earth Pressure, Water এবং Earthquake লোড সম্পূর্ণ BNBC 2022 ক্লজ রেফারেন্স ও factored কম্বিনেশন সহ হিসাব হয়।" },
+  "faq.8.q": { en: "Are the market rates real-time?", bn: "মার্কেট রেট কি রিয়েল-টাইম?" },
+  "faq.8.a": { en: "Yes — district-wise daily Bangladesh rates for Cement, Steel, Brick, Sand, Stone Chips and Labor auto-update and recalculate the BOQ.", bn: "হ্যাঁ — Cement, Steel, Brick, Sand, Stone Chips এবং Labor-এর জেলা-ভিত্তিক দৈনিক রেট অটো আপডেট হয় ও BOQ পুনরায় ক্যালকুলেট হয়।" },
+  "faq.9.q": { en: "Can I export the estimate as PDF?", bn: "এস্টিমেট কি PDF আকারে এক্সপোর্ট করা যায়?" },
+  "faq.9.a": { en: "Yes. Full BOQ, load report, structural design and quotation can be exported as a professional PDF.", bn: "হ্যাঁ। সম্পূর্ণ BOQ, লোড রিপোর্ট, স্ট্রাকচারাল ডিজাইন ও কোটেশন প্রফেশনাল PDF আকারে এক্সপোর্ট করা যায়।" },
+  "faq.10.q": { en: "Do you store my drawings?", bn: "আমার ড্রইং কি সংরক্ষণ করা হয়?" },
+  "faq.10.a": { en: "Drawings are processed securely and only saved to your account if you choose to save the project. Nothing is shared with third parties.", bn: "ড্রইং নিরাপদে প্রক্রিয়া হয় এবং আপনি প্রজেক্ট সেভ করলে শুধু আপনার অ্যাকাউন্টে থাকে। কোনো তৃতীয় পক্ষের সাথে শেয়ার হয় না।" },
+  "faq.11.q": { en: "What's the maximum file size?", bn: "সর্বোচ্চ ফাইল সাইজ কত?" },
+  "faq.11.a": { en: "Up to 20 MB per drawing. For larger CAD files, compress or export a flattened PDF.", bn: "প্রতি ড্রইং সর্বোচ্চ ২০ MB। বড় CAD ফাইলের জন্য কম্প্রেস বা ফ্ল্যাটেন্ড PDF এক্সপোর্ট করুন।" },
+  "faq.12.q": { en: "Does it work for government / private projects?", bn: "এটা কি সরকারি / বেসরকারি কাজে চলে?" },
+  "faq.12.a": { en: "Yes — both. Switch the project type to follow PWD 2022 schedule for government work or market-rate quotation for private projects.", bn: "হ্যাঁ — দুটোতেই। সরকারি কাজের জন্য PWD 2022 শিডিউল বা বেসরকারি প্রজেক্টের জন্য মার্কেট-রেট কোটেশন সিলেক্ট করুন।" },
+
 
   // Footer
   "footer.desc": { en: "AI-powered construction estimation for engineers, contractors, and homeowners.", bn: "ইঞ্জিনিয়ার, ঠিকাদার এবং বাড়ির মালিকদের জন্য এআই-চালিত নির্মাণ এস্টিমেশন।" },
