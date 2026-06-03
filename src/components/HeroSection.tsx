@@ -17,7 +17,7 @@ const HeroSection = () => {
         <div className="absolute top-1/3 left-1/2 w-[20rem] h-[20rem] bg-accent-glow/20 rounded-full blur-3xl animate-blob" style={{ animationDelay: "8s" }} />
       </div>
 
-      <div className="container relative py-24 lg:py-36">
+      <div className="container relative py-16 sm:py-20 lg:py-36 w-full">
         <div className="max-w-4xl mx-auto text-center space-y-7">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
