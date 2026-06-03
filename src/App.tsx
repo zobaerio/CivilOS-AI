@@ -33,7 +33,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
+
               <Route path="/" element={<Index />} />
               <Route path="/upload" element={<UploadPage />} />
               <Route path="/estimate/demo" element={<EstimatePage />} />
