@@ -30,7 +30,7 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 glass border-b">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-heading text-lg font-bold text-primary">
-          <img src={aiLogo} alt="Plan Pro Estimate AI logo" width={32} height={32} className="h-8 w-8 drop-shadow-md" />
+          <img src={aiLogo} alt="Plan Pro Estimate AI logo" width={48} height={48} className="h-12 w-12 drop-shadow-md" />
           <span className="hidden sm:inline">Plan Pro Estimate</span>
         </Link>
         <div className="hidden lg:flex"><LiveUsers compact /></div>
