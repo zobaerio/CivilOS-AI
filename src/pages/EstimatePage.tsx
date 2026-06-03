@@ -176,7 +176,7 @@ const EstimatePage = () => {
 
     let y = (doc as any).lastAutoTable.finalY + 8;
     if (y > 240) { doc.addPage(); y = 20; }
-    doc.text("BNBC 2020 Load Combinations", 14, y);
+    doc.text("BNBC 2022 Load Combinations", 14, y);
     autoTable(doc, {
       startY: y + 4,
       head: [["#", "Combination", "Factored (kN)", "Governs"]],
@@ -240,7 +240,7 @@ const EstimatePage = () => {
     <div className="min-h-screen flex flex-col">
       <SEO
         title={projectName ? `${projectName} — Construction Estimate` : "Construction Estimate"}
-        description={`AI-generated BNBC 2020 construction estimate${params?.area ? ` for a ${params.area} sqft house` : ""}: full BOQ, structural analysis, and 3D model.`}
+        description={`AI-generated BNBC 2022 construction estimate${params?.area ? ` for a ${params.area} sqft house` : ""}: full BOQ, structural analysis, and 3D model.`}
         type="article"
       />
       <Navbar />
@@ -254,7 +254,7 @@ const EstimatePage = () => {
                 className="font-heading text-2xl md:text-3xl font-bold border-0 px-0 h-auto bg-transparent focus-visible:ring-0 shadow-none"
               />
               <p className="text-muted-foreground text-sm">
-                {data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")} • BNBC 2020
+                {data.plotSize} • {data.floors} {t("est.floor")} • {data.quality} {t("est.quality")} • BNBC 2022
               </p>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -383,7 +383,7 @@ const EstimatePage = () => {
 
             {/* STRUCTURAL TAB */}
             <TabsContent value="structural" className="space-y-6">
-              <SectionCard title="BNBC 2020 Site & Importance Inputs" icon={ShieldCheck}>
+              <SectionCard title="BNBC 2022 Site & Importance Inputs" icon={ShieldCheck}>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-muted-foreground">Seismic Zone</label>
@@ -408,7 +408,7 @@ const EstimatePage = () => {
                 </div>
               </SectionCard>
 
-              <SectionCard title="BNBC 2020 Load Analysis" icon={Activity}>
+              <SectionCard title="BNBC 2022 Load Analysis" icon={Activity}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Seismic Zone</p><p className="font-bold mt-1">{loads.zone}</p></div>
                   <div className="bg-muted/40 rounded-lg p-3"><p className="text-muted-foreground text-xs">Zone Factor (Z)</p><p className="font-bold mt-1">{loads.zoneFactor}</p></div>
@@ -426,10 +426,10 @@ const EstimatePage = () => {
                 </div>
               </SectionCard>
 
-              <SectionCard title="Complete BNBC 2020 Load Spectrum (D · L · W · S · H · F · E)" icon={Activity}>
+              <SectionCard title="Complete BNBC 2022 Load Spectrum (D · L · W · S · H · F · E)" icon={Activity}>
                 <p className="text-xs text-muted-foreground">
                   Every code-mandated load on the structure — Dead, Live, Wind, Snow, Lateral Earth Pressure,
-                  Hydrostatic/Fluid, and Earthquake — computed per BNBC 2020 Part 6 Chapter 2.
+                  Hydrostatic/Fluid, and Earthquake — computed per BNBC 2022 Part 6 Chapter 2.
                 </p>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -458,7 +458,7 @@ const EstimatePage = () => {
                 </div>
               </SectionCard>
 
-              <SectionCard title="BNBC 2020 Strength Load Combinations" icon={Layers}>
+              <SectionCard title="BNBC 2022 Strength Load Combinations" icon={Layers}>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead><tr className="border-b text-muted-foreground">
@@ -482,7 +482,7 @@ const EstimatePage = () => {
                   </table>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Reference: BNBC 2020, Part 6, Chapter 2 — Loads on Buildings (clause 2.7.3.1).
+                  Reference: BNBC 2022, Part 6, Chapter 2 — Loads on Buildings (clause 2.7.3.1).
                   Resultant = vertical + 0.5 × lateral, used only for ranking. In design, vertical and lateral effects remain separate.
                 </p>
               </SectionCard>
