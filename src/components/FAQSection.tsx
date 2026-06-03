@@ -91,12 +91,15 @@ const FAQSection = () => {
     }
   };
 
-  // Scroll highlighted item into view
+  // Scroll highlighted item into view (skip first render so the page doesn't auto-jump to FAQ on load)
+  const didInteract = useRef(false);
   useEffect(() => {
+    if (!didInteract.current) { didInteract.current = true; return; }
     if (!listRef.current) return;
     const el = listRef.current.querySelector<HTMLElement>(`[data-faq-index="${highlight}"]`);
     el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [highlight]);
+
 
   return (
     <section className="py-16 md:py-20 bg-background relative overflow-hidden">
