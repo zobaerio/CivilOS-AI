@@ -91,33 +91,38 @@ const Navbar = () => {
       </div>
 
       {open && (
-        <div className="md:hidden border-t bg-card p-4 space-y-2">
+        <div className="md:hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-background flex flex-col p-6 gap-2 overflow-y-auto animate-in fade-in slide-in-from-top-2">
           {links.map((l) => (
             <Link
               key={l.href}
               to={l.href}
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted"
+              className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted"
             >
               {l.label}
             </Link>
           ))}
           {user && (
-            <Link to="/projects" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted">
-              My Projects
-            </Link>
+            <>
+              <Link to="/projects" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+                My Projects
+              </Link>
+              <Link to="/profile" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+                Profile
+              </Link>
+            </>
           )}
-          <div className="pt-2 flex gap-2">
+          <div className="mt-auto pt-4 flex flex-col gap-2">
             {user ? (
-              <Button variant="outline" size="sm" className="flex-1" onClick={() => { handleSignOut(); setOpen(false); }}>
+              <Button variant="outline" size="lg" className="w-full" onClick={() => { handleSignOut(); setOpen(false); }}>
                 Sign out
               </Button>
             ) : (
-              <Button variant="outline" size="sm" className="flex-1" asChild>
+              <Button variant="outline" size="lg" className="w-full" asChild>
                 <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.login")}</Link>
               </Button>
             )}
-            <Button size="sm" className="flex-1" asChild>
+            <Button size="lg" className="w-full" asChild>
               <Link to="/upload" onClick={() => setOpen(false)}>{t("nav.getEstimate")}</Link>
             </Button>
           </div>
