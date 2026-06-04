@@ -35,22 +35,22 @@ const FeaturesSection = () => {
           </h2>
           <p className="mt-4 text-muted-foreground text-lg">{t("features.subtitle")}</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {featureKeys.map((f, i) => (
             <motion.div
               key={f.titleKey}
-              className="group relative p-6 rounded-2xl bg-card border border-border/60 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-500 overflow-hidden"
+              className="group relative p-4 sm:p-6 rounded-2xl bg-card border border-border/60 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-500 overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
             >
               <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-accent/0 group-hover:bg-accent/10 blur-2xl transition-all duration-500" />
-              <div className="relative h-12 w-12 rounded-xl bg-accent-gradient flex items-center justify-center mb-4 shadow-lg shadow-accent/20 group-hover:scale-110 transition-transform duration-500">
-                <f.icon className="h-5 w-5 text-accent-foreground" />
+              <div className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-accent-gradient flex items-center justify-center mb-3 sm:mb-4 shadow-lg shadow-accent/20 group-hover:scale-110 transition-transform duration-500">
+                <f.icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent-foreground" />
               </div>
-              <h3 className="relative font-heading font-semibold text-lg text-foreground">{t(f.titleKey)}</h3>
-              <p className="relative mt-2 text-sm text-muted-foreground leading-relaxed">{t(f.descKey)}</p>
+              <h3 className="relative font-heading font-semibold text-sm sm:text-lg text-foreground">{t(f.titleKey)}</h3>
+              <p className="relative mt-1 sm:mt-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">{t(f.descKey)}</p>
             </motion.div>
           ))}
         </div>
