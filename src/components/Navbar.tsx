@@ -32,7 +32,7 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-heading text-lg font-bold text-primary">
           <img src={aiLogo} alt="Plan Pro Estimate AI logo" width={48} height={48} className="h-12 w-12 drop-shadow-md" />
-          <span className="hidden sm:inline">Plan Pro Estimate</span>
+          <span className="hidden sm:inline">CivilOS AI</span>
         </Link>
         <div className="hidden lg:flex"><LiveUsers compact /></div>
 
