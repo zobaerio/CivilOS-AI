@@ -11,8 +11,9 @@ const Footer = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-2 font-heading text-lg font-bold">
               <Building2 className="h-5 w-5 text-accent" />
-              Smart House Estimate AI
+              CivilOS AI
             </div>
+            <p className="text-[11px] text-accent/90 font-medium">The AI Operating System for Civil Engineers</p>
             <p className="text-sm text-primary-foreground/70">{t("footer.desc")}</p>
             <p className="text-xs text-primary-foreground/50">
               {t("footer.developedBy").replace(/Md Zobaer Hasan|মোঃ জোবায়ের হাসান/, "")}
@@ -57,7 +58,7 @@ const Footer = () => {
         </div>
         <div className="mt-10 pt-6 border-t border-primary-foreground/10 text-center text-xs text-primary-foreground/50">
           <Link to="/admin" title="Admin" className="hover:text-accent transition-colors cursor-pointer">©</Link>{" "}
-          2026 Smart House Estimate AI. All rights reserved.
+          2026 CivilOS AI. All rights reserved.
         </div>
       </div>
     </footer>
