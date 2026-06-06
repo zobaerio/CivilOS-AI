@@ -30,7 +30,7 @@ const FileAssistantPage = () => {
 
   return (
     <>
-      <SEO title="File Assistant — CivilOS AI" description="Upload drawings, plans, or documents and get instant BNBC-aware AI engineering analysis." canonical="/file-assistant" />
+      <SEO title="File Assistant — CivilOS AI" description="Upload drawings, plans, or documents and get instant BNBC-aware AI engineering analysis." url="/file-assistant" />
       <SidebarProvider>
         <div className="flex min-h-screen w-full bg-background">
           <DashboardSidebar />

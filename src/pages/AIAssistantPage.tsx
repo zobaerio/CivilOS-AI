@@ -104,7 +104,7 @@ const AIAssistantPage = () => {
 
   return (
     <>
-      <SEO title="AI Assistant — CivilOS AI" description="Ask any civil engineering question. BNBC 2020 aware AI assistant for engineers in Bangladesh." canonical="/ai-assistant" />
+      <SEO title="AI Assistant — CivilOS AI" description="Ask any civil engineering question. BNBC 2020 aware AI assistant for engineers in Bangladesh." url="/ai-assistant" />
       <SidebarProvider>
         <div className="flex min-h-screen w-full bg-background">
           <DashboardSidebar />
