@@ -7,6 +7,8 @@ import {
   FileText,
   Settings,
   Sparkles,
+  Bot,
+  FileSearch,
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,6 +26,8 @@ import aiLogo from "@/assets/ai-logo.png";
 
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
+  { title: "File Assistant", url: "/file-assistant", icon: FileSearch },
   { title: "Projects", url: "/projects", icon: FolderOpen },
   { title: "New Estimate", url: "/upload", icon: Upload },
   { title: "Demo Estimate", url: "/estimate/demo", icon: FileText },

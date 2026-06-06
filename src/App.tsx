@@ -19,6 +19,8 @@ import SponsorPage from "./pages/SponsorPage.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import SharedEstimatePage from "./pages/SharedEstimatePage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
+import AIAssistantPage from "./pages/AIAssistantPage.tsx";
+import FileAssistantPage from "./pages/FileAssistantPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -45,6 +47,8 @@ const App = () => (
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/ai-assistant" element={<AIAssistantPage />} />
+              <Route path="/file-assistant" element={<FileAssistantPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/sponsor" element={<SponsorPage />} />
               <Route path="/admin" element={<AdminPage />} />
