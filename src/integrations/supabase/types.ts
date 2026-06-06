@@ -149,6 +149,59 @@ export type Database = {
         }
         Relationships: []
       }
+      site_logs: {
+        Row: {
+          activities: string | null
+          created_at: string
+          id: string
+          issues: string | null
+          log_date: string
+          manpower: Json | null
+          materials: Json | null
+          photos: Json | null
+          project_id: string | null
+          updated_at: string
+          user_id: string
+          weather: string | null
+        }
+        Insert: {
+          activities?: string | null
+          created_at?: string
+          id?: string
+          issues?: string | null
+          log_date?: string
+          manpower?: Json | null
+          materials?: Json | null
+          photos?: Json | null
+          project_id?: string | null
+          updated_at?: string
+          user_id: string
+          weather?: string | null
+        }
+        Update: {
+          activities?: string | null
+          created_at?: string
+          id?: string
+          issues?: string | null
+          log_date?: string
+          manpower?: Json | null
+          materials?: Json | null
+          photos?: Json | null
+          project_id?: string | null
+          updated_at?: string
+          user_id?: string
+          weather?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sponsors: {
         Row: {
           contact_email: string | null
@@ -188,6 +241,45 @@ export type Database = {
           submitted_by?: string | null
           updated_at?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      tender_analyses: {
+        Row: {
+          boq_items: Json | null
+          created_at: string
+          deadlines: Json | null
+          id: string
+          risks: Json | null
+          source_text: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          boq_items?: Json | null
+          created_at?: string
+          deadlines?: Json | null
+          id?: string
+          risks?: Json | null
+          source_text?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          boq_items?: Json | null
+          created_at?: string
+          deadlines?: Json | null
+          id?: string
+          risks?: Json | null
+          source_text?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

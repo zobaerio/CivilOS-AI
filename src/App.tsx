@@ -21,6 +21,9 @@ import SharedEstimatePage from "./pages/SharedEstimatePage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
 import AIAssistantPage from "./pages/AIAssistantPage.tsx";
 import FileAssistantPage from "./pages/FileAssistantPage.tsx";
+import BOQGeneratorPage from "./pages/BOQGeneratorPage.tsx";
+import TenderAnalysisPage from "./pages/TenderAnalysisPage.tsx";
+import SiteDiaryPage from "./pages/SiteDiaryPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -49,6 +52,9 @@ const App = () => (
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/ai-assistant" element={<AIAssistantPage />} />
               <Route path="/file-assistant" element={<FileAssistantPage />} />
+              <Route path="/boq" element={<BOQGeneratorPage />} />
+              <Route path="/tender" element={<TenderAnalysisPage />} />
+              <Route path="/site-diary" element={<SiteDiaryPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/sponsor" element={<SponsorPage />} />
               <Route path="/admin" element={<AdminPage />} />
