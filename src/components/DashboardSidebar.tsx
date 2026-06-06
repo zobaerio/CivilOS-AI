@@ -9,6 +9,9 @@ import {
   Sparkles,
   Bot,
   FileSearch,
+  Calculator,
+  Hammer,
+  ClipboardList,
 } from "lucide-react";
 import {
   Sidebar,
@@ -28,6 +31,9 @@ const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
   { title: "File Assistant", url: "/file-assistant", icon: FileSearch },
+  { title: "BOQ Generator", url: "/boq", icon: Calculator },
+  { title: "Tender Analysis", url: "/tender", icon: ClipboardList },
+  { title: "Site Diary", url: "/site-diary", icon: Hammer },
   { title: "Projects", url: "/projects", icon: FolderOpen },
   { title: "New Estimate", url: "/upload", icon: Upload },
   { title: "Demo Estimate", url: "/estimate/demo", icon: FileText },
