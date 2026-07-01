@@ -115,16 +115,17 @@ const DashboardPage = () => {
             </header>
 
             <main className="flex-1 p-4 md:p-6 space-y-6 overflow-x-hidden">
-              {/* Hero card */}
+              {/* Welcome / Hero card */}
               <section className="rounded-2xl border bg-gradient-to-br from-primary/5 via-accent/5 to-background p-5 md:p-8">
                 <div className="max-w-2xl space-y-2">
                   <div className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 text-accent px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3 w-3" /> CivilOS AI Platform
                   </div>
                   <h2 className="font-heading text-2xl md:text-3xl font-bold">
-                    The AI Operating System for Civil Engineers
+                    {greeting}, {displayName} 👋
                   </h2>
-                  <p className="text-sm md:text-base text-muted-foreground">
+                  <p className="text-sm md:text-base text-muted-foreground">{today}</p>
+                  <p className="text-sm md:text-base text-muted-foreground pt-1">
                     Manage projects, estimates, BNBC loads, tenders, BOQ and site activities — all in one workspace.
                   </p>
                   <div className="flex flex-wrap gap-2 pt-2">
@@ -132,6 +133,19 @@ const DashboardPage = () => {
                     <Button variant="outline" asChild><Link to="/projects">View All Projects</Link></Button>
                   </div>
                 </div>
+              </section>
+
+              {/* Quick actions */}
+              <section className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+                {quickActions.map((a) => (
+                  <Link key={a.label} to={a.to}
+                    className="group flex flex-col items-center justify-center gap-1.5 rounded-xl border bg-card p-3 hover:border-accent hover:shadow-sm transition-all">
+                    <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                      <a.icon className="h-4 w-4 text-accent" />
+                    </div>
+                    <span className="text-[11px] md:text-xs font-medium text-center leading-tight">{a.label}</span>
+                  </Link>
+                ))}
               </section>
 
               {/* Stats */}
@@ -198,11 +212,12 @@ const DashboardPage = () => {
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {upcomingModules.map((m) => (
-                    <div key={m.name} className="rounded-lg border bg-muted/30 p-3 space-y-1.5">
+                    <Link key={m.name} to={m.to}
+                      className="rounded-lg border bg-muted/30 p-3 space-y-1.5 hover:border-accent hover:bg-accent/5 transition-all block">
                       <m.icon className="h-5 w-5 text-accent" />
                       <p className="text-sm font-semibold leading-tight">{m.name}</p>
                       <p className="text-[11px] text-muted-foreground leading-snug">{m.desc}</p>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </section>
