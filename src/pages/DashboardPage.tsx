@@ -9,8 +9,8 @@ import NotificationBell from "@/components/NotificationBell";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  FolderOpen, Plus, TrendingUp, Layers, Activity, ArrowRight, Sparkles,
-  Calculator, FileText, Hammer, Search, Upload, Receipt, Bot, ClipboardList,
+  FolderOpen, Plus, ArrowRight, Sparkles,
+  Calculator, Hammer, Search, Upload, Receipt, Bot, ClipboardList,
   Crown,
 } from "lucide-react";
 import SEO from "@/components/SEO";
