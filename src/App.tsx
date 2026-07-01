@@ -24,6 +24,7 @@ import FileAssistantPage from "./pages/FileAssistantPage.tsx";
 import BOQGeneratorPage from "./pages/BOQGeneratorPage.tsx";
 import TenderAnalysisPage from "./pages/TenderAnalysisPage.tsx";
 import SiteDiaryPage from "./pages/SiteDiaryPage.tsx";
+import ComingSoonPage from "./pages/ComingSoonPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -59,6 +60,16 @@ const App = () => (
               <Route path="/sponsor" element={<SponsorPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/share/:token" element={<SharedEstimatePage />} />
+              {/* Day 1 module stubs — Coming Soon */}
+              {[
+                "notifications","ai-writer","ai-drawing","rate-analysis","bbs","material-calc",
+                "progress-reports","inspections","site-photos","tender-docs","bid-prep",
+                "inventory","requisitions","purchase-orders","vendors","equipment",
+                "invoices","contractor-bills","payments","cash-flow",
+                "analytics","ai-insights","reports","company-settings",
+              ].map((p) => (
+                <Route key={p} path={`/${p}`} element={<ComingSoonPage />} />
+              ))}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

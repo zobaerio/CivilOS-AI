@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  FolderOpen,
-  Plus,
-  TrendingUp,
-  Layers,
-  Activity,
-  ArrowRight,
-  Sparkles,
-  Calculator,
-  FileText,
-  Hammer,
+  FolderOpen, Plus, ArrowRight, Sparkles,
+  Calculator, FileText, Hammer, Search, Upload, Receipt, Bot, ClipboardList,
+  Crown,
 } from "lucide-react";
 import SEO from "@/components/SEO";
 
@@ -27,11 +22,20 @@ interface ProjectRow {
   updated_at: string;
 }
 
+const quickActions = [
+  { icon: Plus, label: "New Project", to: "/upload" },
+  { icon: Calculator, label: "New BOQ", to: "/boq" },
+  { icon: Bot, label: "AI Chat", to: "/ai-assistant" },
+  { icon: Upload, label: "Upload File", to: "/file-assistant" },
+  { icon: Hammer, label: "Site Report", to: "/site-diary" },
+  { icon: Receipt, label: "New Invoice", to: "/invoices" },
+];
+
 const upcomingModules = [
-  { icon: Sparkles, name: "AI Engineering Chat", desc: "Ask any civil engineering question" },
-  { icon: Calculator, name: "BOQ Generator", desc: "Auto BOQ + rate analysis" },
-  { icon: FileText, name: "Tender Analysis", desc: "AI-powered tender summaries" },
-  { icon: Hammer, name: "Site Diary", desc: "Daily progress & material logs" },
+  { icon: Sparkles, name: "AI Engineering Chat", desc: "Ask any civil engineering question", to: "/ai-assistant" },
+  { icon: Calculator, name: "BOQ Generator", desc: "Auto BOQ + rate analysis", to: "/boq" },
+  { icon: FileText, name: "Tender Analysis", desc: "AI-powered tender summaries", to: "/tender" },
+  { icon: Hammer, name: "Site Diary", desc: "Daily progress & material logs", to: "/site-diary" },
 ];
 
 const DashboardPage = () => {
@@ -39,6 +43,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -57,12 +62,28 @@ const DashboardPage = () => {
     })();
   }, [user]);
 
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    return "Good evening";
+  }, []);
+
+  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Engineer";
+  const today = new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
   const stats = [
-    { label: "Total Projects", value: projects.length, icon: FolderOpen, color: "text-blue-500" },
-    { label: "Active This Month", value: projects.length, icon: Activity, color: "text-emerald-500" },
-    { label: "Modules", value: 6, icon: Layers, color: "text-purple-500" },
-    { label: "AI Credits", value: "∞", icon: TrendingUp, color: "text-amber-500" },
+    { label: "Active Projects", value: projects.length, icon: FolderOpen, color: "text-blue-500" },
+    { label: "BOQs Generated", value: projects.length, icon: Calculator, color: "text-emerald-500" },
+    { label: "AI Queries Today", value: 0, icon: Sparkles, color: "text-purple-500" },
+    { label: "Pending Tasks", value: 0, icon: ClipboardList, color: "text-amber-500" },
   ];
+
+  const onSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+    navigate(`/projects?q=${encodeURIComponent(search.trim())}`);
+  };
 
   return (
     <>
@@ -73,28 +94,38 @@ const DashboardPage = () => {
           <div className="flex-1 flex flex-col min-w-0">
             <header className="sticky top-0 z-30 h-14 flex items-center gap-2 border-b bg-background/95 backdrop-blur px-3 md:px-6">
               <SidebarTrigger />
-              <div className="flex-1 min-w-0">
-                <h1 className="font-heading text-base md:text-lg font-semibold truncate">
-                  Welcome{user?.user_metadata?.display_name ? `, ${user.user_metadata.display_name}` : ""} 👋
-                </h1>
-              </div>
+              <form onSubmit={onSearch} className="relative flex-1 max-w-md hidden sm:block">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search projects, BOQ, tenders…"
+                  className="pl-8 h-9 text-sm"
+                />
+              </form>
+              <div className="flex-1 sm:hidden" />
+              <Button size="sm" variant="outline" asChild className="hidden md:inline-flex gap-1.5">
+                <Link to="/#pricing"><Crown className="h-3.5 w-3.5 text-amber-500" /> Upgrade</Link>
+              </Button>
+              <NotificationBell />
               <ThemeToggle />
               <Button size="sm" asChild className="hidden sm:inline-flex">
-                <Link to="/upload"><Plus className="h-4 w-4 mr-1" /> New Estimate</Link>
+                <Link to="/upload"><Plus className="h-4 w-4 mr-1" /> New</Link>
               </Button>
             </header>
 
             <main className="flex-1 p-4 md:p-6 space-y-6 overflow-x-hidden">
-              {/* Hero card */}
+              {/* Welcome / Hero card */}
               <section className="rounded-2xl border bg-gradient-to-br from-primary/5 via-accent/5 to-background p-5 md:p-8">
                 <div className="max-w-2xl space-y-2">
                   <div className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 text-accent px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3 w-3" /> CivilOS AI Platform
                   </div>
                   <h2 className="font-heading text-2xl md:text-3xl font-bold">
-                    The AI Operating System for Civil Engineers
+                    {greeting}, {displayName} 👋
                   </h2>
-                  <p className="text-sm md:text-base text-muted-foreground">
+                  <p className="text-sm md:text-base text-muted-foreground">{today}</p>
+                  <p className="text-sm md:text-base text-muted-foreground pt-1">
                     Manage projects, estimates, BNBC loads, tenders, BOQ and site activities — all in one workspace.
                   </p>
                   <div className="flex flex-wrap gap-2 pt-2">
@@ -102,6 +133,19 @@ const DashboardPage = () => {
                     <Button variant="outline" asChild><Link to="/projects">View All Projects</Link></Button>
                   </div>
                 </div>
+              </section>
+
+              {/* Quick actions */}
+              <section className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+                {quickActions.map((a) => (
+                  <Link key={a.label} to={a.to}
+                    className="group flex flex-col items-center justify-center gap-1.5 rounded-xl border bg-card p-3 hover:border-accent hover:shadow-sm transition-all">
+                    <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                      <a.icon className="h-4 w-4 text-accent" />
+                    </div>
+                    <span className="text-[11px] md:text-xs font-medium text-center leading-tight">{a.label}</span>
+                  </Link>
+                ))}
               </section>
 
               {/* Stats */}
@@ -168,11 +212,12 @@ const DashboardPage = () => {
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {upcomingModules.map((m) => (
-                    <div key={m.name} className="rounded-lg border bg-muted/30 p-3 space-y-1.5">
+                    <Link key={m.name} to={m.to}
+                      className="rounded-lg border bg-muted/30 p-3 space-y-1.5 hover:border-accent hover:bg-accent/5 transition-all block">
                       <m.icon className="h-5 w-5 text-accent" />
                       <p className="text-sm font-semibold leading-tight">{m.name}</p>
                       <p className="text-[11px] text-muted-foreground leading-snug">{m.desc}</p>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </section>
