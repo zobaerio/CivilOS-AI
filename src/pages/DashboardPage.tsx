@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  FolderOpen,
-  Plus,
-  TrendingUp,
-  Layers,
-  Activity,
-  ArrowRight,
-  Sparkles,
-  Calculator,
-  FileText,
-  Hammer,
+  FolderOpen, Plus, TrendingUp, Layers, Activity, ArrowRight, Sparkles,
+  Calculator, FileText, Hammer, Search, Upload, Receipt, Bot, ClipboardList,
+  Crown,
 } from "lucide-react";
 import SEO from "@/components/SEO";
 
@@ -27,11 +22,20 @@ interface ProjectRow {
   updated_at: string;
 }
 
+const quickActions = [
+  { icon: Plus, label: "New Project", to: "/upload" },
+  { icon: Calculator, label: "New BOQ", to: "/boq" },
+  { icon: Bot, label: "AI Chat", to: "/ai-assistant" },
+  { icon: Upload, label: "Upload File", to: "/file-assistant" },
+  { icon: Hammer, label: "Site Report", to: "/site-diary" },
+  { icon: Receipt, label: "New Invoice", to: "/invoices" },
+];
+
 const upcomingModules = [
-  { icon: Sparkles, name: "AI Engineering Chat", desc: "Ask any civil engineering question" },
-  { icon: Calculator, name: "BOQ Generator", desc: "Auto BOQ + rate analysis" },
-  { icon: FileText, name: "Tender Analysis", desc: "AI-powered tender summaries" },
-  { icon: Hammer, name: "Site Diary", desc: "Daily progress & material logs" },
+  { icon: Sparkles, name: "AI Engineering Chat", desc: "Ask any civil engineering question", to: "/ai-assistant" },
+  { icon: Calculator, name: "BOQ Generator", desc: "Auto BOQ + rate analysis", to: "/boq" },
+  { icon: FileText, name: "Tender Analysis", desc: "AI-powered tender summaries", to: "/tender" },
+  { icon: Hammer, name: "Site Diary", desc: "Daily progress & material logs", to: "/site-diary" },
 ];
 
 const DashboardPage = () => {
@@ -39,6 +43,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -57,12 +62,28 @@ const DashboardPage = () => {
     })();
   }, [user]);
 
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    return "Good evening";
+  }, []);
+
+  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Engineer";
+  const today = new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
   const stats = [
-    { label: "Total Projects", value: projects.length, icon: FolderOpen, color: "text-blue-500" },
-    { label: "Active This Month", value: projects.length, icon: Activity, color: "text-emerald-500" },
-    { label: "Modules", value: 6, icon: Layers, color: "text-purple-500" },
-    { label: "AI Credits", value: "∞", icon: TrendingUp, color: "text-amber-500" },
+    { label: "Active Projects", value: projects.length, icon: FolderOpen, color: "text-blue-500" },
+    { label: "BOQs Generated", value: projects.length, icon: Calculator, color: "text-emerald-500" },
+    { label: "AI Queries Today", value: 0, icon: Sparkles, color: "text-purple-500" },
+    { label: "Pending Tasks", value: 0, icon: ClipboardList, color: "text-amber-500" },
   ];
+
+  const onSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+    navigate(`/projects?q=${encodeURIComponent(search.trim())}`);
+  };
 
   return (
     <>
@@ -73,14 +94,23 @@ const DashboardPage = () => {
           <div className="flex-1 flex flex-col min-w-0">
             <header className="sticky top-0 z-30 h-14 flex items-center gap-2 border-b bg-background/95 backdrop-blur px-3 md:px-6">
               <SidebarTrigger />
-              <div className="flex-1 min-w-0">
-                <h1 className="font-heading text-base md:text-lg font-semibold truncate">
-                  Welcome{user?.user_metadata?.display_name ? `, ${user.user_metadata.display_name}` : ""} 👋
-                </h1>
-              </div>
+              <form onSubmit={onSearch} className="relative flex-1 max-w-md hidden sm:block">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search projects, BOQ, tenders…"
+                  className="pl-8 h-9 text-sm"
+                />
+              </form>
+              <div className="flex-1 sm:hidden" />
+              <Button size="sm" variant="outline" asChild className="hidden md:inline-flex gap-1.5">
+                <Link to="/#pricing"><Crown className="h-3.5 w-3.5 text-amber-500" /> Upgrade</Link>
+              </Button>
+              <NotificationBell />
               <ThemeToggle />
               <Button size="sm" asChild className="hidden sm:inline-flex">
-                <Link to="/upload"><Plus className="h-4 w-4 mr-1" /> New Estimate</Link>
+                <Link to="/upload"><Plus className="h-4 w-4 mr-1" /> New</Link>
               </Button>
             </header>
 
