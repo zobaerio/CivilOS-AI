@@ -25,6 +25,8 @@ import BOQGeneratorPage from "./pages/BOQGeneratorPage.tsx";
 import TenderAnalysisPage from "./pages/TenderAnalysisPage.tsx";
 import SiteDiaryPage from "./pages/SiteDiaryPage.tsx";
 import ComingSoonPage from "./pages/ComingSoonPage.tsx";
+import AIEngineerPage from "./pages/AIEngineerPage.tsx";
+import BOQHubPage from "./pages/BOQHubPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
