@@ -22,13 +22,15 @@ const groups: Group[] = [
     { title: "Notifications", url: "/notifications", icon: Bell },
   ]},
   { label: "🤖 AI Workspace", items: [
+    { title: "AI Engineering Assistant", url: "/ai-engineer", icon: Bot },
     { title: "AI Engineer Chat", url: "/ai-assistant", icon: Bot },
     { title: "File AI Analyzer", url: "/file-assistant", icon: FileSearch },
     { title: "AI Office Writer", url: "/ai-writer", icon: PenTool },
     { title: "AI Drawing Reader", url: "/ai-drawing", icon: Ruler },
   ]},
   { label: "📐 Quantity Surveying", items: [
-    { title: "BOQ Generator", url: "/boq", icon: Calculator },
+    { title: "BOQ Hub", url: "/boq-hub", icon: Calculator },
+    { title: "BOQ Generator (Lite)", url: "/boq", icon: Calculator },
     { title: "Rate Analysis", url: "/rate-analysis", icon: ClipboardList },
     { title: "BBS Generator", url: "/bbs", icon: Ruler },
     { title: "Material Calculator", url: "/material-calc", icon: Calculator },
