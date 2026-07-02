@@ -92,10 +92,10 @@ export default function BOQHubPage() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("projects").select("id, name, data, created_at, updated_at").order("updated_at", { ascending: false }).then(({ data }) => {
+    supabase.from("projects").select("id, name, estimate, created_at, updated_at").order("updated_at", { ascending: false }).then(({ data }) => {
       const list = data ?? [];
       setProjects(list);
-      setHistory(list.filter((p: any) => p.data?.__type === "boq"));
+      setHistory(list.filter((p: any) => p.estimate?.__type === "boq"));
     });
   }, [user, saving]);
 
@@ -246,7 +246,7 @@ export default function BOQHubPage() {
       const payload = { __type: "boq", ...doc, version: asNewVersion ? doc.version + 1 : doc.version };
       if (linkedProjectId === "new") {
         const { data, error } = await supabase.from("projects").insert({
-          user_id: user.id, name: projectName, data: payload as any,
+          user_id: user.id, name: projectName, estimate: payload as any,
         }).select().single();
         if (error) throw error;
         setLinkedProjectId(data.id);
@@ -254,7 +254,7 @@ export default function BOQHubPage() {
         toast.success(`Saved BOQ v${payload.version}`);
       } else {
         const { error } = await supabase.from("projects").update({
-          name: projectName, data: payload as any,
+          name: projectName, estimate: payload as any,
         }).eq("id", linkedProjectId);
         if (error) throw error;
         setDoc(d => ({ ...d, version: payload.version }));
@@ -270,7 +270,7 @@ export default function BOQHubPage() {
   const loadDoc = (p: any) => {
     setLinkedProjectId(p.id);
     setProjectName(p.name);
-    const d = p.data as BOQDoc;
+    const d = p.estimate as BOQDoc;
     setDoc({ ...emptyDoc(), ...d, items: d.items ?? [], measurements: d.measurements ?? [] });
     toast.success(`Loaded ${p.name}`);
   };
@@ -534,7 +534,7 @@ export default function BOQHubPage() {
                   {history.length === 0 && <Card className="p-6 text-center text-sm text-muted-foreground">No saved BOQs yet.</Card>}
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {history.map((p) => {
-                      const d = p.data as BOQDoc;
+                      const d = p.estimate as BOQDoc;
                       const total = (d.items ?? []).reduce((s, i) => s + i.qty * i.rate, 0);
                       return (
                         <Card key={p.id} className="p-3 space-y-2">
