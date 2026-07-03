@@ -549,19 +549,6 @@ export default function BOQHubPage() {
                     <p className="text-sm">Saved BOQs ({history.length})</p>
                   </div>
                   {history.length === 0 && <Card className="p-6 text-center text-sm text-muted-foreground">No saved BOQs yet.</Card>}
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {history.map((p) => {
-                      const d = p.estimate as BOQDoc;
-                      const total = (d.items ?? []).reduce((s, i) => s + i.qty * i.rate, 0);
-                      return (
-                        <Card key={p.id} className="p-3 space-y-2">
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="min-w-0">
-                              <p className="font-semibold text-sm truncate">{p.name}</p>
-                              <p className="text-[11px] text-muted-foreground">v{d.version} · {d.items?.length ?? 0} items · {new Date(p.updated_at).toLocaleDateString()}</p>
-                            </div>
-                          </div>
-                  {history.length === 0 && <Card className="p-6 text-center text-sm text-muted-foreground">No saved BOQs yet.</Card>}
                   {history.length > 0 && (
                     <p className="text-[11px] text-muted-foreground">
                       Tick up to 2 BOQs to compare side-by-side. {compareIds.length > 0 && <button className="underline" onClick={() => setCompareIds([])}>clear</button>}
