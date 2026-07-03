@@ -27,6 +27,7 @@ import SiteDiaryPage from "./pages/SiteDiaryPage.tsx";
 import ComingSoonPage from "./pages/ComingSoonPage.tsx";
 import AIEngineerPage from "./pages/AIEngineerPage.tsx";
 import BOQHubPage from "./pages/BOQHubPage.tsx";
+import RateAnalysisPage from "./pages/RateAnalysisPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/ai-assistant" element={<AIAssistantPage />} />
               <Route path="/ai-engineer" element={<AIEngineerPage />} />
               <Route path="/boq-hub" element={<BOQHubPage />} />
+              <Route path="/rate-analysis" element={<RateAnalysisPage />} />
               <Route path="/file-assistant" element={<FileAssistantPage />} />
               <Route path="/boq" element={<BOQGeneratorPage />} />
               <Route path="/tender" element={<TenderAnalysisPage />} />
@@ -66,7 +68,7 @@ const App = () => (
               <Route path="/share/:token" element={<SharedEstimatePage />} />
               {/* Day 1 module stubs — Coming Soon */}
               {[
-                "notifications","ai-writer","ai-drawing","rate-analysis","bbs","material-calc",
+                "notifications","ai-writer","ai-drawing","bbs","material-calc",
                 "progress-reports","inspections","site-photos","tender-docs","bid-prep",
                 "inventory","requisitions","purchase-orders","vendors","equipment",
                 "invoices","contractor-bills","payments","cash-flow",
