@@ -87,6 +87,23 @@ export default function BOQHubPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [linkedProjectId, setLinkedProjectId] = useState<string>("new");
   const [projects, setProjects] = useState<any[]>([]);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+
+  const toggleCompare = (id: string) =>
+    setCompareIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : prev.length >= 2 ? [prev[1], id] : [...prev, id]);
+
+  const duplicateFromHistory = async (p: any) => {
+    if (!user) return;
+    const d = p.estimate as BOQDoc;
+    const newName = `${p.name} (copy)`;
+    const payload = { ...d, version: 1, createdAt: Date.now() };
+    const { error } = await supabase.from("projects").insert({
+      user_id: user.id, name: newName, estimate: { __type: "boq", ...payload } as any,
+    });
+    if (error) return toast.error(error.message);
+    toast.success(`Duplicated as "${newName}"`);
+    setSaving(s => !s); // trigger reload
+  };
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
 
@@ -532,24 +549,82 @@ export default function BOQHubPage() {
                     <p className="text-sm">Saved BOQs ({history.length})</p>
                   </div>
                   {history.length === 0 && <Card className="p-6 text-center text-sm text-muted-foreground">No saved BOQs yet.</Card>}
+                  {history.length > 0 && (
+                    <p className="text-[11px] text-muted-foreground">
+                      Tick up to 2 BOQs to compare side-by-side. {compareIds.length > 0 && <button className="underline" onClick={() => setCompareIds([])}>clear</button>}
+                    </p>
+                  )}
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {history.map((p) => {
                       const d = p.estimate as BOQDoc;
                       const total = (d.items ?? []).reduce((s, i) => s + i.qty * i.rate, 0);
+                      const checked = compareIds.includes(p.id);
                       return (
-                        <Card key={p.id} className="p-3 space-y-2">
+                        <Card key={p.id} className={`p-3 space-y-2 ${checked ? "ring-2 ring-primary" : ""}`}>
                           <div className="flex justify-between items-start gap-2">
                             <div className="min-w-0">
                               <p className="font-semibold text-sm truncate">{p.name}</p>
                               <p className="text-[11px] text-muted-foreground">v{d.version} · {d.items?.length ?? 0} items · {new Date(p.updated_at).toLocaleDateString()}</p>
                             </div>
+                            <label className="flex items-center gap-1 text-[11px] cursor-pointer shrink-0">
+                              <input type="checkbox" checked={checked} onChange={() => toggleCompare(p.id)} /> compare
+                            </label>
                           </div>
                           <p className="text-lg font-heading font-bold">{bdt(total)}</p>
-                          <Button size="sm" variant="outline" className="w-full" onClick={() => loadDoc(p)}>Load</Button>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" className="flex-1" onClick={() => loadDoc(p)}>Load</Button>
+                            <Button size="sm" variant="outline" onClick={() => duplicateFromHistory(p)}><CopyIcon className="h-3.5 w-3.5" /></Button>
+                          </div>
                         </Card>
                       );
                     })}
                   </div>
+
+                  {compareIds.length === 2 && (() => {
+                    const [a, b] = compareIds.map(id => history.find(h => h.id === id)).filter(Boolean);
+                    if (!a || !b) return null;
+                    const totalsOf = (p: any) => {
+                      const m: Record<string, number> = { Civil: 0, Sanitary: 0, Electrical: 0, Finishing: 0 };
+                      for (const i of (p.estimate.items ?? []) as BOQItem[]) m[i.category] = (m[i.category] || 0) + i.qty * i.rate;
+                      m.__total = Object.values(m).reduce((s, n) => s + n, 0);
+                      return m;
+                    };
+                    const ta = totalsOf(a), tb = totalsOf(b);
+                    const rows = [...CATEGORIES, "__total"] as const;
+                    return (
+                      <Card className="p-4 space-y-2">
+                        <p className="font-semibold text-sm">BOQ comparison</p>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-xs sm:text-sm border-collapse min-w-[500px]">
+                            <thead className="bg-muted/50 border-b">
+                              <tr>
+                                <th className="p-2 text-left">Category</th>
+                                <th className="p-2 text-right truncate max-w-[160px]">{a.name} v{a.estimate.version}</th>
+                                <th className="p-2 text-right truncate max-w-[160px]">{b.name} v{b.estimate.version}</th>
+                                <th className="p-2 text-right">Δ</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.map(k => {
+                                const delta = tb[k] - ta[k];
+                                const isTotal = k === "__total";
+                                return (
+                                  <tr key={k} className={`border-b ${isTotal ? "bg-muted/30 font-bold" : ""}`}>
+                                    <td className="p-2">{isTotal ? "Grand total" : k}</td>
+                                    <td className="p-2 text-right">{bdt(ta[k])}</td>
+                                    <td className="p-2 text-right">{bdt(tb[k])}</td>
+                                    <td className={`p-2 text-right ${delta > 0 ? "text-destructive" : delta < 0 ? "text-emerald-600" : ""}`}>
+                                      {delta === 0 ? "—" : `${delta > 0 ? "+" : ""}${bdt(delta)}`}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
+                    );
+                  })()}
                 </TabsContent>
               </Tabs>
 
