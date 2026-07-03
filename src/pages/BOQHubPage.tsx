@@ -87,6 +87,23 @@ export default function BOQHubPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [linkedProjectId, setLinkedProjectId] = useState<string>("new");
   const [projects, setProjects] = useState<any[]>([]);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+
+  const toggleCompare = (id: string) =>
+    setCompareIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : prev.length >= 2 ? [prev[1], id] : [...prev, id]);
+
+  const duplicateFromHistory = async (p: any) => {
+    if (!user) return;
+    const d = p.estimate as BOQDoc;
+    const newName = `${p.name} (copy)`;
+    const payload = { ...d, version: 1, createdAt: Date.now() };
+    const { error } = await supabase.from("projects").insert({
+      user_id: user.id, name: newName, estimate: { __type: "boq", ...payload } as any,
+    });
+    if (error) return toast.error(error.message);
+    toast.success(`Duplicated as "${newName}"`);
+    setSaving(s => !s); // trigger reload
+  };
 
   useEffect(() => { if (!authLoading && !user) navigate("/auth"); }, [user, authLoading, navigate]);
 
