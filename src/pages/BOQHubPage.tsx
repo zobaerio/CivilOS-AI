@@ -429,6 +429,22 @@ export default function BOQHubPage() {
                       Save as v{doc.version + 1}
                     </Button>
                   </div>
+                  <ExportButtons
+                    data={doc.items.map((i, idx) => ({
+                      'ক্রমিক নং': idx + 1,
+                      'ক্যাটাগরি': i.category,
+                      'কাজের বিবরণ': i.item,
+                      'একক': i.unit,
+                      'পরিমাণ': i.qty,
+                      'একক দর (৳)': i.rate,
+                      'মোট মূল্য (৳)': i.qty * i.rate,
+                      'উৎস': i.source,
+                      'মন্তব্য': i.notes ?? '',
+                    }))}
+                    sheetName="BOQ"
+                    fileName={`CivilOS_BOQ_${doc.title || 'v' + doc.version}`}
+                    title="Bill of Quantities — CivilOS AI"
+                  />
 
                   <Card className="overflow-x-auto">
                     <table className="w-full text-xs sm:text-sm border-collapse min-w-[900px]">
