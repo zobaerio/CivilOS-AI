@@ -443,7 +443,7 @@ export default function BOQHubPage() {
                       'মন্তব্য': i.notes ?? '',
                     }))}
                     sheetName="BOQ"
-                    fileName={`CivilOS_BOQ_${doc.title || 'v' + doc.version}`}
+                    fileName={`CivilOS_BOQ_v${doc.version}`}
                     title="Bill of Quantities — CivilOS AI"
                   />
 
