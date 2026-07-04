@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import ThemeToggle from "@/components/ThemeToggle";
+import { ExportButtons } from "@/components/ExportButtons";
 import {
   Calculator, Loader2, Plus, Trash2, Download, FileSpreadsheet, Printer,
   Copy as CopyIcon, Save, Ruler, History,
