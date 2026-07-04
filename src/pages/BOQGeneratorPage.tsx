@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import ThemeToggle from "@/components/ThemeToggle";
+import { ExportButtons } from "@/components/ExportButtons";
 
 interface BOQItem { item: string; unit: string; qty: number; rate_bdt: number; amount_bdt: number; notes?: string }
 interface BOQResult { summary: string; boq_items: BOQItem[]; total_bdt: number; assumptions: string[] }
@@ -92,6 +93,20 @@ export default function BOQGeneratorPage() {
                     </tbody>
                   </table>
                 </div>
+                <ExportButtons
+                  data={result.boq_items.map((i, idx) => ({
+                    'ক্রমিক নং': idx + 1,
+                    'কাজের বিবরণ': i.item,
+                    'একক': i.unit,
+                    'পরিমাণ': i.qty,
+                    'একক দর (৳)': i.rate_bdt,
+                    'মোট মূল্য (৳)': i.amount_bdt,
+                    'মন্তব্য': i.notes ?? '',
+                  }))}
+                  sheetName="BOQ"
+                  fileName="CivilOS_BOQ"
+                  title="Bill of Quantities — CivilOS AI"
+                />
                 {result.assumptions?.length > 0 && (
                   <div className="text-xs text-muted-foreground">
                     <p className="font-semibold mb-1">Assumptions:</p>

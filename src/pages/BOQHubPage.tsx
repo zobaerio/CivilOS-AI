@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import ThemeToggle from "@/components/ThemeToggle";
+import { ExportButtons } from "@/components/ExportButtons";
 import {
   Calculator, Loader2, Plus, Trash2, Download, FileSpreadsheet, Printer,
   Copy as CopyIcon, Save, Ruler, History,
@@ -429,6 +430,22 @@ export default function BOQHubPage() {
                       Save as v{doc.version + 1}
                     </Button>
                   </div>
+                  <ExportButtons
+                    data={doc.items.map((i, idx) => ({
+                      'ক্রমিক নং': idx + 1,
+                      'ক্যাটাগরি': i.category,
+                      'কাজের বিবরণ': i.item,
+                      'একক': i.unit,
+                      'পরিমাণ': i.qty,
+                      'একক দর (৳)': i.rate,
+                      'মোট মূল্য (৳)': i.qty * i.rate,
+                      'উৎস': i.source,
+                      'মন্তব্য': i.notes ?? '',
+                    }))}
+                    sheetName="BOQ"
+                    fileName={`CivilOS_BOQ_v${doc.version}`}
+                    title="Bill of Quantities — CivilOS AI"
+                  />
 
                   <Card className="overflow-x-auto">
                     <table className="w-full text-xs sm:text-sm border-collapse min-w-[900px]">
