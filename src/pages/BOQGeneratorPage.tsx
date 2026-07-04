@@ -93,6 +93,20 @@ export default function BOQGeneratorPage() {
                     </tbody>
                   </table>
                 </div>
+                <ExportButtons
+                  data={result.boq_items.map((i, idx) => ({
+                    'ক্রমিক নং': idx + 1,
+                    'কাজের বিবরণ': i.item,
+                    'একক': i.unit,
+                    'পরিমাণ': i.qty,
+                    'একক দর (৳)': i.rate_bdt,
+                    'মোট মূল্য (৳)': i.amount_bdt,
+                    'মন্তব্য': i.notes ?? '',
+                  }))}
+                  sheetName="BOQ"
+                  fileName="CivilOS_BOQ"
+                  title="Bill of Quantities — CivilOS AI"
+                />
                 {result.assumptions?.length > 0 && (
                   <div className="text-xs text-muted-foreground">
                     <p className="font-semibold mb-1">Assumptions:</p>
