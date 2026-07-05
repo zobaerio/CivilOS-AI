@@ -56,12 +56,96 @@ export type Database = {
         }
         Relationships: []
       }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          id: string
+          invited_by: string
+          invited_email: string
+          project_id: string
+          role: Database["public"]["Enums"]["project_role"]
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          invited_by: string
+          invited_email: string
+          project_id: string
+          role?: Database["public"]["Enums"]["project_role"]
+          status?: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          invited_by?: string
+          invited_email?: string
+          project_id?: string
+          role?: Database["public"]["Enums"]["project_role"]
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_settings: {
+        Row: {
+          boq_updates: boolean
+          deadline_alerts: boolean
+          deadline_days_before: number
+          document_uploads: boolean
+          email_enabled: boolean
+          material_price: boolean
+          member_joined: boolean
+          team_invites: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          boq_updates?: boolean
+          deadline_alerts?: boolean
+          deadline_days_before?: number
+          document_uploads?: boolean
+          email_enabled?: boolean
+          material_price?: boolean
+          member_joined?: boolean
+          team_invites?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          boq_updates?: boolean
+          deadline_alerts?: boolean
+          deadline_days_before?: number
+          document_uploads?: boolean
+          email_enabled?: boolean
+          material_price?: boolean
+          member_joined?: boolean
+          team_invites?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
           id: string
           link: string | null
           message: string | null
+          project_id: string | null
           read: boolean
           title: string
           type: string
@@ -72,6 +156,7 @@ export type Database = {
           id?: string
           link?: string | null
           message?: string | null
+          project_id?: string | null
           read?: boolean
           title: string
           type?: string
@@ -82,12 +167,21 @@ export type Database = {
           id?: string
           link?: string | null
           message?: string | null
+          project_id?: string | null
           read?: boolean
           title?: string
           type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -95,6 +189,8 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          referral_code: string | null
+          referred_by: string | null
           updated_at: string
         }
         Insert: {
@@ -102,6 +198,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -109,47 +207,187 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
         }
         Relationships: []
       }
+      project_activity: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          project_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          project_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          project_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_activity_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_documents: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          project_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          project_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          project_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_members: {
+        Row: {
+          id: string
+          invited_by: string | null
+          joined_at: string
+          last_active_at: string | null
+          project_id: string
+          role: Database["public"]["Enums"]["project_role"]
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          last_active_at?: string | null
+          project_id: string
+          role?: Database["public"]["Enums"]["project_role"]
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          last_active_at?: string | null
+          project_id?: string
+          role?: Database["public"]["Enums"]["project_role"]
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           bnbc_loads: Json | null
+          budget: number | null
+          client_name: string | null
           created_at: string
+          end_date: string | null
           estimate: Json | null
           file_name: string | null
           id: string
-          inputs: Json
+          inputs: Json | null
           is_public: boolean
+          location: string | null
           name: string
+          project_type: string | null
           share_token: string | null
+          start_date: string | null
+          status: string
           updated_at: string
           user_id: string
         }
         Insert: {
           bnbc_loads?: Json | null
+          budget?: number | null
+          client_name?: string | null
           created_at?: string
+          end_date?: string | null
           estimate?: Json | null
           file_name?: string | null
           id?: string
-          inputs?: Json
+          inputs?: Json | null
           is_public?: boolean
+          location?: string | null
           name: string
+          project_type?: string | null
           share_token?: string | null
+          start_date?: string | null
+          status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           bnbc_loads?: Json | null
+          budget?: number | null
+          client_name?: string | null
           created_at?: string
+          end_date?: string | null
           estimate?: Json | null
           file_name?: string | null
           id?: string
-          inputs?: Json
+          inputs?: Json | null
           is_public?: boolean
+          location?: string | null
           name?: string
+          project_type?: string | null
           share_token?: string | null
+          start_date?: string | null
+          status?: string
           updated_at?: string
           user_id?: string
         }
@@ -179,6 +417,36 @@ export type Database = {
           id?: string
           stars?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          commission_amount: number
+          created_at: string
+          id: string
+          plan: string | null
+          referred_user_id: string
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          plan?: string | null
+          referred_user_id: string
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          plan?: string | null
+          referred_user_id?: string
+          referrer_id?: string
+          status?: string
         }
         Relationships: []
       }
@@ -337,11 +605,51 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawals: {
+        Row: {
+          account_number: string
+          admin_note: string | null
+          amount: number
+          id: string
+          method: string
+          paid_at: string | null
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          admin_note?: string | null
+          amount: number
+          id?: string
+          method: string
+          paid_at?: string | null
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          admin_note?: string | null
+          amount?: number
+          id?: string
+          method?: string
+          paid_at?: string | null
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_project_role: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: Database["public"]["Enums"]["project_role"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -349,9 +657,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_project_member: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"
+      project_role: "admin" | "engineer" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -480,6 +793,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      project_role: ["admin", "engineer", "viewer"],
     },
   },
 } as const
