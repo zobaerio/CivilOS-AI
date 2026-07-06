@@ -28,6 +28,12 @@ import ComingSoonPage from "./pages/ComingSoonPage.tsx";
 import AIEngineerPage from "./pages/AIEngineerPage.tsx";
 import BOQHubPage from "./pages/BOQHubPage.tsx";
 import RateAnalysisPage from "./pages/RateAnalysisPage.tsx";
+import ProjectDetailPage from "./pages/ProjectDetailPage.tsx";
+import NotificationsPage from "./pages/NotificationsPage.tsx";
+import NotificationSettingsPage from "./pages/NotificationSettingsPage.tsx";
+import AffiliatePage from "./pages/AffiliatePage.tsx";
+import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
+import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -53,6 +59,7 @@ const App = () => (
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/:id" element={<ProjectDetailPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/ai-assistant" element={<AIAssistantPage />} />
               <Route path="/ai-engineer" element={<AIEngineerPage />} />
@@ -65,10 +72,15 @@ const App = () => (
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/sponsor" element={<SponsorPage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
+              <Route path="/affiliate" element={<AffiliatePage />} />
+              <Route path="/admin/affiliate" element={<AdminAffiliatePage />} />
+              <Route path="/invite" element={<InviteAcceptPage />} />
               <Route path="/share/:token" element={<SharedEstimatePage />} />
-              {/* Day 1 module stubs — Coming Soon */}
+              {/* Coming Soon stubs */}
               {[
-                "notifications","ai-writer","ai-drawing","bbs","material-calc",
+                "ai-writer","ai-drawing","bbs","material-calc",
                 "progress-reports","inspections","site-photos","tender-docs","bid-prep",
                 "inventory","requisitions","purchase-orders","vendors","equipment",
                 "invoices","contractor-bills","payments","cash-flow",
