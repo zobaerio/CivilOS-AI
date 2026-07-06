@@ -28,6 +28,12 @@ import ComingSoonPage from "./pages/ComingSoonPage.tsx";
 import AIEngineerPage from "./pages/AIEngineerPage.tsx";
 import BOQHubPage from "./pages/BOQHubPage.tsx";
 import RateAnalysisPage from "./pages/RateAnalysisPage.tsx";
+import ProjectDetailPage from "./pages/ProjectDetailPage.tsx";
+import NotificationsPage from "./pages/NotificationsPage.tsx";
+import NotificationSettingsPage from "./pages/NotificationSettingsPage.tsx";
+import AffiliatePage from "./pages/AffiliatePage.tsx";
+import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
+import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
