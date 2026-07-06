@@ -90,9 +90,9 @@ export default function AffiliatePage() {
               </div>
               <p className="text-xs text-muted-foreground">Code: <b>{profile?.referral_code}</b></p>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={()=>share("fb")}><Facebook className="h-4 w-4"/>Facebook</Button>
+                <Button size="sm" variant="outline" onClick={()=>share("fb")}><Share2 className="h-4 w-4"/>Facebook</Button>
                 <Button size="sm" variant="outline" onClick={()=>share("wa")}><MessageCircle className="h-4 w-4"/>WhatsApp</Button>
-                <Button size="sm" variant="outline" onClick={()=>share("li")}><Linkedin className="h-4 w-4"/>LinkedIn</Button>
+                <Button size="sm" variant="outline" onClick={()=>share("li")}><Share2 className="h-4 w-4"/>LinkedIn</Button>
               </div>
             </CardContent>
           </Card>
