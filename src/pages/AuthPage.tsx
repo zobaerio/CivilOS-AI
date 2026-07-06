@@ -29,12 +29,13 @@ const AuthPage = () => {
     setLoading(true);
     try {
       if (mode === "signup") {
+        const ref = new URLSearchParams(window.location.search).get("ref") || undefined;
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/projects`,
-            data: { display_name: displayName || email.split("@")[0] },
+            data: { display_name: displayName || email.split("@")[0], ref },
           },
         });
         if (error) throw error;
