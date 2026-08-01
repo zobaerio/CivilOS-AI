@@ -112,6 +112,12 @@ const Navbar = () => {
             <Link to="/projects" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               My Projects
             </Link>
+            <Link to="/notification-settings" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Notification Settings
+            </Link>
+            <Link to="/affiliate" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Affiliate Program
+            </Link>
             <Link to="/profile" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               Profile
             </Link>
