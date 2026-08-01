@@ -34,6 +34,7 @@ import NotificationSettingsPage from "./pages/NotificationSettingsPage.tsx";
 import AffiliatePage from "./pages/AffiliatePage.tsx";
 import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
 import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
+import ModulesPage from "./pages/ModulesPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -60,7 +61,9 @@ const App = () => (
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/projects/:id" element={<ProjectDetailPage />} />
+              <Route path="/modules" element={<ModulesPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+
               <Route path="/ai-assistant" element={<AIAssistantPage />} />
               <Route path="/ai-engineer" element={<AIEngineerPage />} />
               <Route path="/boq-hub" element={<BOQHubPage />} />
