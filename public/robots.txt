@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/affiliate
+Disallow: /invite
+Disallow: /share/
+Disallow: /profile
+Disallow: /settings/
 
-Sitemap: https://plan-pro-estimate.lovable.app/sitemap.xml
+Sitemap: https://civilosai.lovable.app/sitemap.xml
