@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, LogOut, FolderOpen, User } from "lucide-react";
+import { Menu, X, Globe, LogOut, FolderOpen, User, Bell } from "lucide-react";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
@@ -64,6 +64,9 @@ const Navbar = () => {
                 <Link to="/projects"><FolderOpen className="h-4 w-4 mr-1" /> Projects</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
+                <Link to="/notification-settings"><Bell className="h-4 w-4 mr-1" /> Notifications</Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile"><User className="h-4 w-4 mr-1" /> Profile</Link>
               </Button>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
@@ -108,6 +111,12 @@ const Navbar = () => {
           <>
             <Link to="/projects" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               My Projects
+            </Link>
+            <Link to="/notification-settings" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Notification Settings
+            </Link>
+            <Link to="/affiliate" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Affiliate Program
             </Link>
             <Link to="/profile" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               Profile
