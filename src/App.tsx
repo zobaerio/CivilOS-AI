@@ -34,6 +34,7 @@ import NotificationSettingsPage from "./pages/NotificationSettingsPage.tsx";
 import AffiliatePage from "./pages/AffiliatePage.tsx";
 import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
 import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
+import ModulesPage from "./pages/ModulesPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
