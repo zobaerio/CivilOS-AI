@@ -1,11 +1,17 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useI18n } from "@/lib/i18n";
 
 const AboutPage = () => {
   const { t } = useI18n();
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="About"
+        description="CivilOS AI is an AI civil engineering workspace for Bangladesh — construction estimates, BOQ, BNBC 2022 analysis. Developed by Md Zobaer Hasan."
+        path="/about"
+      />
       <Navbar />
       <main className="flex-1 py-16">
         <div className="container max-w-2xl space-y-6">
