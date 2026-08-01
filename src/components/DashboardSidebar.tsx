@@ -67,6 +67,8 @@ const groups: Group[] = [
   { label: "⚙️ Settings", items: [
     { title: "Profile", url: "/profile", icon: User },
     { title: "Company Settings", url: "/company-settings", icon: Building2 },
+    { title: "Notification Settings", url: "/notification-settings", icon: Bell },
+    { title: "Affiliate Program", url: "/affiliate", icon: Sparkles },
     { title: "Admin Dashboard", url: "/admin", icon: Shield },
     { title: "New Estimate", url: "/upload", icon: Upload },
   ]},

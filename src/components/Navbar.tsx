@@ -64,6 +64,9 @@ const Navbar = () => {
                 <Link to="/projects"><FolderOpen className="h-4 w-4 mr-1" /> Projects</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
+                <Link to="/notification-settings"><Bell className="h-4 w-4 mr-1" /> Notifications</Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile"><User className="h-4 w-4 mr-1" /> Profile</Link>
               </Button>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
