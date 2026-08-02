@@ -64,7 +64,7 @@ const Navbar = () => {
                 <Link to="/projects"><FolderOpen className="h-4 w-4 mr-1" /> Projects</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/notification-settings"><Bell className="h-4 w-4 mr-1" /> Notifications</Link>
+                <Link to="/settings/notifications"><Bell className="h-4 w-4 mr-1" /> Notifications</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile"><User className="h-4 w-4 mr-1" /> Profile</Link>
@@ -112,7 +112,7 @@ const Navbar = () => {
             <Link to="/projects" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               My Projects
             </Link>
-            <Link to="/notification-settings" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+            <Link to="/settings/notifications" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               Notification Settings
             </Link>
             <Link to="/affiliate" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
