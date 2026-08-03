@@ -82,6 +82,8 @@ const App = () => (
               <Route path="/affiliate" element={<AffiliatePage />} />
               <Route path="/admin/affiliate" element={<AdminAffiliatePage />} />
               <Route path="/invite" element={<InviteAcceptPage />} />
+              <Route path="/billing" element={<BillingPage />} />
+              <Route path="/admin/billing" element={<AdminBillingPage />} />
               <Route path="/share/:token" element={<SharedEstimatePage />} />
               {/* Coming Soon stubs */}
               {[
