@@ -105,7 +105,7 @@ const DashboardPage = () => {
               </form>
               <div className="flex-1 sm:hidden" />
               <Button size="sm" variant="outline" asChild className="hidden md:inline-flex gap-1.5">
-                <Link to="/#pricing"><Crown className="h-3.5 w-3.5 text-amber-500" /> Upgrade</Link>
+                <Link to="/billing"><Crown className="h-3.5 w-3.5 text-amber-500" /> Upgrade</Link>
               </Button>
               <NotificationBell />
               <ThemeToggle />
