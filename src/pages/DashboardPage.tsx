@@ -14,6 +14,8 @@ import {
   Crown,
 } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Progress } from "@/components/ui/progress";
+import { useSubscription, formatLimit } from "@/lib/subscription";
 
 interface ProjectRow {
   id: string;
