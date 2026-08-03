@@ -46,6 +46,12 @@ const DashboardPage = () => {
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { plan, activeSub, usage, limitOf, percentUsed } = useSubscription();
+  const planUsage = [
+    { label: "AI credits", used: usage.ai_credits, limit: limitOf("ai_credits"), pct: percentUsed("ai_credits", "ai_credits") },
+    { label: "Projects", used: usage.projects, limit: limitOf("projects"), pct: percentUsed("projects", "projects") },
+    { label: "Storage (MB)", used: Math.round(usage.storage_mb), limit: limitOf("storage_mb"), pct: percentUsed("storage_mb", "storage_mb") },
+  ];
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
