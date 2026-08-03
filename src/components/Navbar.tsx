@@ -61,10 +61,10 @@ const Navbar = () => {
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/projects"><FolderOpen className="h-4 w-4 mr-1" /> Projects</Link>
+                <Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-1" /> Dashboard</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/settings/notifications"><Bell className="h-4 w-4 mr-1" /> Notifications</Link>
+                <Link to="/billing"><CreditCard className="h-4 w-4 mr-1" /> Plans</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile"><User className="h-4 w-4 mr-1" /> Profile</Link>
