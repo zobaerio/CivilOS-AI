@@ -4,27 +4,27 @@ import { Link } from "react-router-dom";
 
 const tiers = [
   {
-    name: "Free", price: "৳0", period: "/month", cta: "Get Started Free", to: "/auth",
+    name: "Free", price: "৳0", period: "/month", cta: "Get Started Free", to: "/billing",
     highlight: false,
-    features: ["3 projects", "Basic BOQ Generator", "20 AI queries / month", "Community support"],
-    disabled: ["PDF/Excel export", "BNBC load reports"],
+    features: ["3 projects", "Basic BOQ Generator", "50 AI credits / month", "Community support"],
+    disabled: ["AI Drawing & AI Writer", "Analytics & finance modules"],
   },
   {
-    name: "Starter", price: "৳999", period: "/month", cta: "Start Starter", to: "/auth",
+    name: "Starter", price: "৳499", period: "/month", cta: "Start Starter", to: "/billing",
     highlight: false,
-    features: ["15 projects", "BOQ + Rate Analysis", "200 AI queries / month", "PDF export", "Email support"],
+    features: ["15 projects", "BOQ + Rate Analysis", "1,000 AI credits / month", "PDF & Excel export", "Email support"],
     disabled: [],
   },
   {
-    name: "Professional", price: "৳2,499", period: "/month", cta: "Go Professional", to: "/auth",
+    name: "Professional", price: "৳1,999", period: "/month", cta: "Go Professional", to: "/billing",
     highlight: true,
-    features: ["Unlimited projects", "All AI modules", "Unlimited AI queries", "PDF + Excel + CSV export", "BNBC 2022 compliance", "Priority support"],
+    features: ["Unlimited projects", "All AI modules incl. AI Drawing", "10,000 AI credits / month", "Tender, analytics & finance", "BNBC 2022 compliance", "Team collaboration"],
     disabled: [],
   },
   {
-    name: "Enterprise", price: "Custom", period: "", cta: "Contact Sales", to: "/contact",
+    name: "Business", price: "৳4,999", period: "/month", cta: "Contact Sales", to: "/contact",
     highlight: false,
-    features: ["Everything in Professional", "Team seats & roles", "On-prem / private cloud", "Custom integrations", "Dedicated manager"],
+    features: ["Everything in Professional", "Unlimited team seats", "Company management & roles", "Advanced analytics", "Priority AI processing", "Dedicated manager"],
     disabled: [],
   },
 ];
