@@ -109,6 +109,12 @@ const Navbar = () => {
         ))}
         {user && (
           <>
+            <Link to="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Dashboard
+            </Link>
+            <Link to="/billing" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Plans &amp; Billing
+            </Link>
             <Link to="/projects" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               My Projects
             </Link>
