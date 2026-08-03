@@ -183,6 +183,132 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          billing_cycle: string
+          created_at: string
+          currency: string
+          id: string
+          invoice_number: string
+          payment_method: string | null
+          payment_provider: string
+          plan_id: string | null
+          sender_number: string | null
+          status: string
+          subscription_id: string | null
+          transaction_id: string | null
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          billing_cycle?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_number?: string
+          payment_method?: string | null
+          payment_provider?: string
+          plan_id?: string | null
+          sender_number?: string | null
+          status?: string
+          subscription_id?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          billing_cycle?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_number?: string
+          payment_method?: string | null
+          payment_provider?: string
+          plan_id?: string | null
+          sender_number?: string | null
+          status?: string
+          subscription_id?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          code: string
+          created_at: string
+          currency: string
+          features: Json
+          id: string
+          is_active: boolean
+          is_popular: boolean
+          limits: Json
+          name: string
+          price_monthly: number
+          price_yearly: number
+          sort_order: number
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          currency?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_popular?: boolean
+          limits?: Json
+          name: string
+          price_monthly?: number
+          price_yearly?: number
+          sort_order?: number
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          currency?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_popular?: boolean
+          limits?: Json
+          name?: string
+          price_monthly?: number
+          price_yearly?: number
+          sort_order?: number
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -545,6 +671,59 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          billing_cycle: string
+          cancelled_at: string | null
+          created_at: string
+          id: string
+          payment_provider: string | null
+          plan_id: string
+          provider_subscription_id: string | null
+          renewal_date: string | null
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string
+          cancelled_at?: string | null
+          created_at?: string
+          id?: string
+          payment_provider?: string | null
+          plan_id: string
+          provider_subscription_id?: string | null
+          renewal_date?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string
+          cancelled_at?: string | null
+          created_at?: string
+          id?: string
+          payment_provider?: string | null
+          plan_id?: string
+          provider_subscription_id?: string | null
+          renewal_date?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tender_analyses: {
         Row: {
           boq_items: Json | null
@@ -579,6 +758,51 @@ export type Database = {
           source_text?: string | null
           summary?: string | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_records: {
+        Row: {
+          ai_credits: number
+          bbs_generations: number
+          boq_generations: number
+          created_at: string
+          drawings: number
+          id: string
+          period: string
+          projects: number
+          reports: number
+          storage_mb: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_credits?: number
+          bbs_generations?: number
+          boq_generations?: number
+          created_at?: string
+          drawings?: number
+          id?: string
+          period?: string
+          projects?: number
+          reports?: number
+          storage_mb?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_credits?: number
+          bbs_generations?: number
+          boq_generations?: number
+          created_at?: string
+          drawings?: number
+          id?: string
+          period?: string
+          projects?: number
+          reports?: number
+          storage_mb?: number
           updated_at?: string
           user_id?: string
         }
