@@ -1,85 +1,81 @@
+import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard, FolderOpen, Bell, Bot, FileSearch, PenTool, Ruler,
-  Calculator, ClipboardList, Hammer, Camera, ClipboardCheck, FileText,
-  Package, ShoppingCart, Truck, Wrench, Receipt, Wallet, TrendingUp,
-  BarChart3, Lightbulb, FileBarChart, User, Building2, Shield, Sparkles,
-  Upload,
-} from "lucide-react";
+import { ChevronRight, Lock, Wrench, Sparkles, CreditCard } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
-  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
+  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useSubscription } from "@/lib/subscription";
+import {
+  topNav, bottomNav, constructionTools, analyticsNav, settingsNav,
+  findActiveCategory, type NavCategory,
+} from "@/lib/navigation";
 import aiLogo from "@/assets/ai-logo.png";
 
-type Item = { title: string; url: string; icon: any };
-type Group = { label: string; items: Item[] };
+function CategoryGroup({
+  cat, collapsed, pathname, locked,
+}: { cat: NavCategory; collapsed: boolean; pathname: string; locked: (f?: string) => boolean }) {
+  const active = cat.items.some((i) => i.url === pathname);
+  const [open, setOpen] = useState(active);
+  useEffect(() => { if (active) setOpen(true); }, [active]);
 
-const groups: Group[] = [
-  { label: "📊 Overview", items: [
-    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-    { title: "All Modules", url: "/modules", icon: Sparkles },
-    { title: "My Projects", url: "/projects", icon: FolderOpen },
-    { title: "Notifications", url: "/notifications", icon: Bell },
-  ]},
-  { label: "🤖 AI Workspace", items: [
-    { title: "AI Engineering Assistant", url: "/ai-engineer", icon: Bot },
-    { title: "AI Engineer Chat", url: "/ai-assistant", icon: Bot },
-    { title: "File AI Analyzer", url: "/file-assistant", icon: FileSearch },
-    { title: "AI Office Writer", url: "/ai-writer", icon: PenTool },
-    { title: "AI Drawing Reader", url: "/ai-drawing", icon: Ruler },
-  ]},
-  { label: "📐 Quantity Surveying", items: [
-    { title: "BOQ Hub", url: "/boq-hub", icon: Calculator },
-    { title: "BOQ Generator (Lite)", url: "/boq", icon: Calculator },
-    { title: "Rate Analysis", url: "/rate-analysis", icon: ClipboardList },
-    { title: "BBS Generator", url: "/bbs", icon: Ruler },
-    { title: "Material Calculator", url: "/material-calc", icon: Calculator },
-  ]},
-  { label: "🏗️ Site Management", items: [
-    { title: "Site Diary", url: "/site-diary", icon: Hammer },
-    { title: "Progress Reports", url: "/progress-reports", icon: ClipboardCheck },
-    { title: "Site Inspections", url: "/inspections", icon: ClipboardCheck },
-    { title: "Photo Upload", url: "/site-photos", icon: Camera },
-  ]},
-  { label: "📋 Tender", items: [
-    { title: "Tender Analyzer", url: "/tender", icon: ClipboardList },
-    { title: "Document Checker", url: "/tender-docs", icon: FileText },
-    { title: "Bid Preparation", url: "/bid-prep", icon: FileText },
-  ]},
-  { label: "🏭 Construction ERP", items: [
-    { title: "Inventory", url: "/inventory", icon: Package },
-    { title: "Requisitions", url: "/requisitions", icon: ClipboardList },
-    { title: "Purchase Orders", url: "/purchase-orders", icon: ShoppingCart },
-    { title: "Vendors", url: "/vendors", icon: Truck },
-    { title: "Equipment", url: "/equipment", icon: Wrench },
-  ]},
-  { label: "💰 Finance", items: [
-    { title: "Invoices", url: "/invoices", icon: Receipt },
-    { title: "Contractor Bills", url: "/contractor-bills", icon: Receipt },
-    { title: "Payments", url: "/payments", icon: Wallet },
-    { title: "Cash Flow", url: "/cash-flow", icon: TrendingUp },
-  ]},
-  { label: "📊 Analytics", items: [
-    { title: "Project Analytics", url: "/analytics", icon: BarChart3 },
-    { title: "AI Insights", url: "/ai-insights", icon: Lightbulb },
-    { title: "Reports Center", url: "/reports", icon: FileBarChart },
-  ]},
-  { label: "⚙️ Settings", items: [
-    { title: "Profile", url: "/profile", icon: User },
-    { title: "Company Settings", url: "/company-settings", icon: Building2 },
-    { title: "Notification Settings", url: "/settings/notifications", icon: Bell },
-    { title: "Affiliate Program", url: "/affiliate", icon: Sparkles },
-    { title: "Admin Dashboard", url: "/admin", icon: Shield },
-    { title: "New Estimate", url: "/upload", icon: Upload },
-  ]},
-];
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton isActive={active && !open} tooltip={cat.label} className="justify-between">
+            <span className="flex items-center gap-2 min-w-0">
+              <cat.icon className="h-4 w-4 shrink-0" />
+              {!collapsed && <span className="truncate">{cat.label}</span>}
+            </span>
+            {!collapsed && (
+              <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ${open ? "rotate-90" : ""}`} />
+            )}
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        {!collapsed && (
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+            <SidebarMenuSub>
+              {cat.items.map((item) => (
+                <SidebarMenuSubItem key={item.url + item.title}>
+                  <SidebarMenuSubButton asChild isActive={pathname === item.url}>
+                    <NavLink to={item.url} className="flex items-center justify-between gap-2">
+                      <span className="truncate">{item.title}</span>
+                      {locked(item.feature) && <Lock className="h-3 w-3 shrink-0 text-muted-foreground" />}
+                    </NavLink>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        )}
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
 
 export function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { pathname } = useLocation();
-  const isActive = (p: string) => pathname === p;
+  const { user } = useAuth();
+  const { plan, hasFeature } = useSubscription();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
+
+  const locked = (feature?: string) => !!feature && !hasFeature(feature);
+  const toolsActive = findActiveCategory(pathname) !== null;
+  const [toolsOpen, setToolsOpen] = useState(toolsActive);
+  useEffect(() => { if (toolsActive) setToolsOpen(true); }, [toolsActive]);
 
   return (
     <Sidebar collapsible="icon">
@@ -89,43 +85,93 @@ export function DashboardSidebar() {
           {!collapsed && (
             <div className="min-w-0 flex-1">
               <p className="font-heading text-sm font-bold leading-tight truncate">CivilOS AI</p>
-              <p className="text-[10px] text-muted-foreground leading-tight truncate">v1.0 · AI OS for Civil Engineers</p>
+              <p className="text-[10px] text-muted-foreground leading-tight truncate">
+                The AI Operating System for Civil Engineers
+              </p>
             </div>
           )}
         </div>
       </SidebarHeader>
+
       <SidebarContent>
-        {groups.map((g) => (
-          <SidebarGroup key={g.label}>
-            {!collapsed && <SidebarGroupLabel className="text-[10px] uppercase tracking-wider">{g.label}</SidebarGroupLabel>}
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {g.items.map((item) => (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                      <NavLink to={item.url} className="flex items-center gap-2">
-                        <item.icon className="h-4 w-4 shrink-0" />
-                        {!collapsed && <span className="truncate">{item.title}</span>}
-                      </NavLink>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {topNav.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
+                    <NavLink to={item.url} className="flex items-center gap-2">
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span className="truncate">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          {!collapsed && (
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-wider">Workspace</SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <Collapsible open={collapsed ? true : toolsOpen} onOpenChange={setToolsOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip="Construction Tools" className="justify-between font-medium">
+                      <span className="flex items-center gap-2 min-w-0">
+                        <Wrench className="h-4 w-4 shrink-0" />
+                        {!collapsed && <span className="truncate">Construction Tools</span>}
+                      </span>
+                      {!collapsed && (
+                        <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ${toolsOpen ? "rotate-90" : ""}`} />
+                      )}
                     </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                    <SidebarMenu className={collapsed ? "" : "ml-2 border-l pl-1"}>
+                      {constructionTools.map((cat) => (
+                        <CategoryGroup key={cat.label} cat={cat} collapsed={collapsed} pathname={pathname} locked={locked} />
+                      ))}
+                    </SidebarMenu>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              <CategoryGroup cat={analyticsNav} collapsed={collapsed} pathname={pathname} locked={locked} />
+
+              {bottomNav.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
+                    <NavLink to={item.url} className="flex items-center gap-2">
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span className="truncate">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+
+              <CategoryGroup
+                cat={{ ...settingsNav, items: settingsNav.items.filter((i) => !i.adminOnly || isAdmin) }}
+                collapsed={collapsed} pathname={pathname} locked={locked}
+              />
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         {!collapsed && (
-          <div className="p-3">
-            <div className="rounded-lg border bg-gradient-to-br from-accent/10 to-primary/10 p-3 space-y-2">
+          <div className="p-3 mt-auto">
+            <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold">
-                <Sparkles className="h-3.5 w-3.5 text-accent" /> Upgrade Plan
+                <Sparkles className="h-3.5 w-3.5 text-accent" /> {plan?.name || "Free"} plan
               </div>
               <p className="text-[11px] text-muted-foreground leading-snug">
-                Unlock unlimited AI queries, exports & team seats.
+                Unlock AI Drawing, AI Writer, analytics & team seats.
               </p>
-              <NavLink to="/#pricing" className="block text-[11px] font-semibold text-accent hover:underline">
-                View pricing →
+              <NavLink to="/billing" className="inline-flex items-center gap-1 text-[11px] font-semibold text-accent hover:underline">
+                <CreditCard className="h-3 w-3" /> Plans &amp; Billing
               </NavLink>
             </div>
           </div>
