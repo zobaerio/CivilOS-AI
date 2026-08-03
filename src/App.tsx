@@ -35,6 +35,8 @@ import AffiliatePage from "./pages/AffiliatePage.tsx";
 import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
 import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
 import ModulesPage from "./pages/ModulesPage.tsx";
+import BillingPage from "./pages/BillingPage.tsx";
+import AdminBillingPage from "./pages/AdminBillingPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
@@ -80,6 +82,8 @@ const App = () => (
               <Route path="/affiliate" element={<AffiliatePage />} />
               <Route path="/admin/affiliate" element={<AdminAffiliatePage />} />
               <Route path="/invite" element={<InviteAcceptPage />} />
+              <Route path="/billing" element={<BillingPage />} />
+              <Route path="/admin/billing" element={<AdminBillingPage />} />
               <Route path="/share/:token" element={<SharedEstimatePage />} />
               {/* Coming Soon stubs */}
               {[

@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, LogOut, FolderOpen, User, Bell } from "lucide-react";
+import { Menu, X, Globe, LogOut, FolderOpen, User, Bell, LayoutDashboard, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
@@ -61,10 +61,10 @@ const Navbar = () => {
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/projects"><FolderOpen className="h-4 w-4 mr-1" /> Projects</Link>
+                <Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-1" /> Dashboard</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/settings/notifications"><Bell className="h-4 w-4 mr-1" /> Notifications</Link>
+                <Link to="/billing"><CreditCard className="h-4 w-4 mr-1" /> Plans</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile"><User className="h-4 w-4 mr-1" /> Profile</Link>
@@ -109,6 +109,12 @@ const Navbar = () => {
         ))}
         {user && (
           <>
+            <Link to="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Dashboard
+            </Link>
+            <Link to="/billing" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
+              Plans &amp; Billing
+            </Link>
             <Link to="/projects" onClick={() => setOpen(false)} className="block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted">
               My Projects
             </Link>

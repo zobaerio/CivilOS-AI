@@ -14,6 +14,8 @@ import {
   Crown,
 } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Progress } from "@/components/ui/progress";
+import { useSubscription, formatLimit } from "@/lib/subscription";
 
 interface ProjectRow {
   id: string;
@@ -44,6 +46,12 @@ const DashboardPage = () => {
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { plan, activeSub, usage, limitOf, percentUsed } = useSubscription();
+  const planUsage = [
+    { label: "AI credits", used: usage.ai_credits, limit: limitOf("ai_credits"), pct: percentUsed("ai_credits", "ai_credits") },
+    { label: "Projects", used: usage.projects, limit: limitOf("projects"), pct: percentUsed("projects", "projects") },
+    { label: "Storage (MB)", used: Math.round(usage.storage_mb), limit: limitOf("storage_mb"), pct: percentUsed("storage_mb", "storage_mb") },
+  ];
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -105,7 +113,7 @@ const DashboardPage = () => {
               </form>
               <div className="flex-1 sm:hidden" />
               <Button size="sm" variant="outline" asChild className="hidden md:inline-flex gap-1.5">
-                <Link to="/#pricing"><Crown className="h-3.5 w-3.5 text-amber-500" /> Upgrade</Link>
+                <Link to="/billing"><Crown className="h-3.5 w-3.5 text-amber-500" /> Upgrade</Link>
               </Button>
               <NotificationBell />
               <ThemeToggle />
@@ -148,7 +156,8 @@ const DashboardPage = () => {
                 ))}
               </section>
 
-              {/* Stats */}
+
+              {/* Stats + current plan */}
               <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {stats.map((s) => (
                   <div key={s.label} className="rounded-xl border bg-card p-4 space-y-2">
@@ -160,6 +169,40 @@ const DashboardPage = () => {
                   </div>
                 ))}
               </section>
+
+              <section className="rounded-xl border bg-card p-4 md:p-5">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Your plan</p>
+                    <p className="font-heading text-xl font-bold flex items-center gap-2">
+                      <Crown className="h-4 w-4 text-amber-500" /> {plan?.name || "Free"}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {activeSub?.renewal_date
+                        ? `Renews ${new Date(activeSub.renewal_date).toLocaleDateString()}`
+                        : "Free plan — upgrade any time"}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" asChild><Link to="/billing">Manage plan</Link></Button>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3 mt-4">
+                  {planUsage.map((u) => (
+                    <div key={u.label} className="space-y-1">
+                      <div className="flex justify-between text-[11px]">
+                        <span>{u.label}</span>
+                        <span className="text-muted-foreground">{u.used} / {formatLimit(u.limit)}</span>
+                      </div>
+                      <Progress value={u.pct} className="h-1.5" />
+                    </div>
+                  ))}
+                </div>
+                {planUsage.some((u) => u.pct >= 85) && (
+                  <p className="text-[11px] text-amber-600 mt-3">
+                    You are close to a plan limit. <Link to="/billing" className="underline font-medium">Upgrade plan</Link>
+                  </p>
+                )}
+              </section>
+
 
               {/* Project management section */}
               <section className="rounded-xl border bg-card">
