@@ -35,6 +35,8 @@ import AffiliatePage from "./pages/AffiliatePage.tsx";
 import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
 import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
 import ModulesPage from "./pages/ModulesPage.tsx";
+import BillingPage from "./pages/BillingPage.tsx";
+import AdminBillingPage from "./pages/AdminBillingPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 
