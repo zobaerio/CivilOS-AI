@@ -148,7 +148,8 @@ const DashboardPage = () => {
                 ))}
               </section>
 
-              {/* Stats */}
+
+              {/* Stats + current plan */}
               <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {stats.map((s) => (
                   <div key={s.label} className="rounded-xl border bg-card p-4 space-y-2">
@@ -160,6 +161,40 @@ const DashboardPage = () => {
                   </div>
                 ))}
               </section>
+
+              <section className="rounded-xl border bg-card p-4 md:p-5">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Your plan</p>
+                    <p className="font-heading text-xl font-bold flex items-center gap-2">
+                      <Crown className="h-4 w-4 text-amber-500" /> {plan?.name || "Free"}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {activeSub?.renewal_date
+                        ? `Renews ${new Date(activeSub.renewal_date).toLocaleDateString()}`
+                        : "Free plan — upgrade any time"}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" asChild><Link to="/billing">Manage plan</Link></Button>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3 mt-4">
+                  {planUsage.map((u) => (
+                    <div key={u.label} className="space-y-1">
+                      <div className="flex justify-between text-[11px]">
+                        <span>{u.label}</span>
+                        <span className="text-muted-foreground">{u.used} / {formatLimit(u.limit)}</span>
+                      </div>
+                      <Progress value={u.pct} className="h-1.5" />
+                    </div>
+                  ))}
+                </div>
+                {planUsage.some((u) => u.pct >= 85) && (
+                  <p className="text-[11px] text-amber-600 mt-3">
+                    You are close to a plan limit. <Link to="/billing" className="underline font-medium">Upgrade plan</Link>
+                  </p>
+                )}
+              </section>
+
 
               {/* Project management section */}
               <section className="rounded-xl border bg-card">
