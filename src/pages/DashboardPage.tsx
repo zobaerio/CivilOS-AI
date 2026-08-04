@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import SEO from "@/components/SEO";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSubscription, formatLimit } from "@/lib/subscription";
 
 interface ProjectRow {
@@ -217,7 +218,15 @@ const DashboardPage = () => {
                 </div>
                 <div className="p-4 md:p-5">
                   {loading ? (
-                    <p className="text-sm text-muted-foreground text-center py-8">Loading…</p>
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" aria-label="Loading recent projects">
+                      {[0, 1, 2].map((item) => (
+                        <div key={item} className="space-y-3 rounded-lg border bg-background p-4">
+                          <Skeleton className="h-4 w-2/3" />
+                          <Skeleton className="h-3 w-1/2" />
+                          <Skeleton className="h-2.5 w-1/3" />
+                        </div>
+                      ))}
+                    </div>
                   ) : projects.length === 0 ? (
                     <div className="text-center py-10 space-y-3">
                       <FolderOpen className="h-10 w-10 text-muted-foreground/40 mx-auto" />

@@ -1,10 +1,21 @@
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
+import AppErrorBoundary from "./components/AppErrorBoundary.tsx";
 import "./index.css";
 
-createRoot(document.getElementById("root")!).render(
+const rootElement = document.getElementById("root");
+
+if (!rootElement) throw new Error("Application root was not found");
+
+createRoot(rootElement).render(
   <HelmetProvider>
-    <App />
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
   </HelmetProvider>
 );
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => window.dispatchEvent(new Event("civilos:ready")));
+});

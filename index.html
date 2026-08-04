@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111d51" />
     <title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD</title>
     <meta name="description" content="Instant AI construction cost estimate for Bangladesh — BOQ, BNBC 2022 load analysis, rebar design, rate analysis, tender & site diary. Prices in BDT.">
     <meta name="keywords" content="construction cost estimate Bangladesh, building estimate BD, BOQ generator, BNBC 2022, rate analysis, BBS calculator, tender analysis, RCC design Bangladesh, CivilOS AI" />
@@ -67,9 +68,37 @@
     "founder": { "@type": "Person", "name": "Md Zobaer Hasan" }
   }
   </script>
+    <style>
+      #civilos-boot{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#f8f9fc;color:#111827;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:opacity 200ms ease}
+      #civilos-boot.boot-exit{opacity:0;pointer-events:none}
+      .boot-content{display:flex;flex-direction:column;align-items:center;padding:24px;text-align:center}
+      .boot-logo{position:relative;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:#17245e;color:#fff;font-size:23px;font-weight:800;box-shadow:0 10px 28px rgba(17,29,81,.18)}
+      .boot-logo:after{content:"";position:absolute;right:-4px;bottom:-4px;width:17px;height:17px;border:3px solid #f8f9fc;border-radius:6px;background:#f97316}
+      .boot-title{margin:18px 0 4px;font-size:21px;line-height:1.2;font-weight:750}
+      .boot-tagline{margin:0;color:#667085;font-size:12px}
+      .boot-label{margin:22px 0 9px;color:#667085;font-size:11px}
+      .boot-track{width:116px;height:4px;overflow:hidden;border-radius:9px;background:#e5e7eb}
+      .boot-bar{width:48%;height:100%;border-radius:9px;background:#f97316;animation:boot-slide .9s ease-in-out infinite}
+      @keyframes boot-slide{0%{transform:translateX(-110%)}100%{transform:translateX(220%)}}
+      @media(prefers-color-scheme:dark){#civilos-boot{background:#0d1020;color:#f8fafc}.boot-logo:after{border-color:#0d1020}.boot-tagline,.boot-label{color:#a5adbd}.boot-track{background:#262b3b}}
+      @media(prefers-reduced-motion:reduce){#civilos-boot{transition:none}.boot-bar{animation-duration:1.8s}}
+    </style>
 </head>
   <body>
+    <div id="civilos-boot" role="status" aria-live="polite" aria-label="Loading CivilOS AI">
+      <div class="boot-content">
+        <div class="boot-logo" aria-hidden="true">C</div>
+        <h1 class="boot-title">CivilOS AI</h1>
+        <p class="boot-tagline">The AI Operating System for Civil Engineers</p>
+        <p class="boot-label">Loading workspace…</p>
+        <div class="boot-track" aria-hidden="true"><div class="boot-bar"></div></div>
+      </div>
+    </div>
     <div id="root"></div>
+    <script>
+      window.addEventListener("civilos:ready",function(){var splash=document.getElementById("civilos-boot");if(!splash)return;splash.classList.add("boot-exit");setTimeout(function(){splash.remove()},220)},{once:true});
+      window.setTimeout(function(){var label=document.querySelector(".boot-label");if(label)label.textContent="Still loading — check your connection…"},10000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -6,38 +7,40 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { I18nProvider } from "@/lib/i18n";
 import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import UploadPage from "./pages/UploadPage.tsx";
-import EstimatePage from "./pages/EstimatePage.tsx";
-import AboutPage from "./pages/AboutPage.tsx";
-import ContactPage from "./pages/ContactPage.tsx";
-import AuthPage from "./pages/AuthPage.tsx";
-import ProjectsPage from "./pages/ProjectsPage.tsx";
-import ProfilePage from "./pages/ProfilePage.tsx";
-import SponsorPage from "./pages/SponsorPage.tsx";
-import AdminPage from "./pages/AdminPage.tsx";
-import SharedEstimatePage from "./pages/SharedEstimatePage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx";
-import AIAssistantPage from "./pages/AIAssistantPage.tsx";
-import FileAssistantPage from "./pages/FileAssistantPage.tsx";
-import BOQGeneratorPage from "./pages/BOQGeneratorPage.tsx";
-import TenderAnalysisPage from "./pages/TenderAnalysisPage.tsx";
-import SiteDiaryPage from "./pages/SiteDiaryPage.tsx";
-import ComingSoonPage from "./pages/ComingSoonPage.tsx";
-import AIEngineerPage from "./pages/AIEngineerPage.tsx";
-import BOQHubPage from "./pages/BOQHubPage.tsx";
-import RateAnalysisPage from "./pages/RateAnalysisPage.tsx";
-import ProjectDetailPage from "./pages/ProjectDetailPage.tsx";
-import NotificationsPage from "./pages/NotificationsPage.tsx";
-import NotificationSettingsPage from "./pages/NotificationSettingsPage.tsx";
-import AffiliatePage from "./pages/AffiliatePage.tsx";
-import AdminAffiliatePage from "./pages/AdminAffiliatePage.tsx";
-import InviteAcceptPage from "./pages/InviteAcceptPage.tsx";
-import ModulesPage from "./pages/ModulesPage.tsx";
-import BillingPage from "./pages/BillingPage.tsx";
-import AdminBillingPage from "./pages/AdminBillingPage.tsx";
 import ScrollToTop from "./components/ScrollToTop";
+import AppLoading from "./components/AppLoading";
+
+const Index = lazy(() => import("./pages/Index.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const UploadPage = lazy(() => import("./pages/UploadPage.tsx"));
+const EstimatePage = lazy(() => import("./pages/EstimatePage.tsx"));
+const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));
+const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
+const AuthPage = lazy(() => import("./pages/AuthPage.tsx"));
+const ProjectsPage = lazy(() => import("./pages/ProjectsPage.tsx"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage.tsx"));
+const SponsorPage = lazy(() => import("./pages/SponsorPage.tsx"));
+const AdminPage = lazy(() => import("./pages/AdminPage.tsx"));
+const SharedEstimatePage = lazy(() => import("./pages/SharedEstimatePage.tsx"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage.tsx"));
+const AIAssistantPage = lazy(() => import("./pages/AIAssistantPage.tsx"));
+const FileAssistantPage = lazy(() => import("./pages/FileAssistantPage.tsx"));
+const BOQGeneratorPage = lazy(() => import("./pages/BOQGeneratorPage.tsx"));
+const TenderAnalysisPage = lazy(() => import("./pages/TenderAnalysisPage.tsx"));
+const SiteDiaryPage = lazy(() => import("./pages/SiteDiaryPage.tsx"));
+const ComingSoonPage = lazy(() => import("./pages/ComingSoonPage.tsx"));
+const AIEngineerPage = lazy(() => import("./pages/AIEngineerPage.tsx"));
+const BOQHubPage = lazy(() => import("./pages/BOQHubPage.tsx"));
+const RateAnalysisPage = lazy(() => import("./pages/RateAnalysisPage.tsx"));
+const ProjectDetailPage = lazy(() => import("./pages/ProjectDetailPage.tsx"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage.tsx"));
+const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage.tsx"));
+const AffiliatePage = lazy(() => import("./pages/AffiliatePage.tsx"));
+const AdminAffiliatePage = lazy(() => import("./pages/AdminAffiliatePage.tsx"));
+const InviteAcceptPage = lazy(() => import("./pages/InviteAcceptPage.tsx"));
+const ModulesPage = lazy(() => import("./pages/ModulesPage.tsx"));
+const BillingPage = lazy(() => import("./pages/BillingPage.tsx"));
+const AdminBillingPage = lazy(() => import("./pages/AdminBillingPage.tsx"));
 
 
 
@@ -53,7 +56,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
-            <Routes>
+            <Suspense fallback={<AppLoading compact />}>
+              <Routes>
 
               <Route path="/" element={<Index />} />
               <Route path="/upload" element={<UploadPage />} />
@@ -96,7 +100,8 @@ const App = () => (
                 <Route key={p} path={`/${p}`} element={<ComingSoonPage />} />
               ))}
               <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </Suspense>
           </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>
