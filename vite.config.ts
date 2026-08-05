@@ -18,27 +18,32 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      strategies: "generateSW",
-      filename: "sw.js",
-      injectRegister: null,
-      manifest: false,
-      devOptions: { enabled: false },
-      workbox: {
-        navigateFallbackDenylist: [/^\/~oauth/],
-        runtimeCaching: [
+      includeAssets: ["favicon.ico", "apple-touch-icon.png", "favicon.png"],
+      manifest: {
+        name: "CivilOS AI — Construction Cost Estimate & BNBC Analysis BD",
+        short_name: "CivilOS AI",
+        description: "AI-powered construction estimation, BOQ, BNBC analysis and project workspace for civil engineers.",
+        theme_color: "#111d51",
+        background_color: "#f8f9fc",
+        display: "standalone",
+        start_url: "/",
+        icons: [
           {
-            urlPattern: ({ request }) => request.mode === "navigate",
-            handler: "NetworkFirst",
-            options: { cacheName: "civilos-pages", networkTimeoutSeconds: 4 },
+            src: "/icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any maskable"
           },
           {
-            urlPattern: ({ request, url }) => url.origin === url.origin && ["script", "style", "image", "font"].includes(request.destination),
-            handler: "CacheFirst",
-            options: { cacheName: "civilos-assets", expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 } },
-          },
+            src: "/icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+          }
         ],
-      },
-    }),
+        categories: ["business", "productivity", "utilities"]
+      }
+    })
   ].filter(Boolean),
   resolve: {
     alias: {
