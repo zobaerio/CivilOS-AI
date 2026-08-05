@@ -16,39 +16,35 @@ export default function InviteAcceptPage() {
   const nav = useNavigate();
   const [invite, setInvite] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => { (async () => {
-    if (!token) return;
+    if (!token) { setError("Invitation link is invalid."); return; }
     if (loading) return;
     if (!user) { nav(`/auth?redirect=/invite?token=${token}`); return; }
     const { data } = await (supabase as any).from("invitations").select("*, projects(name)").eq("token", token).maybeSingle();
-    if (!data) toast.error("Invitation not found or expired");
+    if (!data) { setError("Invitation not found, expired, or assigned to another email."); return; }
     setInvite(data);
-  })(); }, [token, user, loading]);
+  })(); }, [token, user, loading, nav]);
 
   const accept = async () => {
     if (!invite || !user) return;
     setBusy(true);
-    const { error: e1 } = await (supabase as any).from("project_members").insert({
-      project_id: invite.project_id, user_id: user.id, role: invite.role, invited_by: invite.invited_by, status: "accepted",
-    });
-    if (e1) { toast.error(e1.message); setBusy(false); return; }
-    await (supabase as any).from("invitations").update({ status:"accepted", accepted_at: new Date().toISOString() }).eq("id", invite.id);
-    await supabase.from("notifications").insert({
-      user_id: invite.invited_by, type: "member_joined",
-      title: "নতুন সদস্য যোগ দিয়েছে",
-      message: `${user.email} প্রজেক্টে যোগ দিয়েছে`,
-    } as any);
+    const { data: projectId, error: acceptError } = await (supabase as any).rpc("accept_project_invitation", { _token: token });
+    if (acceptError || !projectId) { toast.error(acceptError?.message || "Could not accept invitation"); setBusy(false); return; }
     toast.success("যোগদান সফল");
-    nav(`/projects/${invite.project_id}`);
+    nav(`/projects/${projectId}`);
   };
 
   const reject = async () => {
-    await (supabase as any).from("invitations").update({ status:"rejected" }).eq("id", invite.id);
+    if (!token) return;
+    const { error: declineError } = await (supabase as any).rpc("decline_project_invitation", { _token: token });
+    if (declineError) { toast.error(declineError.message); return; }
     nav("/projects");
   };
 
-  if (loading || !invite) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin"/></div>;
+  if (loading || (!invite && !error)) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin"/></div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center p-6"><Card className="max-w-md"><CardContent className="pt-6 text-center space-y-4"><h1 className="text-xl font-bold">Invitation unavailable</h1><p className="text-sm text-muted-foreground">{error}</p><Button onClick={() => nav("/projects")}>Go to projects</Button></CardContent></Card></div>;
 
   return (
     <div className="min-h-screen flex flex-col">

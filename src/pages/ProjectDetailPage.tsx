@@ -98,16 +98,23 @@ export default function ProjectDetailPage() {
   };
 
   const sendInvite = async () => {
-    if (!inviteEmail || !id || !user) return;
+    if (!id || !user) return;
+    const normalizedEmail = inviteEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 255) {
+      return toast.error("Enter a valid email address");
+    }
     const { data, error } = await (supabase as any).from("invitations").insert({
-      project_id: id, invited_email: inviteEmail.trim().toLowerCase(), role: inviteRole, invited_by: user.id,
+      project_id: id, invited_email: normalizedEmail, role: inviteRole, invited_by: user.id,
     }).select().single();
     if (error) return toast.error(error.message);
-    // Try to notify existing user
-    const { data: p } = await supabase.from("profiles").select("id").limit(1);
-    // best-effort notification (email lookup requires admin; skip)
-    toast.success(`Invitation sent to ${inviteEmail}`);
-    await logActivity("member_invited", { email: inviteEmail, role: inviteRole });
+    const inviteUrl = `${window.location.origin}/invite?token=${encodeURIComponent(data.token)}`;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      toast.success(`Secure invite created for ${normalizedEmail}. Link copied.`);
+    } catch {
+      toast.success(`Secure invite created for ${normalizedEmail}.`);
+    }
+    await logActivity("member_invited", { email: normalizedEmail, role: inviteRole });
     setInviteEmail(""); load();
   };
 
