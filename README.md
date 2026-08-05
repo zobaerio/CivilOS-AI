@@ -27,8 +27,8 @@ The system should allow users to:
 
  Scanned floor plan
 
- After upload, the system should analyze the plan and generate:
-
+ After upload, the system should analyze the plan and generate: 
+ 
  Total built-up area
 
  Room-wise area
