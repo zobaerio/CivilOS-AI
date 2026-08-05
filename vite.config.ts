@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => ({
             options: { cacheName: "civilos-pages", networkTimeoutSeconds: 4 },
           },
           {
-            urlPattern: ({ request, url }) => url.origin === self.location.origin && ["script", "style", "image", "font"].includes(request.destination),
+            urlPattern: ({ request, url }) => url.origin === url.origin && ["script", "style", "image", "font"].includes(request.destination),
             handler: "CacheFirst",
             options: { cacheName: "civilos-assets", expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 } },
           },
