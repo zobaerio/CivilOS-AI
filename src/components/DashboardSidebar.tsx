@@ -15,6 +15,7 @@ import {
   findActiveCategory, type NavCategory,
 } from "@/lib/navigation";
 import aiLogo from "@/assets/ai-logo.png";
+import InstallCivilOS from "@/components/InstallCivilOS";
 
 function CategoryGroup({
   cat, collapsed, pathname, locked,
@@ -163,6 +164,8 @@ export function DashboardSidebar() {
 
         {!collapsed && (
           <div className="p-3 mt-auto">
+            <div className="space-y-2">
+            <InstallCivilOS triggerOnly />
             <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold">
                 <Sparkles className="h-3.5 w-3.5 text-accent" /> {plan?.name || "Free"} plan
@@ -173,6 +176,7 @@ export function DashboardSidebar() {
               <NavLink to="/billing" className="inline-flex items-center gap-1 text-[11px] font-semibold text-accent hover:underline">
                 <CreditCard className="h-3 w-3" /> Plans &amp; Billing
               </NavLink>
+            </div>
             </div>
           </div>
         )}

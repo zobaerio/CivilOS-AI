@@ -19,6 +19,13 @@ export default function InstallCivilOS({ triggerOnly = false }: { triggerOnly?: 
     return () => window.clearTimeout(timer);
   }, [isInstalled, triggerOnly, user]);
 
+  useEffect(() => {
+    if (triggerOnly) return;
+    const show = () => setOpen(true);
+    window.addEventListener("civilos:show-install", show);
+    return () => window.removeEventListener("civilos:show-install", show);
+  }, [triggerOnly]);
+
   if (isInstalled) return null;
 
   const close = () => {
@@ -33,7 +40,7 @@ export default function InstallCivilOS({ triggerOnly = false }: { triggerOnly?: 
 
   if (triggerOnly) {
     return (
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)} className="w-full justify-start gap-2">
+      <Button variant="outline" size="sm" onClick={() => window.dispatchEvent(new Event("civilos:show-install"))} className="w-full justify-start gap-2">
         <Download className="h-4 w-4" /> Install CivilOS AI
       </Button>
     );

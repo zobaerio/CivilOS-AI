@@ -11,7 +11,7 @@ interface SEOProps {
   jsonLd?: Record<string, unknown>;
 }
 
-const SITE = "https://civilosai.lovable.app";
+const SITE = "https://estimateai.pro.bd";
 const BRAND = "CivilOS AI";
 const DEFAULT_TITLE = "CivilOS AI — Construction Cost Estimate & BNBC Analysis";
 const DEFAULT_DESC =
