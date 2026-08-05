@@ -9,6 +9,8 @@ import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
 import ScrollToTop from "./components/ScrollToTop";
 import AppLoading from "./components/AppLoading";
+import InstallCivilOS from "./components/InstallCivilOS";
+import { PwaProvider } from "@/lib/pwa";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
@@ -50,12 +52,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <I18nProvider>
       <ThemeProvider>
+        <PwaProvider>
         <AuthProvider>
           <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <InstallCivilOS />
             <Suspense fallback={<AppLoading compact />}>
               <Routes>
 
@@ -105,6 +109,7 @@ const App = () => (
           </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>
+        </PwaProvider>
       </ThemeProvider>
     </I18nProvider>
   </QueryClientProvider>

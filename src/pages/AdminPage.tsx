@@ -56,8 +56,8 @@ const AdminPage = () => {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-      setIsAdmin(!!data);
+      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
+      setIsAdmin(data === true);
     })();
   }, [user]);
 

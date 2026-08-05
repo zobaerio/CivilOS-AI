@@ -216,7 +216,7 @@ const EstimatePage = () => {
     if (y > 270) { doc.addPage(); y = 20; }
     doc.setFontSize(8);
     doc.text("Disclaimer: AI-based preliminary analysis. Verify with a licensed structural engineer.", 14, y);
-    doc.text("Developed by MD Zobaer Hasan | https://zobaer-portfolio.lovable.app", 14, y + 5);
+    doc.text("Developed by MD Zobaer Hasan | https://zobaer.vercel.app", 14, y + 5);
 
     doc.save(`${data.projectName}_EngineeringReport.pdf`);
   };
