@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Building2 } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const { user } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -21,8 +22,8 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) navigate("/projects", { replace: true });
-  }, [user, navigate]);
+    if (user) navigate(safeRedirect(params.get("redirect")), { replace: true });
+  }, [user, navigate, params]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +35,7 @@ const AuthPage = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/projects`,
+            emailRedirectTo: `${window.location.origin}${safeRedirect(params.get("redirect"))}`,
             data: { display_name: displayName || email.split("@")[0], ref },
           },
         });
@@ -105,7 +106,7 @@ const AuthPage = () => {
               setLoading(true);
               try {
                 const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: `${window.location.origin}/projects`,
+                  redirect_uri: `${window.location.origin}/auth`,
                 });
                 if (result.error) throw result.error;
               } catch (err: any) {
@@ -136,3 +137,8 @@ const AuthPage = () => {
 };
 
 export default AuthPage;
+
+function safeRedirect(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  return value;
+}
