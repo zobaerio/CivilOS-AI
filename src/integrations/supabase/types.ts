@@ -59,34 +59,46 @@ export type Database = {
       invitations: {
         Row: {
           accepted_at: string | null
+          accepted_by: string | null
           created_at: string
+          expires_at: string
           id: string
           invited_by: string
           invited_email: string
+          last_sent_at: string | null
           project_id: string
           role: Database["public"]["Enums"]["project_role"]
+          sent_at: string | null
           status: string
           token: string
         }
         Insert: {
           accepted_at?: string | null
+          accepted_by?: string | null
           created_at?: string
+          expires_at?: string
           id?: string
           invited_by: string
           invited_email: string
+          last_sent_at?: string | null
           project_id: string
           role?: Database["public"]["Enums"]["project_role"]
+          sent_at?: string | null
           status?: string
           token?: string
         }
         Update: {
           accepted_at?: string | null
+          accepted_by?: string | null
           created_at?: string
+          expires_at?: string
           id?: string
           invited_by?: string
           invited_email?: string
+          last_sent_at?: string | null
           project_id?: string
           role?: Database["public"]["Enums"]["project_role"]
+          sent_at?: string | null
           status?: string
           token?: string
         }
@@ -870,6 +882,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_project_invitation: { Args: { _token: string }; Returns: string }
+      decline_project_invitation: { Args: { _token: string }; Returns: boolean }
       get_project_role: {
         Args: { _project_id: string; _user_id: string }
         Returns: Database["public"]["Enums"]["project_role"]
