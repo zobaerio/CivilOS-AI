@@ -3,6 +3,7 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import AppErrorBoundary from "./components/AppErrorBoundary.tsx";
 import "./index.css";
+import { registerCivilOsPwa } from "./lib/registerPwa";
 
 const rootElement = document.getElementById("root");
 
@@ -19,3 +20,5 @@ createRoot(rootElement).render(
 requestAnimationFrame(() => {
   requestAnimationFrame(() => window.dispatchEvent(new Event("civilos:ready")));
 });
+
+void registerCivilOsPwa();
