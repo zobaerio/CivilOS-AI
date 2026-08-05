@@ -18,7 +18,7 @@ const Footer = () => {
             <p className="text-xs text-primary-foreground/50">
               {t("footer.developedBy").replace(/Md Zobaer Hasan|মোঃ জোবায়ের হাসান/, "")}
               <a
-                href="https://zobaer.vercel.app"
+                href="https://zobaer-portfolio.lovable.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-accent hover:text-accent/80 hover:underline font-medium transition-colors"
