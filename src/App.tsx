@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/lib/theme";
 import ScrollToTop from "./components/ScrollToTop";
 import AppLoading from "./components/AppLoading";
 import InstallCivilOS from "./components/InstallCivilOS";
+import UpdateAvailable from "./components/UpdateAvailable";
 import { PwaProvider } from "@/lib/pwa";
 
 const Index = lazy(() => import("./pages/Index.tsx"));

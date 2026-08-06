@@ -52,10 +52,13 @@ export function PwaProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  useEffect(() => subscribePwaUpdates((next) => {
-    setUpdateReady(next.updateReady);
-    setOfflineReady(next.offlineReady);
-  }), []);
+  useEffect(() => {
+    const unsubscribe = subscribePwaUpdates((next) => {
+      setUpdateReady(next.updateReady);
+      setOfflineReady(next.offlineReady);
+    });
+    return () => { unsubscribe(); };
+  }, []);
 
   const install = async () => {
     if (!promptEvent) return false;
