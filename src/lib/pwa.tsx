@@ -1,4 +1,5 @@
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { applyPwaUpdate, dismissPwaUpdate, subscribePwaUpdates } from "@/lib/registerPwa";
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -10,6 +11,10 @@ interface PwaContextValue {
   isInstalled: boolean;
   isIos: boolean;
   install: () => Promise<boolean>;
+  updateReady: boolean;
+  offlineReady: boolean;
+  applyUpdate: () => Promise<void>;
+  dismissUpdate: () => void;
 }
 
 const PwaContext = createContext<PwaContextValue>({
@@ -17,11 +22,17 @@ const PwaContext = createContext<PwaContextValue>({
   isInstalled: false,
   isIos: false,
   install: async () => false,
+  updateReady: false,
+  offlineReady: false,
+  applyUpdate: async () => {},
+  dismissUpdate: () => {},
 });
 
 export function PwaProvider({ children }: { children: ReactNode }) {
   const [promptEvent, setPromptEvent] = useState<InstallPromptEvent | null>(null);
   const [isInstalled, setInstalled] = useState(false);
+  const [updateReady, setUpdateReady] = useState(false);
+  const [offlineReady, setOfflineReady] = useState(false);
   const isIos = useMemo(() => /iphone|ipad|ipod/i.test(navigator.userAgent), []);
 
   useEffect(() => {
@@ -41,6 +52,14 @@ export function PwaProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = subscribePwaUpdates((next) => {
+      setUpdateReady(next.updateReady);
+      setOfflineReady(next.offlineReady);
+    });
+    return () => { unsubscribe(); };
+  }, []);
+
   const install = async () => {
     if (!promptEvent) return false;
     await promptEvent.prompt();
@@ -50,7 +69,18 @@ export function PwaProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <PwaContext.Provider value={{ canInstall: Boolean(promptEvent), isInstalled, isIos, install }}>
+    <PwaContext.Provider
+      value={{
+        canInstall: Boolean(promptEvent),
+        isInstalled,
+        isIos,
+        install,
+        updateReady,
+        offlineReady,
+        applyUpdate: applyPwaUpdate,
+        dismissUpdate: dismissPwaUpdate,
+      }}
+    >
       {children}
     </PwaContext.Provider>
   );
