@@ -61,6 +61,7 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <InstallCivilOS />
+            <UpdateAvailable />
             <Suspense fallback={<AppLoading compact />}>
               <Routes>
 
