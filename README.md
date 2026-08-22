@@ -776,16 +776,6 @@ Optional:
 
 ---
 
-📥 Clone Repository
-
-git clone https://github.com/zobaerio/CivilOS-AI.git
-
-Enter the project:
-
-cd CivilOS-AI
-
----
-
 📦 Install Dependencies
 
 npm install
