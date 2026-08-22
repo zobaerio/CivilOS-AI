@@ -1,0 +1,6 @@
+https://civilosai.pro.bd | /auth/callback                                   | 200 | CivilOS AI — Construction Cost Estimate & BNBC Analysis BD | src="/assets/index-DnWflIDF.js" | 
+https://civilosai.pro.bd | /projects/demo-project                           | 200 | CivilOS AI — Construction Cost Estimate & BNBC Analysis BD | src="/assets/index-DnWflIDF.js" | 
+https://civilosai.pro.bd | /projects/00000000-0000-0000-0000-000000000000   | 200 | CivilOS AI — Construction Cost Estimate & BNBC Analysis BD | src="/assets/index-DnWflIDF.js" | 
+https://civilosai.lovable.app | /auth/callback                                   | 200 | CivilOS AI — Construction Cost Estimate & BNBC Analysis BD | src="/assets/index-DlWf9A0U.js" | 
+https://civilosai.lovable.app | /projects/demo-project                           | 200 | CivilOS AI — Construction Cost Estimate & BNBC Analysis BD | src="/assets/index-DlWf9A0U.js" | 
+https://civilosai.lovable.app | /projects/00000000-0000-0000-0000-000000000000   | 200 | CivilOS AI — Construction Cost Estimate & BNBC Analysis BD | src="/assets/index-DlWf9A0U.js" | 

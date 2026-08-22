@@ -1,0 +1,64 @@
+=== PWA/SEO FILES ===
+./public/apple-touch-icon.png
+./public/favicon.ico
+./public/favicon.png
+./public/icon-192.png
+./public/icon-512.png
+./public/manifest.webmanifest
+./public/robots.txt
+./public/sitemap.xml
+./src/assets/ai-logo.png
+
+=== PUBLIC/STATIC DIRECTORIES ===
+./public
+./src/assets
+
+=== SEO/PWA REFERENCES ===
+src/components/DashboardSidebar.tsx:85:          <img src={aiLogo} alt="CivilOS AI" className="h-8 w-8 shrink-0" />
+src/components/Navbar.tsx:34:          <img src={aiLogo} alt="CivilOS AI logo" width={48} height={48} className="h-12 w-12 drop-shadow-md" />
+src/components/SEO.tsx:23:  const canonical =
+src/components/SEO.tsx:31:      <link rel="canonical" href={canonical} />
+src/components/SEO.tsx:32:      {noindex && <meta name="robots" content="noindex, nofollow" />}
+src/components/SEO.tsx:33:      <meta property="og:type" content={type} />
+src/components/SEO.tsx:34:      <meta property="og:site_name" content={BRAND} />
+src/components/SEO.tsx:35:      <meta property="og:title" content={fullTitle} />
+src/components/SEO.tsx:36:      <meta property="og:description" content={desc} />
+src/components/SEO.tsx:37:      <meta property="og:url" content={canonical} />
+src/components/SEO.tsx:38:      {image && <meta property="og:image" content={image} />}
+src/components/SEO.tsx:39:      <meta name="twitter:card" content="summary_large_image" />
+src/components/SEO.tsx:40:      <meta name="twitter:title" content={fullTitle} />
+src/components/SEO.tsx:41:      <meta name="twitter:description" content={desc} />
+src/components/SEO.tsx:42:      {image && <meta name="twitter:image" content={image} />}
+src/components/SEO.tsx:43:      {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
+src/components/SponsorSlider.tsx:47:                {s.logo_url ? <img src={s.logo_url} alt={s.name} className="h-12 w-12 object-contain" /> : <div className="h-12 w-12 rounded bg-muted flex items-center justify-center font-bold">{s.name[0]}</div>}
+src/components/SponsorSlider.tsx:64:                  {s.logo_url ? <img src={s.logo_url} alt={s.name} className="h-8 max-w-[80%] object-contain" /> : <div className="h-8 w-8 rounded bg-muted flex items-center justify-center text-xs font-bold">{s.name[0]}</div>}
+src/components/SponsorsSection.tsx:44:                    {s.logo_url && <img src={s.logo_url} alt={s.name} className="h-16 w-16 object-contain" />}
+src/components/SponsorsSection.tsx:59:                    <img src={s.logo_url} alt={s.name} className="h-12 w-12 object-contain" />
+src/lib/registerPwa.ts:35:  if (!("serviceWorker" in navigator)) return;
+src/lib/registerPwa.ts:36:  const registrations = await navigator.serviceWorker.getRegistrations();
+src/lib/registerPwa.ts:44:export async function registerCivilOsPwa() {
+src/lib/registerPwa.ts:45:  if (!("serviceWorker" in navigator)) return;
+src/main.tsx:6:import { registerCivilOsPwa } from "./lib/registerPwa";
+src/main.tsx:24:void registerCivilOsPwa();
+src/pages/AdminPage.tsx:251:                      {s.logo_url ? <img src={s.logo_url} className="h-10 w-10 object-contain rounded" alt="" /> : <div className="h-10 w-10 rounded bg-muted flex items-center justify-center font-bold text-xs">{s.name[0]}</div>}
+src/pages/AdminPage.tsx:289:                  {p.avatar_url ? <img src={p.avatar_url} className="h-10 w-10 rounded-full object-cover" alt="" /> : <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold">{(p.display_name || "U")[0]}</div>}
+src/pages/UploadPage.tsx:121:                <img src={preview} alt="Preview" className="max-h-48 mx-auto rounded-lg shadow-card" />
+index.html:7:    <link rel="manifest" href="/manifest.webmanifest" />
+index.html:8:    <link rel="icon" type="image/png" href="/favicon.png" />
+index.html:9:    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+index.html:14:    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+index.html:17:    <meta property="og:type" content="website" />
+index.html:18:    <meta property="og:site_name" content="CivilOS AI" />
+index.html:19:    <link rel="canonical" href="https://estimateai.pro.bd/" />
+index.html:20:    <meta property="og:url" content="https://estimateai.pro.bd/" />
+index.html:23:    <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61f8ea6d-c9ef-4431-a612-f84d01cd2dcf">
+index.html:24:    <meta property="og:locale" content="en_US" />
+index.html:25:    <meta property="og:locale:alternate" content="bn_BD" />
+index.html:27:    <meta name="twitter:card" content="summary_large_image" />
+index.html:30:    <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61f8ea6d-c9ef-4431-a612-f84d01cd2dcf">
+index.html:32:    <script type="application/ld+json">
+index.html:61:  <meta property="og:title" content="CivilOS AI — Construction Cost Estimate & BNBC Analysis BD">
+index.html:62:  <meta name="twitter:title" content="CivilOS AI — Construction Cost Estimate & BNBC Analysis BD">
+index.html:63:  <meta property="og:description" content="Instant AI construction cost estimate for Bangladesh — BOQ, BNBC 2022 loads, rate analysis, tender &amp; site diary. Prices in BDT.">
+index.html:64:  <meta name="twitter:description" content="Instant AI construction cost estimate for Bangladesh — BOQ, BNBC 2022 loads, rate analysis, tender &amp; site diary. Prices in BDT.">
+index.html:65:  <script type="application/ld+json">

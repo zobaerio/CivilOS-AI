@@ -1,0 +1,71 @@
+=== RPC CALLS ===
+src/pages/AdminPage.tsx:59:      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
+src/pages/InviteAcceptPage.tsx:33:    const { data: projectId, error: acceptError } = await (supabase as any).rpc("accept_project_invitation", { _token: token });
+src/pages/InviteAcceptPage.tsx:41:    const { error: declineError } = await (supabase as any).rpc("decline_project_invitation", { _token: token });
+
+=== EDGE FUNCTION INVOCATIONS ===
+src/components/AIThinking.tsx:58:      const { data, error } = await supabase.functions.invoke("ai-analyze", {
+src/pages/BOQGeneratorPage.tsx:26:      const { data, error } = await supabase.functions.invoke("ai-structured", {
+src/pages/BOQHubPage.tsx:138:      const { data, error } = await supabase.functions.invoke("ai-structured", {
+src/pages/TenderAnalysisPage.tsx:36:      const { data, error } = await supabase.functions.invoke("ai-structured", {
+
+=== ADMIN/BILLING MUTATIONS ===
+src/components/DashboardSidebar.tsx:72:    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+src/components/RatingsSection.tsx:40:    const { data } = await supabase.from("ratings").select("*").order("created_at", { ascending: false }).limit(30);
+src/components/RatingsSection.tsx:59:    const { data: prof } = await supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle();
+src/components/RatingsSection.tsx:60:    const { error } = await supabase.from("ratings").insert({
+src/components/SponsorSlider.tsx:21:        .from("sponsors")
+src/components/SponsorsSection.tsx:21:        .from("sponsors")
+src/lib/billing.ts:45:      .from("payments")
+src/lib/billing.ts:81:      .from("subscriptions")
+src/lib/billing.ts:99:      .from("subscriptions").select("id").eq("user_id", payment.user_id).maybeSingle();
+src/lib/billing.ts:102:      const { error } = await supabase.from("subscriptions").update({
+src/lib/billing.ts:113:      const { error } = await supabase.from("subscriptions").insert({
+src/lib/billing.ts:124:    const { error: payErr } = await supabase.from("payments").update({
+src/lib/billing.ts:131:    const { error } = await supabase.from("payments")
+src/lib/subscription.ts:74:      .from("plans")
+src/lib/subscription.ts:87:        supabase.from("subscriptions").select("*").eq("user_id", user.id).maybeSingle(),
+src/pages/AdminAffiliatePage.tsx:21:    const { data } = await (supabase as any).from("user_roles").select("role").eq("user_id", user.id).eq("role","admin").maybeSingle();
+src/pages/AdminAffiliatePage.tsx:28:    const { data } = await (supabase as any).from("withdrawals").select("*").order("requested_at",{ascending:false});
+src/pages/AdminAffiliatePage.tsx:34:    await (supabase as any).from("withdrawals").update({ status:"paid", paid_at: new Date().toISOString() }).eq("id", id);
+src/pages/AdminAffiliatePage.tsx:38:    await (supabase as any).from("withdrawals").update({ status:"approved" }).eq("id", id);
+src/pages/AdminBillingPage.tsx:39:      const { data: role } = await supabase.from("user_roles").select("role")
+src/pages/AdminBillingPage.tsx:51:      supabase.from("payments").select("*").order("created_at", { ascending: false }),
+src/pages/AdminBillingPage.tsx:52:      supabase.from("plans").select("id,name"),
+src/pages/AdminPage.tsx:66:      supabase.from("sponsors").select("*").order("created_at", { ascending: false }),
+src/pages/AdminPage.tsx:67:      supabase.from("ratings").select("*").order("created_at", { ascending: false }),
+src/pages/AdminPage.tsx:68:      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+src/pages/AdminPage.tsx:69:      supabase.from("projects").select("id, name, user_id, file_name, is_public, share_token, created_at").order("created_at", { ascending: false }),
+src/pages/AdminPage.tsx:70:      supabase.from("contact_messages").select("*").order("created_at", { ascending: false }),
+src/pages/AdminPage.tsx:99:  const setSponsorStatus = async (id: string, status: string) => { await supabase.from("sponsors").update({ status }).eq("id", id); loadAll(); toast.success(`Sponsor ${status}`); };
+src/pages/AdminPage.tsx:100:  const toggleFeatured = async (id: string, featured: boolean) => { await supabase.from("sponsors").update({ featured }).eq("id", id); loadAll(); };
+src/pages/AdminPage.tsx:101:  const delSponsor = async (id: string) => { await supabase.from("sponsors").delete().eq("id", id); loadAll(); };
+src/pages/AdminPage.tsx:102:  const delRating = async (id: string) => { await supabase.from("ratings").delete().eq("id", id); loadAll(); };
+src/pages/AdminPage.tsx:103:  const delMessage = async (id: string) => { await supabase.from("contact_messages").delete().eq("id", id); loadAll(); toast.success("Message deleted"); };
+src/pages/AdminPage.tsx:104:  const markRead = async (id: string) => { await supabase.from("contact_messages").update({ status: "read" }).eq("id", id); loadAll(); };
+src/pages/AdminPage.tsx:108:    const { error } = await supabase.from("sponsors").insert({ ...newSponsor, status: "active" });
+src/pages/AdminPage.tsx:118:    await supabase.from("contact_messages").update({
+src/pages/AffiliatePage.tsx:26:    const { data: p } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+src/pages/AffiliatePage.tsx:31:    const { data: w } = await (supabase as any).from("withdrawals").select("*").eq("user_id", user.id).order("requested_at",{ascending:false});
+src/pages/AffiliatePage.tsx:59:    const { error } = await (supabase as any).from("withdrawals").insert({
+src/pages/BOQHubPage.tsx:101:    const { error } = await supabase.from("projects").insert({
+src/pages/BOQHubPage.tsx:113:    supabase.from("projects").select("id, name, estimate, created_at, updated_at").order("updated_at", { ascending: false }).then(({ data }) => {
+src/pages/BOQHubPage.tsx:266:        const { data, error } = await supabase.from("projects").insert({
+src/pages/BOQHubPage.tsx:274:        const { error } = await supabase.from("projects").update({
+src/pages/BillingPage.tsx:73:    const { data } = await supabase.from("payments").select("*")
+src/pages/ContactPage.tsx:37:    const { error } = await supabase.from("contact_messages").insert({
+src/pages/DashboardPage.tsx:65:        .from("projects")
+src/pages/EstimatePage.tsx:122:        const { error } = await supabase.from("projects").update(payload).eq("id", params._projectId);
+src/pages/EstimatePage.tsx:125:        const { error } = await supabase.from("projects").insert(payload);
+src/pages/EstimatePage.tsx:142:      const { error } = await supabase.from("projects")
+src/pages/ProfilePage.tsx:31:      const { data } = await supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle();
+src/pages/ProfilePage.tsx:43:    const { error } = await supabase.from("profiles").update({ display_name: displayName, avatar_url: avatarUrl }).eq("id", user.id);
+src/pages/ProfilePage.tsx:59:    await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", user.id);
+src/pages/ProjectDetailPage.tsx:42:    const { data: proj, error } = await supabase.from("projects").select("*").eq("id", id).single();
+src/pages/ProjectDetailPage.tsx:132:    await supabase.from("projects").update({ status } as any).eq("id", id!);
+src/pages/ProjectsPage.tsx:48:    const { data, error } = await supabase.from("projects")
+src/pages/ProjectsPage.tsx:71:    const { data, error } = await supabase.from("projects").insert(payload).select("id").single();
+src/pages/RateAnalysisPage.tsx:260:    supabase.from("projects").select("id, name, estimate").order("updated_at", { ascending: false })
+src/pages/RateAnalysisPage.tsx:335:      const { error } = await supabase.from("projects").update({ estimate: merged as any }).eq("id", projectId);
+src/pages/SharedEstimatePage.tsx:19:        .from("projects")
+src/pages/SponsorPage.tsx:39:    const { error } = await supabase.from("sponsors").insert(payload);

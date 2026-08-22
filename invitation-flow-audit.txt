@@ -1,0 +1,191 @@
+=== TOKEN GENERATION / STATUS / EXPIRY ===
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:47:  status text not null default 'pending',
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:56:create policy "Anyone can submit sponsor" on public.sponsors for insert with check (status = 'pending');
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:104:  token text NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(24),'hex'),
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:105:  status text NOT NULL DEFAULT 'pending',
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:107:  accepted_at timestamptz
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:147:SET referral_code = 'CIVIL-' || upper(substr(encode(gen_random_bytes(4),'hex'),1,6))
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:156:  status text NOT NULL DEFAULT 'pending',
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:174:  status text NOT NULL DEFAULT 'pending',
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:206:    'CIVIL-' || upper(substr(encode(gen_random_bytes(4),'hex'),1,6)),
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:29:    'CIVIL-' || upper(substr(encode(gen_random_bytes(4),'hex'),1,6)),
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:37:  cancelled_at timestamptz,
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:54:  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id AND status IN ('cancelled','active'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:69:  status text NOT NULL DEFAULT 'pending',
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:71:  invoice_number text NOT NULL DEFAULT 'INV-' || upper(substr(encode(gen_random_bytes(5),'hex'),1,10)),
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:83:  WITH CHECK (auth.uid() = user_id AND status = 'pending');
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:2:  ADD COLUMN IF NOT EXISTS expires_at timestamptz NOT NULL DEFAULT (now() + interval '7 days'),
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:3:  ADD COLUMN IF NOT EXISTS accepted_by uuid,
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:4:  ADD COLUMN IF NOT EXISTS sent_at timestamptz,
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:5:  ADD COLUMN IF NOT EXISTS last_sent_at timestamptz;
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:9:WHERE status = 'pending';
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:55:    'CIVIL-' || upper(substr(encode(gen_random_bytes(4),'hex'),1,6)),
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:88:    AND status = 'pending'
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:89:    AND expires_at > now()
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:92:CREATE OR REPLACE FUNCTION public.accept_project_invitation(_token text)
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:111:  IF inv.id IS NULL OR inv.status <> 'pending' OR inv.expires_at <= now() THEN
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:112:    RAISE EXCEPTION 'Invitation is invalid or expired';
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:124:  SET status = 'accepted', accepted_at = now(), accepted_by = auth.uid()
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:125:  WHERE id = inv.id AND status = 'pending';
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:134:CREATE OR REPLACE FUNCTION public.decline_project_invitation(_token text)
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:144:  SET status = 'rejected'
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:146:    AND status = 'pending'
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:147:    AND expires_at > now()
+src/integrations/supabase/types.ts:61:          accepted_at: string | null
+src/integrations/supabase/types.ts:62:          accepted_by: string | null
+src/integrations/supabase/types.ts:64:          expires_at: string
+src/integrations/supabase/types.ts:68:          last_sent_at: string | null
+src/integrations/supabase/types.ts:71:          sent_at: string | null
+src/integrations/supabase/types.ts:76:          accepted_at?: string | null
+src/integrations/supabase/types.ts:77:          accepted_by?: string | null
+src/integrations/supabase/types.ts:79:          expires_at?: string
+src/integrations/supabase/types.ts:83:          last_sent_at?: string | null
+src/integrations/supabase/types.ts:86:          sent_at?: string | null
+src/integrations/supabase/types.ts:91:          accepted_at?: string | null
+src/integrations/supabase/types.ts:92:          accepted_by?: string | null
+src/integrations/supabase/types.ts:94:          expires_at?: string
+src/integrations/supabase/types.ts:98:          last_sent_at?: string | null
+src/integrations/supabase/types.ts:101:          sent_at?: string | null
+src/integrations/supabase/types.ts:689:          cancelled_at: string | null
+src/integrations/supabase/types.ts:703:          cancelled_at?: string | null
+src/integrations/supabase/types.ts:717:          cancelled_at?: string | null
+src/integrations/supabase/types.ts:885:      accept_project_invitation: { Args: { _token: string }; Returns: string }
+src/integrations/supabase/types.ts:886:      decline_project_invitation: { Args: { _token: string }; Returns: boolean }
+src/lib/billing.ts:56:        status: "pending",
+src/lib/billing.ts:82:      .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
+src/lib/billing.ts:108:        cancelled_at: null,
+src/lib/subscription.ts:29:  cancelled_at: string | null;
+src/pages/AdminAffiliatePage.tsx:65:                        {w.status==="pending" && <Button size="sm" variant="outline" onClick={()=>approve(w.id)}>Approve</Button>}
+src/pages/AdminBillingPage.tsx:74:      toast({ title: "Payment rejected" });
+src/pages/AdminBillingPage.tsx:122:                    {r.status === "pending" && (
+src/pages/AdminPage.tsx:141:  const pendingSponsors = sponsors.filter((s) => s.status === "pending").length;
+src/pages/AdminPage.tsx:258:                      <Badge variant={s.status === "active" ? "default" : s.status === "pending" ? "secondary" : "destructive"}>{s.status}</Badge>
+src/pages/AdminPage.tsx:260:                      {s.status !== "rejected" && <Button size="sm" variant="outline" title="Reject" onClick={() => setSponsorStatus(s.id, "rejected")}><X className="h-3 w-3" /></Button>}
+src/pages/BillingPage.tsx:39:  cancelled: "bg-muted text-muted-foreground",
+src/pages/BillingPage.tsx:40:  expired: "bg-muted text-muted-foreground",
+src/pages/BillingPage.tsx:112:      toast({ title: "Subscription cancelled", description: "You keep access until the renewal date." });
+src/pages/InviteAcceptPage.tsx:25:    const { data } = await (supabase as any).from("invitations").select("*, projects(name)").eq("token", token).maybeSingle();
+src/pages/InviteAcceptPage.tsx:26:    if (!data) { setError("Invitation not found, expired, or assigned to another email."); return; }
+src/pages/InviteAcceptPage.tsx:33:    const { data: projectId, error: acceptError } = await (supabase as any).rpc("accept_project_invitation", { _token: token });
+src/pages/InviteAcceptPage.tsx:41:    const { error: declineError } = await (supabase as any).rpc("decline_project_invitation", { _token: token });
+src/pages/ProjectDetailPage.tsx:55:      (supabase as any).from("invitations").select("*").eq("project_id", id).eq("status","pending"),
+src/pages/SponsorPage.tsx:37:      status: "pending",
+
+=== INVITATION FLOW CALLS ===
+src/components/RatingsSection.tsx:64:      display_name: prof?.display_name || user.email?.split("@")[0] || "User",
+src/integrations/supabase/types.ts:21:          email: string
+src/integrations/supabase/types.ts:34:          email: string
+src/integrations/supabase/types.ts:47:          email?: string
+src/integrations/supabase/types.ts:59:      invitations: {
+src/integrations/supabase/types.ts:67:          invited_email: string
+src/integrations/supabase/types.ts:82:          invited_email: string
+src/integrations/supabase/types.ts:97:          invited_email?: string
+src/integrations/supabase/types.ts:107:            foreignKeyName: "invitations_project_id_fkey"
+src/integrations/supabase/types.ts:121:          email_enabled: boolean
+src/integrations/supabase/types.ts:133:          email_enabled?: boolean
+src/integrations/supabase/types.ts:145:          email_enabled?: boolean
+src/integrations/supabase/types.ts:646:          contact_email: string | null
+src/integrations/supabase/types.ts:659:          contact_email?: string | null
+src/integrations/supabase/types.ts:672:          contact_email?: string | null
+src/integrations/supabase/types.ts:885:      accept_project_invitation: { Args: { _token: string }; Returns: string }
+src/integrations/supabase/types.ts:886:      decline_project_invitation: { Args: { _token: string }; Returns: boolean }
+src/lib/i18n.tsx:209:  "contact.email": { en: "Email", bn: "ইমেইল" },
+src/pages/AdminPage.tsx:47:  const [newSponsor, setNewSponsor] = useState({ name: "", logo_url: "", website: "", description: "", contact_email: "" });
+src/pages/AdminPage.tsx:110:    setNewSponsor({ name: "", logo_url: "", website: "", description: "", contact_email: "" });
+src/pages/AdminPage.tsx:144:    !search || `${m.name} ${m.email} ${m.subject || ""} ${m.message}`.toLowerCase().includes(search.toLowerCase())
+src/pages/AdminPage.tsx:206:                        <a href={`mailto:${m.email}`} className="flex items-center gap-1 hover:text-foreground"><Mail className="h-3 w-3" />{m.email}</a>
+src/pages/AdminPage.tsx:239:                  <Input placeholder="Email" value={newSponsor.contact_email} onChange={(e) => setNewSponsor({ ...newSponsor, contact_email: e.target.value })} />
+src/pages/AdminPage.tsx:254:                        <p className="text-xs text-muted-foreground truncate">{s.contact_email} {s.website && `• ${s.website}`}</p>
+src/pages/AdminPage.tsx:262:                      {s.contact_email && <a href={`mailto:${s.contact_email}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input"><Mail className="h-3 w-3" /></a>}
+src/pages/AuthPage.tsx:19:  const [email, setEmail] = useState("");
+src/pages/AuthPage.tsx:35:          email,
+src/pages/AuthPage.tsx:38:            emailRedirectTo: `${window.location.origin}${safeRedirect(params.get("redirect"))}`,
+src/pages/AuthPage.tsx:39:            data: { display_name: displayName || email.split("@")[0], ref },
+src/pages/AuthPage.tsx:45:        const { error } = await supabase.auth.signInWithPassword({ email, password });
+src/pages/AuthPage.tsx:81:              <Label htmlFor="email">Email</Label>
+src/pages/AuthPage.tsx:82:              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+src/pages/ContactPage.tsx:18:  email: z.string().trim().email("Invalid email").max(255),
+src/pages/ContactPage.tsx:26:  const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+src/pages/ContactPage.tsx:39:      email: parsed.data.email,
+src/pages/ContactPage.tsx:53:      `🆕 New Contact Message\n\n👤 ${parsed.data.name}\n✉️ ${parsed.data.email}${parsed.data.phone ? `\n📱 ${parsed.data.phone}` : ""}${parsed.data.subject ? `\n📌 ${parsed.data.subject}` : ""}\n\n💬 ${parsed.data.message}`
+src/pages/ContactPage.tsx:58:    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+src/pages/ContactPage.tsx:69:            <p className="text-muted-foreground text-sm">We reply on WhatsApp & email — usually within an hour.</p>
+src/pages/ContactPage.tsx:81:              <div className="space-y-1.5"><Label>Email *</Label><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+src/pages/DashboardPage.tsx:81:  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Engineer";
+src/pages/InviteAcceptPage.tsx:25:    const { data } = await (supabase as any).from("invitations").select("*, projects(name)").eq("token", token).maybeSingle();
+src/pages/InviteAcceptPage.tsx:26:    if (!data) { setError("Invitation not found, expired, or assigned to another email."); return; }
+src/pages/InviteAcceptPage.tsx:33:    const { data: projectId, error: acceptError } = await (supabase as any).rpc("accept_project_invitation", { _token: token });
+src/pages/InviteAcceptPage.tsx:41:    const { error: declineError } = await (supabase as any).rpc("decline_project_invitation", { _token: token });
+src/pages/NotificationSettingsPage.tsx:14:  { key: "team_invites", label: "Team invitations" },
+src/pages/NotificationSettingsPage.tsx:19:  { key: "email_enabled", label: "Send email notifications" },
+src/pages/ProfilePage.tsx:93:              <Input value={user?.email || ""} disabled />
+src/pages/ProjectDetailPage.tsx:55:      (supabase as any).from("invitations").select("*").eq("project_id", id).eq("status","pending"),
+src/pages/ProjectDetailPage.tsx:100:  const sendInvite = async () => {
+src/pages/ProjectDetailPage.tsx:104:      return toast.error("Enter a valid email address");
+src/pages/ProjectDetailPage.tsx:106:    const { data, error } = await (supabase as any).from("invitations").insert({
+src/pages/ProjectDetailPage.tsx:107:      project_id: id, invited_email: normalizedEmail, role: inviteRole, invited_by: user.id,
+src/pages/ProjectDetailPage.tsx:110:    const inviteUrl = `${window.location.origin}/invite?token=${encodeURIComponent(data.token)}`;
+src/pages/ProjectDetailPage.tsx:112:      await navigator.clipboard.writeText(inviteUrl);
+src/pages/ProjectDetailPage.tsx:117:    await logActivity("member_invited", { email: normalizedEmail, role: inviteRole });
+src/pages/ProjectDetailPage.tsx:121:  const cancelInvite = async (invId: string) => {
+src/pages/ProjectDetailPage.tsx:122:    await (supabase as any).from("invitations").delete().eq("id", invId);
+src/pages/ProjectDetailPage.tsx:241:                  <Input placeholder="member@email.com" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} />
+src/pages/ProjectDetailPage.tsx:250:                  <Button onClick={sendInvite}><UserPlus className="h-4 w-4"/>Invite</Button>
+src/pages/ProjectDetailPage.tsx:283:                          <p className="text-sm">{iv.invited_email}</p>
+src/pages/ProjectDetailPage.tsx:286:                        {isAdmin && <Button size="sm" variant="ghost" onClick={()=>cancelInvite(iv.id)}>Cancel</Button>}
+src/pages/SponsorPage.tsx:17:  contact_email: z.string().trim().email().max(255),
+src/pages/SponsorPage.tsx:24:  const [form, setForm] = useState({ name: "", contact_email: "", website: "", logo_url: "", description: "" });
+src/pages/SponsorPage.tsx:45:      `🤝 New Sponsor Request\n\n🏢 ${parsed.data.name}\n✉️ ${parsed.data.contact_email}${parsed.data.website ? `\n🔗 ${parsed.data.website}` : ""}${parsed.data.description ? `\n\n📝 ${parsed.data.description}` : ""}`
+src/pages/SponsorPage.tsx:50:    setForm({ name: "", contact_email: "", website: "", logo_url: "", description: "" });
+src/pages/SponsorPage.tsx:71:            <div className="space-y-2"><Label>Contact Email *</Label><Input type="email" required value={form.contact_email} onChange={(e) => setForm({ ...form, contact_email: e.target.value })} /></div>
+
+=== EMAIL PROVIDER / SECRET REFERENCES ===
+src/components/RatingsSection.tsx:64:      display_name: prof?.display_name || user.email?.split("@")[0] || "User",
+src/integrations/supabase/types.ts:21:          email: string
+src/integrations/supabase/types.ts:34:          email: string
+src/integrations/supabase/types.ts:47:          email?: string
+src/integrations/supabase/types.ts:67:          invited_email: string
+src/integrations/supabase/types.ts:82:          invited_email: string
+src/integrations/supabase/types.ts:97:          invited_email?: string
+src/integrations/supabase/types.ts:121:          email_enabled: boolean
+src/integrations/supabase/types.ts:133:          email_enabled?: boolean
+src/integrations/supabase/types.ts:145:          email_enabled?: boolean
+src/integrations/supabase/types.ts:646:          contact_email: string | null
+src/integrations/supabase/types.ts:659:          contact_email?: string | null
+src/integrations/supabase/types.ts:672:          contact_email?: string | null
+src/lib/i18n.tsx:209:  "contact.email": { en: "Email", bn: "ইমেইল" },
+src/pages/AdminPage.tsx:47:  const [newSponsor, setNewSponsor] = useState({ name: "", logo_url: "", website: "", description: "", contact_email: "" });
+src/pages/AdminPage.tsx:110:    setNewSponsor({ name: "", logo_url: "", website: "", description: "", contact_email: "" });
+src/pages/AdminPage.tsx:144:    !search || `${m.name} ${m.email} ${m.subject || ""} ${m.message}`.toLowerCase().includes(search.toLowerCase())
+src/pages/AdminPage.tsx:206:                        <a href={`mailto:${m.email}`} className="flex items-center gap-1 hover:text-foreground"><Mail className="h-3 w-3" />{m.email}</a>
+src/pages/AdminPage.tsx:239:                  <Input placeholder="Email" value={newSponsor.contact_email} onChange={(e) => setNewSponsor({ ...newSponsor, contact_email: e.target.value })} />
+src/pages/AdminPage.tsx:254:                        <p className="text-xs text-muted-foreground truncate">{s.contact_email} {s.website && `• ${s.website}`}</p>
+src/pages/AdminPage.tsx:262:                      {s.contact_email && <a href={`mailto:${s.contact_email}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input"><Mail className="h-3 w-3" /></a>}
+src/pages/AuthPage.tsx:19:  const [email, setEmail] = useState("");
+src/pages/AuthPage.tsx:35:          email,
+src/pages/AuthPage.tsx:38:            emailRedirectTo: `${window.location.origin}${safeRedirect(params.get("redirect"))}`,
+src/pages/AuthPage.tsx:39:            data: { display_name: displayName || email.split("@")[0], ref },
+src/pages/AuthPage.tsx:45:        const { error } = await supabase.auth.signInWithPassword({ email, password });
+src/pages/AuthPage.tsx:81:              <Label htmlFor="email">Email</Label>
+src/pages/AuthPage.tsx:82:              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+src/pages/ContactPage.tsx:18:  email: z.string().trim().email("Invalid email").max(255),
+src/pages/ContactPage.tsx:26:  const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+src/pages/ContactPage.tsx:39:      email: parsed.data.email,
+src/pages/ContactPage.tsx:53:      `🆕 New Contact Message\n\n👤 ${parsed.data.name}\n✉️ ${parsed.data.email}${parsed.data.phone ? `\n📱 ${parsed.data.phone}` : ""}${parsed.data.subject ? `\n📌 ${parsed.data.subject}` : ""}\n\n💬 ${parsed.data.message}`
+src/pages/ContactPage.tsx:58:    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+src/pages/ContactPage.tsx:69:            <p className="text-muted-foreground text-sm">We reply on WhatsApp & email — usually within an hour.</p>
+src/pages/ContactPage.tsx:81:              <div className="space-y-1.5"><Label>Email *</Label><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+src/pages/DashboardPage.tsx:81:  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "Engineer";
+src/pages/InviteAcceptPage.tsx:26:    if (!data) { setError("Invitation not found, expired, or assigned to another email."); return; }
+src/pages/NotificationSettingsPage.tsx:19:  { key: "email_enabled", label: "Send email notifications" },
+src/pages/ProfilePage.tsx:93:              <Input value={user?.email || ""} disabled />
+src/pages/ProjectDetailPage.tsx:104:      return toast.error("Enter a valid email address");
+src/pages/ProjectDetailPage.tsx:107:      project_id: id, invited_email: normalizedEmail, role: inviteRole, invited_by: user.id,
+src/pages/ProjectDetailPage.tsx:117:    await logActivity("member_invited", { email: normalizedEmail, role: inviteRole });
+src/pages/ProjectDetailPage.tsx:241:                  <Input placeholder="member@email.com" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} />
+src/pages/ProjectDetailPage.tsx:283:                          <p className="text-sm">{iv.invited_email}</p>
+src/pages/SponsorPage.tsx:17:  contact_email: z.string().trim().email().max(255),
+src/pages/SponsorPage.tsx:24:  const [form, setForm] = useState({ name: "", contact_email: "", website: "", logo_url: "", description: "" });
+src/pages/SponsorPage.tsx:45:      `🤝 New Sponsor Request\n\n🏢 ${parsed.data.name}\n✉️ ${parsed.data.contact_email}${parsed.data.website ? `\n🔗 ${parsed.data.website}` : ""}${parsed.data.description ? `\n\n📝 ${parsed.data.description}` : ""}`
+src/pages/SponsorPage.tsx:50:    setForm({ name: "", contact_email: "", website: "", logo_url: "", description: "" });
+src/pages/SponsorPage.tsx:71:            <div className="space-y-2"><Label>Contact Email *</Label><Input type="email" required value={form.contact_email} onChange={(e) => setForm({ ...form, contact_email: e.target.value })} /></div>

@@ -1,0 +1,131 @@
+=== https://civilosai.lovable.app/ ===
+DNS:
+185.41.148.1    STREAM civilosai.lovable.app
+185.41.148.1    DGRAM  
+185.41.148.1    RAW    
+185.41.148.2    STREAM 
+185.41.148.2    DGRAM  
+HEADERS:
+HTTP/2 200 
+date: Sat, 22 Aug 2026 02:09:56 GMT
+content-type: text/html; charset=utf-8
+cache-control: no-cache, must-revalidate, max-age=0
+strict-transport-security: max-age=31536000; includeSubDomains
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-deployment-id: ae3b8bba-d967-4bd2-8eae-3413efc29d20
+set-cookie: __cf_bm=NxsWmPsS_AeJcJJ4g7jjUsY84.WW3yEcOxlyHT1JINI-1787364595.0314958-1.0.1.1-YG048GzvEIYPfbZLh.v9_pmWnwmwAArnw1ojdvWSOYd8.RLY1DiDNhM.QrrusCs5yhm9x_xZjVjpLFSdPx2F3ULyGnzbCykYz7_9Q89f7OnxtEW34uSggV07Sk1jcckO; HttpOnly; SameSite=None; Secure; Path=/; Domain=lovable.app; Expires=Sat, 22 Aug 2026 02:39:56 GMT
+server: cloudflare
+cf-ray: a2ee568efb3d0645-DAC
+
+HTML TITLE/CANONICAL/SCRIPTS:
+<title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD
+<link rel="canonical" href="https://estimateai.pro.bd/" />
+<script type="module" crossorigin src="/assets/index-DlWf9A0U.js">
+<script defer src="/~flock.js" data-proxy-url="/~api/analytics">
+DEPLOYMENT MARKERS:
+estimateai lovable 
+BUNDLE https://civilosai.lovable.app/assets/index-DlWf9A0U.js SUPABASE/LOVABLE/DOMAIN MARKERS:
+https://github.com/orgs/supabase/discussions/37217
+https://qtvwjjcyvswjwzymknlg.supabase.co
+BUNDLE https://civilosai.lovable.app/~flock.js SUPABASE/LOVABLE/DOMAIN MARKERS:
+
+=== https://estimateai.pro.bd/ ===
+DNS:
+64.29.17.65     STREAM estimateai.pro.bd
+64.29.17.65     DGRAM  
+64.29.17.65     RAW    
+216.198.79.65   STREAM 
+216.198.79.65   DGRAM  
+HEADERS:
+HTTP/2 404 
+cache-control: public, max-age=0, must-revalidate
+content-type: text/plain; charset=utf-8
+date: Sat, 22 Aug 2026 02:10:08 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-error: DEPLOYMENT_NOT_FOUND
+x-vercel-id: bom1::k9zj6-1787364608451-c321d5331e46
+content-length: 107
+
+HTML TITLE/CANONICAL/SCRIPTS:
+DEPLOYMENT MARKERS:
+
+
+=== https://civilosai.vercel.app/ ===
+DNS:
+216.198.79.67   STREAM civilosai.vercel.app
+216.198.79.67   DGRAM  
+216.198.79.67   RAW    
+64.29.17.67     STREAM 
+64.29.17.67     DGRAM  
+HEADERS:
+HTTP/2 307 
+cache-control: public, max-age=0, must-revalidate
+content-type: text/plain
+date: Sat, 22 Aug 2026 02:10:11 GMT
+location: https://civilosai.pro.bd/
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-vercel-id: iad1::s9ltl-1787364611039-8e9d117663cc
+
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 505540
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-type: text/html; charset=utf-8
+date: Sat, 22 Aug 2026 02:10:13 GMT
+etag: "23fb11321caaf68af013c9f789e494b1"
+last-modified: Sun, 16 Aug 2026 05:44:32 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: HIT
+x-vercel-id: bom1::9bl2v-1787364613093-e9bd2973c48e
+content-length: 6579
+
+HTML TITLE/CANONICAL/SCRIPTS:
+<title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD
+<link rel="canonical" href="https://estimateai.pro.bd/" />
+<script type="module" crossorigin src="/assets/index-DnWflIDF.js">
+DEPLOYMENT MARKERS:
+estimateai 
+BUNDLE https://civilosai.vercel.app/assets/index-DnWflIDF.js SUPABASE/LOVABLE/DOMAIN MARKERS:
+https://github.com/orgs/supabase/discussions/37217
+https://qtvwjjcyvswjwzymknlg.supabase.co
+
+=== https://civilosai.pro.bd/ ===
+DNS:
+216.198.79.1    STREAM civilosai.pro.bd
+216.198.79.1    DGRAM  
+216.198.79.1    RAW    
+64.29.17.1      STREAM 
+64.29.17.1      DGRAM  
+HEADERS:
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 505548
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-type: text/html; charset=utf-8
+date: Sat, 22 Aug 2026 02:10:21 GMT
+etag: "23fb11321caaf68af013c9f789e494b1"
+last-modified: Sun, 16 Aug 2026 05:44:32 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: HIT
+x-vercel-id: bom1::rz9ns-1787364621286-edb7a1bdb644
+content-length: 6579
+
+HTML TITLE/CANONICAL/SCRIPTS:
+<title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD
+<link rel="canonical" href="https://estimateai.pro.bd/" />
+<script type="module" crossorigin src="/assets/index-DnWflIDF.js">
+DEPLOYMENT MARKERS:
+estimateai 
+BUNDLE https://civilosai.pro.bd/assets/index-DnWflIDF.js SUPABASE/LOVABLE/DOMAIN MARKERS:
+https://github.com/orgs/supabase/discussions/37217
+https://qtvwjjcyvswjwzymknlg.supabase.co
+

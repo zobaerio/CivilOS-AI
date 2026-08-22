@@ -1,0 +1,97 @@
+=== https://civilosai.lovable.app ===
+HTTP/2 200 
+date: Sat, 22 Aug 2026 02:51:40 GMT
+content-type: text/html; charset=utf-8
+cache-control: no-cache, must-revalidate, max-age=0
+set-cookie: __cf_bm=p3aaL3lbG4KMG6kNWfaCfl7z7SDK2BHhHWxoM2WweEs-1787367100.2361112-1.0.1.1-jvQxtKNkra18JHKzOavrft4JZ_54R5YFmb78gXvF4uZLEoDAkJ9lnS00pKT1OmMjYtJs1XlimGl0spR_jOjmEw8VawV32JIl8ORIwOAgLfEKyydXlohGJl555cOp_kwh; HttpOnly; SameSite=None; Secure; Path=/; Domain=lovable.app; Expires=Sat, 22 Aug 2026 03:21:40 GMT
+strict-transport-security: max-age=31536000; includeSubDomains
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-deployment-id: ae3b8bba-d967-4bd2-8eae-3413efc29d20
+server: cloudflare
+cf-ray: a2ee93b87e234836-IAD
+
+-- canonical/title/scripts --
+<title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD
+<link rel="canonical" href="https://estimateai.pro.bd/" /
+<script type="module" crossorigin src="/assets/index-DlWf9A0U.js"
+<script defer src="/~flock.js"
+-- bundle sha/project/origin markers --
+b32080b16e333ea64e2900e0b19bff8ae60a62997d03bdeb4635a747a9fe66a4  /tmp/part4-bundle.js
+      4 emailRedirectTo
+      1 qtvwjjcyvswjwzymknlg
+      3 window.location.origin
+
+=== https://estimateai.pro.bd ===
+HTTP/2 404 
+cache-control: public, max-age=0, must-revalidate
+content-type: text/plain; charset=utf-8
+date: Sat, 22 Aug 2026 02:52:13 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-error: DEPLOYMENT_NOT_FOUND
+x-vercel-id: iad1::h7nnx-1787367133889-3b068bd2a6d3
+content-length: 107
+
+-- canonical/title/scripts --
+
+=== https://civilosai.pro.bd ===
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-type: text/html; charset=utf-8
+date: Sat, 22 Aug 2026 02:52:21 GMT
+etag: "23fb11321caaf68af013c9f789e494b1"
+last-modified: Sat, 22 Aug 2026 02:52:21 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: MISS
+x-vercel-id: gru1::s986l-1787367141042-ffca7ac2a0eb
+content-length: 6579
+
+-- canonical/title/scripts --
+<title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD
+<link rel="canonical" href="https://estimateai.pro.bd/" /
+<script type="module" crossorigin src="/assets/index-DnWflIDF.js"
+-- bundle sha/project/origin markers --
+1bbd73cfd4586cb0c91d89673b4bbb7aa02da029c2715afc7c239a7ef08659e4  /tmp/part4-bundle.js
+      4 emailRedirectTo
+      1 qtvwjjcyvswjwzymknlg
+      3 window.location.origin
+
+=== https://civilosai.vercel.app/ ===
+HTTP/2 307 
+cache-control: public, max-age=0, must-revalidate
+content-type: text/plain
+date: Sat, 22 Aug 2026 02:52:54 GMT
+location: https://civilosai.pro.bd/
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-vercel-id: iad1::m7hlk-1787367174636-47a95a3ac440
+
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 35
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-type: text/html; charset=utf-8
+date: Sat, 22 Aug 2026 02:52:57 GMT
+etag: "23fb11321caaf68af013c9f789e494b1"
+last-modified: Sat, 22 Aug 2026 02:52:21 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: HIT
+x-vercel-id: gru1::x6hjq-1787367177263-8658a6e81919
+content-length: 6579
+
+-- canonical/title/scripts --
+<title>CivilOS AI — Construction Cost Estimate & BNBC Analysis BD
+<link rel="canonical" href="https://estimateai.pro.bd/" /
+<script type="module" crossorigin src="/assets/index-DnWflIDF.js"
+-- bundle sha/project/origin markers --
+7c040f8633b8823d72ed63da9b3b2dfe9846e912c66a64c9433ec9c4815d76c2  /tmp/part4-bundle.js
+

@@ -1,0 +1,263 @@
+=== supabase/migrations/20260502133653_6d2ba74c-9317-412b-89a9-9d98bed11436.sql ===
+2:create table public.profiles (
+10:alter table public.profiles enable row level security;
+12:create policy "Profiles are viewable by owner"
+16:create policy "Users can insert own profile"
+20:create policy "Users can update own profile"
+25:create table public.projects (
+37:alter table public.projects enable row level security;
+39:create policy "Users view own projects"
+41:create policy "Users insert own projects"
+43:create policy "Users update own projects"
+45:create policy "Users delete own projects"
+49:create or replace function public.set_updated_at()
+53:create trigger trg_profiles_updated before update on public.profiles
+55:create trigger trg_projects_updated before update on public.projects
+59:create or replace function public.handle_new_user()
+62:security definer
+66:  insert into public.profiles (id, display_name, avatar_url)
+76:create trigger on_auth_user_created
+=== supabase/migrations/20260502133759_7a7064b8-2bf5-47fc-adfd-5824b2389dc9.sql ===
+1:create or replace function public.set_updated_at()
+10:revoke execute on function public.handle_new_user() from public, anon, authenticated;
+11:revoke execute on function public.set_updated_at() from public, anon, authenticated;
+=== supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql ===
+2:create type public.app_role as enum ('admin', 'user');
+4:create table public.user_roles (
+11:alter table public.user_roles enable row level security;
+13:create or replace function public.has_role(_user_id uuid, _role public.app_role)
+15:language sql stable security definer set search_path = public
+20:create policy "Users view own roles" on public.user_roles
+22:create policy "Admins manage roles" on public.user_roles
+25:create table public.ratings (
+33:alter table public.ratings enable row level security;
+34:create policy "Ratings public read" on public.ratings for select using (true);
+35:create policy "Auth users insert ratings" on public.ratings for insert with check (auth.uid() = user_id);
+36:create policy "Users update own rating" on public.ratings for update using (auth.uid() = user_id);
+37:create policy "Users delete own / admin delete" on public.ratings for delete
+40:create table public.sponsors (
+53:alter table public.sponsors enable row level security;
+54:create policy "Active sponsors public" on public.sponsors for select
+56:create policy "Anyone can submit sponsor" on public.sponsors for insert with check (status = 'pending');
+57:create policy "Admins manage sponsors" on public.sponsors for update using (public.has_role(auth.uid(),'admin'));
+58:create policy "Admins delete sponsors" on public.sponsors for delete using (public.has_role(auth.uid(),'admin'));
+59:create trigger sponsors_updated before update on public.sponsors
+62:alter table public.projects add column if not exists share_token text unique;
+63:alter table public.projects add column if not exists is_public boolean not null default false;
+64:create policy "Public projects via share token" on public.projects for select
+67:insert into storage.buckets (id, name, public) values ('avatars','avatars', true)
+70:create policy "Avatars public read" on storage.objects for select using (bucket_id = 'avatars');
+71:create policy "Users upload own avatar" on storage.objects for insert
+72:  with check (bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]);
+73:create policy "Users update own avatar" on storage.objects for update
+74:  using (bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]);
+75:create policy "Users delete own avatar" on storage.objects for delete
+76:  using (bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]);
+=== supabase/migrations/20260503082930_681c0c10-de0f-4457-964c-ad930178ddb4.sql ===
+2:create or replace function public.handle_new_user()
+5:security definer
+11:  insert into public.profiles (id, display_name, avatar_url)
+20:    insert into public.user_roles (user_id, role) values (new.id, 'admin')
+23:    insert into public.user_roles (user_id, role) values (new.id, 'user')
+31:create trigger on_auth_user_created
+=== supabase/migrations/20260504135137_a152f4d1-3043-4b40-94af-c8fe616a543a.sql ===
+1:CREATE TABLE public.contact_messages (
+15:ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+17:CREATE POLICY "Anyone can submit contact message"
+21:CREATE POLICY "Admins view contact messages"
+25:CREATE POLICY "Admins update contact messages"
+29:CREATE POLICY "Admins delete contact messages"
+33:CREATE TRIGGER contact_messages_updated_at
+=== supabase/migrations/20260605035036_e733e4db-085b-4025-9c39-1e9c2c94ed77.sql ===
+1:INSERT INTO public.user_roles (user_id, role)
+=== supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql ===
+3:CREATE TABLE public.site_logs (
+17:GRANT SELECT, INSERT, UPDATE, DELETE ON public.site_logs TO authenticated;
+18:GRANT ALL ON public.site_logs TO service_role;
+19:ALTER TABLE public.site_logs ENABLE ROW LEVEL SECURITY;
+20:CREATE POLICY "Users manage own site logs" ON public.site_logs FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+21:CREATE TRIGGER trg_site_logs_updated BEFORE UPDATE ON public.site_logs FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+24:CREATE TABLE public.tender_analyses (
+36:GRANT SELECT, INSERT, UPDATE, DELETE ON public.tender_analyses TO authenticated;
+37:GRANT ALL ON public.tender_analyses TO service_role;
+38:ALTER TABLE public.tender_analyses ENABLE ROW LEVEL SECURITY;
+39:CREATE POLICY "Users manage own tender analyses" ON public.tender_analyses FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+40:CREATE TRIGGER trg_tender_analyses_updated BEFORE UPDATE ON public.tender_analyses FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+=== supabase/migrations/20260701140630_2b3b4c80-6705-4958-8176-ca4d8993c56a.sql ===
+2:create table if not exists public.notifications (
+13:grant select, insert, update, delete on public.notifications to authenticated;
+14:grant all on public.notifications to service_role;
+16:alter table public.notifications enable row level security;
+18:create policy "own notifications select" on public.notifications
+20:create policy "own notifications insert" on public.notifications
+22:create policy "own notifications update" on public.notifications
+24:create policy "own notifications delete" on public.notifications
+=== supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql ===
+2:ALTER TABLE public.projects
+11:ALTER TABLE public.projects ALTER COLUMN inputs DROP NOT NULL;
+12:ALTER TABLE public.projects ALTER COLUMN inputs SET DEFAULT '{}'::jsonb;
+15:  CREATE TYPE public.project_role AS ENUM ('admin','engineer','viewer');
+18:CREATE TABLE IF NOT EXISTS public.project_members (
+29:GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_members TO authenticated;
+30:GRANT ALL ON public.project_members TO service_role;
+31:ALTER TABLE public.project_members ENABLE ROW LEVEL SECURITY;
+33:CREATE OR REPLACE FUNCTION public.get_project_role(_project_id uuid, _user_id uuid)
+34:RETURNS public.project_role LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+43:CREATE OR REPLACE FUNCTION public.is_project_member(_project_id uuid, _user_id uuid)
+44:RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+48:DROP POLICY IF EXISTS "Members can view projects" ON public.projects;
+49:CREATE POLICY "Members can view projects" ON public.projects
+53:CREATE POLICY "Members view project_members" ON public.project_members
+55:CREATE POLICY "Admins manage project_members" ON public.project_members
+60:CREATE TABLE IF NOT EXISTS public.project_documents (
+70:GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_documents TO authenticated;
+71:GRANT ALL ON public.project_documents TO service_role;
+72:ALTER TABLE public.project_documents ENABLE ROW LEVEL SECURITY;
+73:CREATE POLICY "Members view documents" ON public.project_documents
+75:CREATE POLICY "Engineers upload documents" ON public.project_documents
+78:CREATE POLICY "Uploader or admin delete documents" ON public.project_documents
+82:CREATE TABLE IF NOT EXISTS public.project_activity (
+90:GRANT SELECT, INSERT ON public.project_activity TO authenticated;
+91:GRANT ALL ON public.project_activity TO service_role;
+92:ALTER TABLE public.project_activity ENABLE ROW LEVEL SECURITY;
+93:CREATE POLICY "Members view activity" ON public.project_activity
+95:CREATE POLICY "Members insert activity" ON public.project_activity
+98:CREATE TABLE IF NOT EXISTS public.invitations (
+109:GRANT SELECT, INSERT, UPDATE, DELETE ON public.invitations TO authenticated;
+110:GRANT ALL ON public.invitations TO service_role;
+111:ALTER TABLE public.invitations ENABLE ROW LEVEL SECURITY;
+112:CREATE POLICY "Admins manage invitations" ON public.invitations
+116:CREATE POLICY "Invitee views own invitations" ON public.invitations
+118:CREATE POLICY "Invitee updates own invitations" ON public.invitations
+121:ALTER TABLE public.notifications
+124:CREATE TABLE IF NOT EXISTS public.notification_settings (
+136:GRANT SELECT, INSERT, UPDATE, DELETE ON public.notification_settings TO authenticated;
+137:GRANT ALL ON public.notification_settings TO service_role;
+138:ALTER TABLE public.notification_settings ENABLE ROW LEVEL SECURITY;
+139:CREATE POLICY "Users manage own settings" ON public.notification_settings
+142:ALTER TABLE public.profiles
+150:CREATE TABLE IF NOT EXISTS public.referrals (
+159:GRANT SELECT, INSERT, UPDATE ON public.referrals TO authenticated;
+160:GRANT ALL ON public.referrals TO service_role;
+161:ALTER TABLE public.referrals ENABLE ROW LEVEL SECURITY;
+162:CREATE POLICY "Referrer views own referrals" ON public.referrals
+164:CREATE POLICY "Admins manage referrals" ON public.referrals
+168:CREATE TABLE IF NOT EXISTS public.withdrawals (
+179:GRANT SELECT, INSERT, UPDATE ON public.withdrawals TO authenticated;
+180:GRANT ALL ON public.withdrawals TO service_role;
+181:ALTER TABLE public.withdrawals ENABLE ROW LEVEL SECURITY;
+182:CREATE POLICY "Users view own withdrawals" ON public.withdrawals
+184:CREATE POLICY "Users request withdrawals" ON public.withdrawals
+186:CREATE POLICY "Admins update withdrawals" ON public.withdrawals
+189:CREATE OR REPLACE FUNCTION public.handle_new_user()
+190:RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+201:  insert into public.profiles (id, display_name, avatar_url, referral_code, referred_by)
+211:    INSERT INTO public.referrals (referrer_id, referred_user_id, status)
+218:    insert into public.user_roles (user_id, role) values (new.id, 'admin') on conflict do nothing;
+220:    insert into public.user_roles (user_id, role) values (new.id, 'user') on conflict do nothing;
+227:CREATE TRIGGER on_auth_user_created
+=== supabase/migrations/20260705070744_26d2afcf-d037-4815-8c9d-c1cc8ef5f1be.sql ===
+2:REVOKE EXECUTE ON FUNCTION public.get_project_role(uuid, uuid) FROM anon, authenticated, public;
+3:REVOKE EXECUTE ON FUNCTION public.is_project_member(uuid, uuid) FROM anon, authenticated, public;
+4:REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM anon, authenticated, public;
+=== supabase/migrations/20260705070805_b7cc4fcc-85f3-48b3-978a-926644d7a6ec.sql ===
+2:CREATE POLICY "Members read project docs" ON storage.objects
+4:  USING (bucket_id = 'project-documents' AND public.is_project_member((storage.foldername(name))[1]::uuid, auth.uid()));
+5:CREATE POLICY "Engineers upload project docs" ON storage.objects
+7:  WITH CHECK (bucket_id = 'project-documents' AND public.get_project_role((storage.foldername(name))[1]::uuid, auth.uid()) IN ('admin','engineer'));
+8:CREATE POLICY "Admins delete project docs" ON storage.objects
+10:  USING (bucket_id = 'project-documents' AND public.get_project_role((storage.foldername(name))[1]::uuid, auth.uid()) = 'admin');
+=== supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql ===
+2:GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO anon, authenticated, service_role;
+3:GRANT EXECUTE ON FUNCTION public.get_project_role(uuid, uuid) TO anon, authenticated, service_role;
+4:GRANT EXECUTE ON FUNCTION public.is_project_member(uuid, uuid) TO anon, authenticated, service_role;
+5:GRANT EXECUTE ON FUNCTION public.set_updated_at() TO anon, authenticated, service_role;
+6:GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, service_role;
+8:CREATE OR REPLACE FUNCTION public.handle_new_user()
+11:SECURITY DEFINER
+24:  insert into public.profiles (id, display_name, avatar_url, referral_code, referred_by)
+35:    INSERT INTO public.referrals (referrer_id, referred_user_id, status)
+42:    insert into public.user_roles (user_id, role) values (new.id, 'admin') on conflict do nothing;
+44:    insert into public.user_roles (user_id, role) values (new.id, 'user') on conflict do nothing;
+52:INSERT INTO public.user_roles (user_id, role)
+=== supabase/migrations/20260802055250_74a18599-0893-4134-9c50-9463a9240555.sql ===
+1:REVOKE EXECUTE ON FUNCTION public.set_updated_at() FROM anon, authenticated, PUBLIC;
+=== supabase/migrations/20260802055754_7bdda1fb-1ce7-46cf-9ca5-3390f4be9a72.sql ===
+2:CREATE POLICY "Admins view all profiles" ON public.profiles
+5:CREATE POLICY "Admins view all projects" ON public.projects
+=== supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql ===
+3:CREATE TABLE public.plans (
+19:GRANT SELECT ON public.plans TO anon;
+20:GRANT SELECT, INSERT, UPDATE, DELETE ON public.plans TO authenticated;
+21:GRANT ALL ON public.plans TO service_role;
+22:ALTER TABLE public.plans ENABLE ROW LEVEL SECURITY;
+23:CREATE POLICY "Plans are public" ON public.plans FOR SELECT USING (true);
+24:CREATE POLICY "Admins insert plans" ON public.plans FOR INSERT TO authenticated WITH CHECK (public.has_role(auth.uid(),'admin'));
+25:CREATE POLICY "Admins update plans" ON public.plans FOR UPDATE TO authenticated USING (public.has_role(auth.uid(),'admin'));
+26:CREATE POLICY "Admins delete plans" ON public.plans FOR DELETE TO authenticated USING (public.has_role(auth.uid(),'admin'));
+29:CREATE TABLE public.subscriptions (
+44:GRANT SELECT, INSERT, UPDATE ON public.subscriptions TO authenticated;
+45:GRANT ALL ON public.subscriptions TO service_role;
+46:ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+47:CREATE POLICY "Users view own subscription" ON public.subscriptions FOR SELECT TO authenticated
+49:CREATE POLICY "Users create own free subscription" ON public.subscriptions FOR INSERT TO authenticated
+51:CREATE POLICY "Admins update subscriptions" ON public.subscriptions FOR UPDATE TO authenticated
+53:CREATE POLICY "Users cancel own subscription" ON public.subscriptions FOR UPDATE TO authenticated
+57:CREATE TABLE public.payments (
+76:GRANT SELECT, INSERT ON public.payments TO authenticated;
+77:GRANT UPDATE ON public.payments TO authenticated;
+78:GRANT ALL ON public.payments TO service_role;
+79:ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
+80:CREATE POLICY "Users view own payments" ON public.payments FOR SELECT TO authenticated
+82:CREATE POLICY "Users create own payments" ON public.payments FOR INSERT TO authenticated
+84:CREATE POLICY "Admins update payments" ON public.payments FOR UPDATE TO authenticated
+88:CREATE TABLE public.usage_records (
+98:  storage_mb numeric NOT NULL DEFAULT 0,
+103:GRANT SELECT, INSERT, UPDATE ON public.usage_records TO authenticated;
+104:GRANT ALL ON public.usage_records TO service_role;
+105:ALTER TABLE public.usage_records ENABLE ROW LEVEL SECURITY;
+106:CREATE POLICY "Users view own usage" ON public.usage_records FOR SELECT TO authenticated
+108:CREATE POLICY "Users insert own usage" ON public.usage_records FOR INSERT TO authenticated
+110:CREATE POLICY "Users update own usage" ON public.usage_records FOR UPDATE TO authenticated
+114:CREATE TRIGGER plans_set_updated_at BEFORE UPDATE ON public.plans FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+115:CREATE TRIGGER subscriptions_set_updated_at BEFORE UPDATE ON public.subscriptions FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+116:CREATE TRIGGER payments_set_updated_at BEFORE UPDATE ON public.payments FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+117:CREATE TRIGGER usage_set_updated_at BEFORE UPDATE ON public.usage_records FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+120:INSERT INTO public.plans (code,name,tagline,price_monthly,price_yearly,sort_order,is_popular,features,limits) VALUES
+123: '{"projects":3,"ai_credits":50,"team_members":1,"storage_mb":200,"drawings":3,"boq":5,"bbs":2,"reports":3,"estimates":5,"ai_writer":false,"ai_drawing":false,"ai_insights":false,"analytics":false,"tender":false,"finance":false,"procurement":false,"team":false,"export_excel":false,"priority_support":false}'::jsonb),
+126: '{"projects":15,"ai_credits":1000,"team_members":2,"storage_mb":5000,"drawings":25,"boq":50,"bbs":25,"reports":25,"estimates":50,"ai_writer":false,"ai_drawing":false,"ai_insights":false,"analytics":false,"tender":true,"finance":false,"procurement":false,"team":false,"export_excel":true,"priority_support":false}'::jsonb),
+129: '{"projects":-1,"ai_credits":10000,"team_members":10,"storage_mb":50000,"drawings":-1,"boq":-1,"bbs":-1,"reports":-1,"estimates":-1,"ai_writer":true,"ai_drawing":true,"ai_insights":true,"analytics":true,"tender":true,"finance":true,"procurement":true,"team":true,"export_excel":true,"priority_support":true}'::jsonb),
+132: '{"projects":-1,"ai_credits":-1,"team_members":-1,"storage_mb":-1,"drawings":-1,"boq":-1,"bbs":-1,"reports":-1,"estimates":-1,"ai_writer":true,"ai_drawing":true,"ai_insights":true,"analytics":true,"tender":true,"finance":true,"procurement":true,"team":true,"export_excel":true,"priority_support":true}'::jsonb);
+=== supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql ===
+1:ALTER TABLE public.invitations
+11:CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
+15:SECURITY DEFINER
+31:REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+32:GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
+34:CREATE OR REPLACE FUNCTION public.handle_new_user()
+37:SECURITY DEFINER
+50:  INSERT INTO public.profiles (id, display_name, avatar_url, referral_code, referred_by)
+61:    INSERT INTO public.referrals (referrer_id, referred_user_id, status)
+66:  INSERT INTO public.user_roles (user_id, role)
+79:REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+80:GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, service_role;
+82:DROP POLICY IF EXISTS "Invitee updates own invitations" ON public.invitations;
+83:DROP POLICY IF EXISTS "Invitee views own invitations" ON public.invitations;
+84:CREATE POLICY "Invitee views own valid invitations" ON public.invitations
+92:CREATE OR REPLACE FUNCTION public.accept_project_invitation(_token text)
+95:SECURITY DEFINER
+118:  INSERT INTO public.project_members (project_id, user_id, role, invited_by, status)
+127:  INSERT INTO public.notifications (user_id, project_id, type, title, message, link)
+134:CREATE OR REPLACE FUNCTION public.decline_project_invitation(_token text)
+137:SECURITY DEFINER
+154:REVOKE ALL ON FUNCTION public.accept_project_invitation(text) FROM PUBLIC, anon;
+155:REVOKE ALL ON FUNCTION public.decline_project_invitation(text) FROM PUBLIC, anon;
+156:GRANT EXECUTE ON FUNCTION public.accept_project_invitation(text) TO authenticated, service_role;
+157:GRANT EXECUTE ON FUNCTION public.decline_project_invitation(text) TO authenticated, service_role;
+159:DROP POLICY IF EXISTS "Uploader or admin delete documents" ON public.project_documents;
+160:CREATE POLICY "Current uploader or admin delete documents" ON public.project_documents
+=== supabase/migrations/20260805044750_c1ee7b77-ecba-4978-b719-91bc022cca49.sql ===
+1:REVOKE ALL ON FUNCTION public.get_project_role(uuid, uuid) FROM PUBLIC, anon;
+2:REVOKE ALL ON FUNCTION public.is_project_member(uuid, uuid) FROM PUBLIC, anon;
+3:GRANT EXECUTE ON FUNCTION public.get_project_role(uuid, uuid) TO authenticated, service_role;
+4:GRANT EXECUTE ON FUNCTION public.is_project_member(uuid, uuid) TO authenticated, service_role;

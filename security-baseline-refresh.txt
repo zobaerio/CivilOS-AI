@@ -1,0 +1,99 @@
+=== TRACKED ENV/SECRET-LIKE FILES ===
+.env
+
+=== PRIVILEGED/SECRET REFERENCES ===
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-analyze/index.ts:36:    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-analyze/index.ts:37:    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-analyze/index.ts:55:        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-chat/index.ts:36:    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-chat/index.ts:37:    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-chat/index.ts:51:        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-structured/index.ts:31:    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-structured/index.ts:32:    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+/home/ubuntu/civilos-audit/repo/supabase/functions/ai-structured/index.ts:42:      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:18:GRANT ALL ON public.site_logs TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:37:GRANT ALL ON public.tender_analyses TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260701140630_2b3b4c80-6705-4958-8176-ca4d8993c56a.sql:14:grant all on public.notifications to service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:30:GRANT ALL ON public.project_members TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:71:GRANT ALL ON public.project_documents TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:91:GRANT ALL ON public.project_activity TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:110:GRANT ALL ON public.invitations TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:137:GRANT ALL ON public.notification_settings TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:160:GRANT ALL ON public.referrals TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:180:GRANT ALL ON public.withdrawals TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:2:GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO anon, authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:3:GRANT EXECUTE ON FUNCTION public.get_project_role(uuid, uuid) TO anon, authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:4:GRANT EXECUTE ON FUNCTION public.is_project_member(uuid, uuid) TO anon, authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:5:GRANT EXECUTE ON FUNCTION public.set_updated_at() TO anon, authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:6:GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:21:GRANT ALL ON public.plans TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:45:GRANT ALL ON public.subscriptions TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:78:GRANT ALL ON public.payments TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:104:GRANT ALL ON public.usage_records TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:32:GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:80:GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:156:GRANT EXECUTE ON FUNCTION public.accept_project_invitation(text) TO authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:157:GRANT EXECUTE ON FUNCTION public.decline_project_invitation(text) TO authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260805044750_c1ee7b77-ecba-4978-b719-91bc022cca49.sql:3:GRANT EXECUTE ON FUNCTION public.get_project_role(uuid, uuid) TO authenticated, service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260805044750_c1ee7b77-ecba-4978-b719-91bc022cca49.sql:4:GRANT EXECUTE ON FUNCTION public.is_project_member(uuid, uuid) TO authenticated, service_role;
+
+=== CLIENT AUTHZ / STORAGE / REDIRECT PATTERNS ===
+/home/ubuntu/civilos-audit/repo/src/components/Footer.tsx:22:                target="_blank"
+/home/ubuntu/civilos-audit/repo/src/components/Footer.tsx:51:              <a href="https://wa.me/8801832313998" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent">
+/home/ubuntu/civilos-audit/repo/src/components/SponsorSlider.tsx:45:              <a key={s.id} href={s.website || "#"} target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/components/SponsorSlider.tsx:62:                <a key={`${s.id}-${i}`} href={s.website || "#"} target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/components/SponsorsSection.tsx:42:                  <a key={s.id} href={s.website || "#"} target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/components/SponsorsSection.tsx:56:                <a key={s.id} href={s.website || "#"} target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/components/ui/chart.tsx:71:      dangerouslySetInnerHTML={{
+/home/ubuntu/civilos-audit/repo/src/lib/registerPwa.ts:58:    new URLSearchParams(window.location.search).get("sw") === "off";
+/home/ubuntu/civilos-audit/repo/src/pages/AdminPage.tsx:128:      window.open(`https://wa.me/${num}?text=${wa}`, "_blank", "noopener,noreferrer");
+/home/ubuntu/civilos-audit/repo/src/pages/AdminPage.tsx:130:      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${wa}`, "_blank", "noopener,noreferrer");
+/home/ubuntu/civilos-audit/repo/src/pages/AdminPage.tsx:221:                        target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/pages/AdminPage.tsx:307:                    <a href={`/share/${p.share_token}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-input"><ExternalLink className="h-3 w-3" /></a>
+/home/ubuntu/civilos-audit/repo/src/pages/AffiliatePage.tsx:52:    window.open(urls[net], "_blank");
+/home/ubuntu/civilos-audit/repo/src/pages/AuthPage.tsx:33:        const ref = new URLSearchParams(window.location.search).get("ref") || undefined;
+/home/ubuntu/civilos-audit/repo/src/pages/ContactPage.tsx:55:    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waText}`, "_blank", "noopener,noreferrer");
+/home/ubuntu/civilos-audit/repo/src/pages/ContactPage.tsx:72:          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/pages/ProfilePage.tsx:55:    const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+/home/ubuntu/civilos-audit/repo/src/pages/ProfilePage.tsx:57:    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+/home/ubuntu/civilos-audit/repo/src/pages/ProjectDetailPage.tsx:76:      const { error } = await supabase.storage.from("project-documents").upload(path, file);
+/home/ubuntu/civilos-audit/repo/src/pages/ProjectDetailPage.tsx:78:      const { data: signed } = await supabase.storage.from("project-documents").createSignedUrl(path, 60 * 60 * 24 * 365);
+/home/ubuntu/civilos-audit/repo/src/pages/ProjectDetailPage.tsx:90:    const { data } = await supabase.storage.from("project-documents").createSignedUrl(d.file_url, 3600);
+/home/ubuntu/civilos-audit/repo/src/pages/ProjectDetailPage.tsx:91:    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+/home/ubuntu/civilos-audit/repo/src/pages/ProjectDetailPage.tsx:95:    await supabase.storage.from("project-documents").remove([d.file_url]);
+/home/ubuntu/civilos-audit/repo/src/pages/SponsorPage.tsx:47:    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${wa}`, "_blank", "noopener,noreferrer");
+/home/ubuntu/civilos-audit/repo/src/pages/SponsorPage.tsx:64:          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer"
+/home/ubuntu/civilos-audit/repo/src/utils/exportUtils.ts:103:  setTimeout(() => window.open('https://sheets.new', '_blank'), 800);
+
+=== BROAD AUTHENTICATED GRANTS/POLICIES ===
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:17:GRANT SELECT, INSERT, UPDATE, DELETE ON public.site_logs TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:18:GRANT ALL ON public.site_logs TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:20:CREATE POLICY "Users manage own site logs" ON public.site_logs FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:36:GRANT SELECT, INSERT, UPDATE, DELETE ON public.tender_analyses TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:37:GRANT ALL ON public.tender_analyses TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260606002054_1696696c-6243-44f2-8b6d-aa9f62b58d5f.sql:39:CREATE POLICY "Users manage own tender analyses" ON public.tender_analyses FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:29:GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_members TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:30:GRANT ALL ON public.project_members TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:56:  FOR ALL TO authenticated
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:70:GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_documents TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:71:GRANT ALL ON public.project_documents TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:91:GRANT ALL ON public.project_activity TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:109:GRANT SELECT, INSERT, UPDATE, DELETE ON public.invitations TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:110:GRANT ALL ON public.invitations TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:113:  FOR ALL TO authenticated
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:136:GRANT SELECT, INSERT, UPDATE, DELETE ON public.notification_settings TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:137:GRANT ALL ON public.notification_settings TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:140:  FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:160:GRANT ALL ON public.referrals TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:165:  FOR ALL TO authenticated
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:180:GRANT ALL ON public.withdrawals TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:185:  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:20:GRANT SELECT, INSERT, UPDATE, DELETE ON public.plans TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:21:GRANT ALL ON public.plans TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:45:GRANT ALL ON public.subscriptions TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:50:  WITH CHECK (auth.uid() = user_id);
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:77:GRANT UPDATE ON public.payments TO authenticated;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:78:GRANT ALL ON public.payments TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:104:GRANT ALL ON public.usage_records TO service_role;
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:109:  WITH CHECK (auth.uid() = user_id);
+/home/ubuntu/civilos-audit/repo/supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:111:  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);

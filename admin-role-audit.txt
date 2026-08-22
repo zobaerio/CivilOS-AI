@@ -1,0 +1,89 @@
+=== ADMIN ROLE ASSIGNMENTS / ALLOWLISTS ===
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:2:create type public.app_role as enum ('admin', 'user');
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:13:create or replace function public.has_role(_user_id uuid, _role public.app_role)
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:21:  for select using (auth.uid() = user_id or public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:23:  for all using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:38:  using (auth.uid() = user_id or public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:55:  using (status = 'active' or public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:57:create policy "Admins manage sponsors" on public.sponsors for update using (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260503082856_90b438b1-033e-4d48-84c9-5c7cabfdb035.sql:58:create policy "Admins delete sponsors" on public.sponsors for delete using (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260503082930_681c0c10-de0f-4457-964c-ad930178ddb4.sql:20:    insert into public.user_roles (user_id, role) values (new.id, 'admin')
+supabase/migrations/20260504135137_a152f4d1-3043-4b40-94af-c8fe616a543a.sql:23:USING (has_role(auth.uid(), 'admin'::app_role));
+supabase/migrations/20260504135137_a152f4d1-3043-4b40-94af-c8fe616a543a.sql:27:USING (has_role(auth.uid(), 'admin'::app_role));
+supabase/migrations/20260504135137_a152f4d1-3043-4b40-94af-c8fe616a543a.sql:31:USING (has_role(auth.uid(), 'admin'::app_role));
+supabase/migrations/20260605035036_e733e4db-085b-4025-9c39-1e9c2c94ed77.sql:2:SELECT id, 'admin'::app_role FROM auth.users WHERE email = 'zobaerhasan431@gmail.com'
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:15:  CREATE TYPE public.project_role AS ENUM ('admin','engineer','viewer');
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:38:  SELECT 'admin'::public.project_role FROM public.projects
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:57:  USING (public.get_project_role(project_id, auth.uid()) = 'admin')
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:58:  WITH CHECK (public.get_project_role(project_id, auth.uid()) = 'admin');
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:77:  WITH CHECK (public.get_project_role(project_id, auth.uid()) IN ('admin','engineer') AND uploaded_by = auth.uid());
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:80:  USING (uploaded_by = auth.uid() OR public.get_project_role(project_id, auth.uid()) = 'admin');
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:114:  USING (public.get_project_role(project_id, auth.uid()) = 'admin')
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:115:  WITH CHECK (public.get_project_role(project_id, auth.uid()) = 'admin');
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:163:  FOR SELECT TO authenticated USING (auth.uid() = referrer_id OR public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:166:  USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:183:  FOR SELECT TO authenticated USING (auth.uid() = user_id OR public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:187:  FOR UPDATE TO authenticated USING (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260705070724_7bfd57f1-3910-43eb-ab5e-fd3d526024ec.sql:218:    insert into public.user_roles (user_id, role) values (new.id, 'admin') on conflict do nothing;
+supabase/migrations/20260705070744_26d2afcf-d037-4815-8c9d-c1cc8ef5f1be.sql:4:REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM anon, authenticated, public;
+supabase/migrations/20260705070805_b7cc4fcc-85f3-48b3-978a-926644d7a6ec.sql:7:  WITH CHECK (bucket_id = 'project-documents' AND public.get_project_role((storage.foldername(name))[1]::uuid, auth.uid()) IN ('admin','engineer'));
+supabase/migrations/20260705070805_b7cc4fcc-85f3-48b3-978a-926644d7a6ec.sql:10:  USING (bucket_id = 'project-documents' AND public.get_project_role((storage.foldername(name))[1]::uuid, auth.uid()) = 'admin');
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:2:GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO anon, authenticated, service_role;
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:6:GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, service_role;
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:41:  if user_count = 1 or lower(new.email) in ('zobaerhasan451@gmail.com','zobaerhasan431@gmail.com','zobaerhasan43@gmail.com') then
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:42:    insert into public.user_roles (user_id, role) values (new.id, 'admin') on conflict do nothing;
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:53:SELECT id, 'admin'::public.app_role FROM auth.users
+supabase/migrations/20260802055227_7a1229d3-9082-4282-ba36-b2cd149ef621.sql:54:WHERE lower(email) IN ('zobaerhasan451@gmail.com','zobaerhasan431@gmail.com','zobaerhasan43@gmail.com')
+supabase/migrations/20260802055754_7bdda1fb-1ce7-46cf-9ca5-3390f4be9a72.sql:3:FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
+supabase/migrations/20260802055754_7bdda1fb-1ce7-46cf-9ca5-3390f4be9a72.sql:6:FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:24:CREATE POLICY "Admins insert plans" ON public.plans FOR INSERT TO authenticated WITH CHECK (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:25:CREATE POLICY "Admins update plans" ON public.plans FOR UPDATE TO authenticated USING (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:26:CREATE POLICY "Admins delete plans" ON public.plans FOR DELETE TO authenticated USING (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:48:  USING (auth.uid() = user_id OR public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:52:  USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:81:  USING (auth.uid() = user_id OR public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:85:  USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260803023830_026473cd-7908-47f8-b742-581c29f50c3a.sql:107:  USING (auth.uid() = user_id OR public.has_role(auth.uid(),'admin'));
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:11:CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:25:        _role <> 'admin'::public.app_role
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:26:        OR lower(trim(au.email)) IN ('zobaerio24@gmail.com', 'zobaerhasan431@gmail.com')
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:31:REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:32:GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:69:    CASE WHEN normalized_email IN ('zobaerio24@gmail.com', 'zobaerhasan431@gmail.com')
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:70:      THEN 'admin'::public.app_role ELSE 'user'::public.app_role END
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:80:GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, service_role;
+supabase/migrations/20260805044720_12f21018-5393-4948-9e5f-a228d53a09ca.sql:163:    public.get_project_role(project_id, auth.uid()) = 'admin'
+src/components/DashboardSidebar.tsx:72:    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+src/integrations/supabase/types.ts:891:      has_role: {
+src/integrations/supabase/types.ts:904:      app_role: "admin" | "user"
+src/integrations/supabase/types.ts:905:      project_role: "admin" | "engineer" | "viewer"
+src/integrations/supabase/types.ts:1033:      app_role: ["admin", "user"],
+src/integrations/supabase/types.ts:1034:      project_role: ["admin", "engineer", "viewer"],
+src/pages/AdminAffiliatePage.tsx:21:    const { data } = await (supabase as any).from("user_roles").select("role").eq("user_id", user.id).eq("role","admin").maybeSingle();
+src/pages/AdminBillingPage.tsx:40:        .eq("user_id", user.id).eq("role", "admin").maybeSingle();
+src/pages/AdminPage.tsx:59:      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
+src/pages/ProjectDetailPage.tsx:63:  const canEdit = role === "admin" || role === "engineer";
+src/pages/ProjectDetailPage.tsx:64:  const isAdmin = role === "admin";
+src/pages/ProjectDetailPage.tsx:259:                    <Badge className={roleColor.admin} variant="outline">ADMIN</Badge>
+
+=== DIRECT CLIENT ROLE CHECKS ===
+src/components/DashboardSidebar.tsx:72:    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+src/pages/AdminAffiliatePage.tsx:21:    const { data } = await (supabase as any).from("user_roles").select("role").eq("user_id", user.id).eq("role","admin").maybeSingle();
+src/pages/AdminBillingPage.tsx:39:      const { data: role } = await supabase.from("user_roles").select("role")
+src/pages/AdminBillingPage.tsx:40:        .eq("user_id", user.id).eq("role", "admin").maybeSingle();
+
+=== ADMIN ROUTES / ADMIN-ONLY METADATA ===
+src/App.tsx:42:const AdminAffiliatePage = lazy(() => import("./pages/AdminAffiliatePage.tsx"));
+src/App.tsx:46:const AdminBillingPage = lazy(() => import("./pages/AdminBillingPage.tsx"));
+src/App.tsx:89:              <Route path="/admin" element={<AdminPage />} />
+src/App.tsx:93:              <Route path="/admin/affiliate" element={<AdminAffiliatePage />} />
+src/App.tsx:96:              <Route path="/admin/billing" element={<AdminBillingPage />} />
+src/components/DashboardSidebar.tsx:158:                cat={{ ...settingsNav, items: settingsNav.items.filter((i) => !i.adminOnly || isAdmin) }}
+src/components/Footer.tsx:60:          <Link to="/admin" title="Admin" className="hover:text-accent transition-colors cursor-pointer">©</Link>{" "}
+src/lib/navigation.ts:15:  adminOnly?: boolean;
+src/lib/navigation.ts:116:    { title: "Admin Dashboard", url: "/admin", icon: Shield, adminOnly: true },
+src/lib/navigation.ts:117:    { title: "Admin · Payments", url: "/admin/billing", icon: CreditCard, adminOnly: true },
+src/pages/AdminAffiliatePage.tsx:12:export default function AdminAffiliatePage() {
+src/pages/AdminBillingPage.tsx:24:export default function AdminBillingPage() {
+src/pages/AdminPage.tsx:53:    if (!authLoading && !user) navigate("/auth?redirect=/admin");
+src/pages/ModulesPage.tsx:76:    { title: "Admin Dashboard", bn: "অ্যাডমিন", url: "/admin", icon: Shield, live: true },

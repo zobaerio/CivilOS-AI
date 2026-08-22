@@ -1,0 +1,46 @@
+=== TOP LEVEL DEPLOYMENT FILES ===
+-rw-r--r-- 1 ubuntu ubuntu 378762 Aug 22 01:35 bun.lock
+-rwxr-xr-x 1 ubuntu ubuntu 245395 Aug 22 01:35 bun.lockb
+-rw-r--r-- 1 ubuntu ubuntu 335108 Aug 22 01:35 package-lock.json
+-rw-r--r-- 1 ubuntu ubuntu   3474 Aug 22 01:35 package.json
+-rw-r--r-- 1 ubuntu ubuntu     72 Aug 22 01:35 vercel.json
+-rw-r--r-- 1 ubuntu ubuntu   1511 Aug 22 01:35 vite.config.ts
+
+=== GITHUB/AUTOMATION FILES ===
+.github/FUNDING.yml
+.github/dependabot.yml
+
+=== GIT BRANCH/REMOTE ===
+* [32mmain[m
+  [31mremotes/origin/HEAD[m -> origin/main
+  [31mremotes/origin/main[m
+origin	https://github.com/zobaerio/CivilOS-AI.git (fetch)
+origin	https://github.com/zobaerio/CivilOS-AI.git (push)
+
+=== RECENT COMMITS ===
+c250a40 2026-08-16 07:34:36 +0600 Zobaerio Fix formatting by adding newline at end of file
+070423c 2026-08-06 09:26:28 +0000 gpt-engineer-app[bot] Added version update flow
+061c3b0 2026-08-06 09:26:18 +0000 gpt-engineer-app[bot] Changes
+4e2b6b0 2026-08-06 09:26:13 +0000 gpt-engineer-app[bot] Changes
+dba0b9b 2026-08-06 09:26:03 +0000 gpt-engineer-app[bot] Changes
+edfb03a 2026-08-06 09:25:37 +0000 gpt-engineer-app[bot] Changes
+5d3feaf 2026-08-06 09:25:19 +0000 gpt-engineer-app[bot] Update plan
+12e3ef0 2026-08-06 09:25:14 +0000 gpt-engineer-app[bot] Changes
+
+=== VERCEL CONFIG ===
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+
+=== PACKAGE SCRIPTS ===
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}
