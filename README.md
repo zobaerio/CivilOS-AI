@@ -958,7 +958,7 @@ Also add demo sample project data so the platform looks complete even before fir
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://civilosai.lovable.app
+**Live app**: https://civilosai.pro.bd
 
 ## Build with Lovable
 
