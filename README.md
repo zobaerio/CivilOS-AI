@@ -1,980 +1,1352 @@
-# CivilOS AI
+🏗️ CivilOS AI
 
-Full Final Prompt
+AI Operating System for Civil Engineers
 
-Prompt Title:
-AI-Powered House Design Estimation & Construction Details Platform
+From Drawing to Estimate — Smarter Construction Decisions.
 
-Main Prompt:
+CivilOS AI is an AI-powered civil engineering and construction management platform that brings AI assistance, drawing analysis, quantity takeoff, BOQ, estimation, BBS, engineering calculators, project management, and professional reporting into one unified workspace.
 
-Create a modern, professional, fully responsive web application called “Smart House Estimate AI” where users can upload a house design / floor plan / blueprint / building drawing / image / PDF and instantly get a complete construction estimate and detailed report.
+---
 
-The platform must look premium, clean, engineering-grade, trustworthy, and modern, suitable for civil engineers, contractors, architects, students, and house owners.
+<p align="center">""Live App" (https://img.shields.io/badge/🌐_Live_App-civilosai.pro.bd-2563EB?style=for-the-badge)" (https://civilosai.pro.bd)
+""GitHub" (https://img.shields.io/badge/GitHub-zobaerio-181717?style=for-the-badge&logo=github)" (https://github.com/zobaerio/CivilOS-AI)
+""License" (https://img.shields.io/badge/License-MIT-green?style=for-the-badge)" (LICENSE)
 
-Core Objective
+</p>---
 
-The system should allow users to:
+🌐 Live Application
 
- Upload house design files in formats like:
+Website: https://civilosai.pro.bd
 
- JPG
+GitHub Repository: https://github.com/zobaerio/CivilOS-AI
 
- PNG
+Developer: Md Zobaer Hasan
 
- PDF
+---
 
- AutoCAD-export image/PDF
+✨ Features
 
- Scanned floor plan
+🤖 AI Civil Engineer
 
- After upload, the system should analyze the plan and generate: 
- 
- Total built-up area
+CivilOS AI provides an AI-powered engineering assistant for:
 
- Room-wise area
+- Civil engineering questions
+- Construction methodology
+- Quantity estimation
+- BOQ preparation
+- Material calculations
+- Cost analysis
+- Drawing interpretation
+- Construction planning
+- Engineering calculations
+- Project-specific questions
 
- Number of rooms
+The AI can work with the context of the current project instead of behaving only as a generic chatbot.
 
- Wall length estimation
+---
 
- Column count suggestion
+📐 Drawing & Floor Plan Analysis
 
- Beam estimation
+Upload:
 
- Slab area
+- JPG
+- JPEG
+- PNG
+- WEBP
+- PDF
+- Scanned floor plans
+- Blueprint images
+- AutoCAD-exported PDF drawings
 
- Foundation estimate
+The system can analyze available information such as:
 
- Brick quantity estimate
+- Building dimensions
+- Room dimensions
+- Room names
+- Walls
+- Doors
+- Windows
+- Stairs
+- Balconies
+- Verandas
+- Bathrooms
+- Kitchens
+- Floor count
+- Approximate floor area
 
- Cement quantity estimate
+Confidence-Based Analysis
 
- Sand quantity estimate
+CivilOS AI distinguishes between:
 
- Stone quantity estimate
+- Detected data
+- User-provided data
+- Assumptions
+- Missing information
+- Engineering verification required
 
- Rod/steel quantity estimate
+The system must never invent missing dimensions.
 
- Labor cost
+---
 
- Finishing cost
+📊 Quantity Takeoff
 
- Electrical estimation
+Generate preliminary quantities for:
 
- Plumbing estimation
+Earthwork
 
- Paint estimation
+- Excavation
+- Filling
+- Disposal
 
- Tile/flooring estimation
+Foundation
 
- Doors and windows estimation
+- PCC
+- Footing
+- Foundation wall
+- Plinth
+- Soling
 
- Total project cost summary
+RCC
 
- Show all calculations in a beautiful dashboard.
+- Columns
+- Beams
+- Slabs
+- Staircases
+- Lintels
+- Roof
 
- Generate a downloadable estimate report in PDF.
+Masonry
+
+- Brickwork
+- Blockwork
+
+Finishing
 
-Important System Behavior
+- Plaster
+- Flooring
+- Tiles
+- Paint
+- Putty
+- Ceiling
 
-The AI must not claim 100% engineering accuracy unless exact scale and measurements are provided.
-If the uploaded design does not include proper dimensions, the app must:
+---
 
- Ask the user to enter:
+🧱 Material Estimation
 
- Plot size
+Estimate:
 
- Length and width
+- Cement
+- Sand
+- Stone chips
+- Bricks
+- Blocks
+- Reinforcement steel
+- Binding wire
+- Water
+- Tiles
+- Paint
+- Primer
+- Putty
+- Electrical materials
+- Plumbing materials
 
- Unit system (feet/meters)
+Each estimate can include:
 
- Number of floors
+Item| Unit| Quantity| Waste| Adjusted Quantity| Rate| Amount
+Cement| Bag| —| —| —| —| —
+Sand| CFT| —| —| —| —| —
+Brick| Nos| —| —| —| —| —
+Steel| kg| —| —| —| —| —
 
- Floor height
+---
 
- Wall thickness
+📋 BOQ Generator
 
- Foundation type
+Generate professional Bills of Quantities.
 
- Roof/slab type
+BOQ Categories
 
- Soil type
+- Earthwork
+- Concrete
+- RCC
+- Reinforcement
+- Masonry
+- Plaster
+- Flooring
+- Painting
+- Electrical
+- Plumbing
+- Doors & Windows
+- Miscellaneous
 
- Material quality level (standard/premium/economy)
+BOQ Structure
 
-Then the system should produce an approximate estimate.
-
-If dimensions are visible in the drawing, use those values automatically.
-
-Main Modules
-
-1. Home Page
-
-Include:
-
- Hero section with strong headline
-
- Upload design button
-
- Drag & drop upload area
-
- Demo preview section
-
- Features section
-
- “How it works” section
-
- Estimate categories section
-
- Testimonials section
-
- FAQ section
-
- Footer
-
-Hero Text Example:
-
- Title: Upload Your House Design and Get Full Construction Estimate Instantly
-
- Subtitle: Smart AI-powered building estimation system for house owners, civil engineers, architects, and contractors.
-
- CTA buttons:
-
- Upload Design
-
- Try Demo
-
-2. Upload & Analysis Module
-
-Allow users to upload:
-
- Floor plan image
-
- Blueprint scan
-
- PDF drawing
-
- House layout image
-
-After upload, show:
-
- File preview
-
- Input fields for missing dimensions
-
- Select project type:
-
- Single-storied house
-
- Duplex house
-
- Multi-storied building
-
- Commercial building
-
- Small shop/home combo
-
- Select location factor
-
- Select construction quality:
-
- Economy
-
- Standard
-
- Premium
-
-Then click:
-Analyze Design
-
-3. Design Data Extraction Module
-
-The AI should detect or ask for:
-
- External dimensions
-
- Internal room dimensions
-
- Number of bedrooms
-
- Number of bathrooms
-
- Kitchen
-
- Dining
-
- Drawing/living room
-
- Veranda/balcony
-
- Stair area
-
- Garage
-
- Store room
-
- Boundary wall
-
- Roof access
-
- Floor count
-
-The app should show:
-
- Design summary card
-
- Recognized dimensions
-
- Missing values warning
-
- Confidence score of extraction
-
-4. Estimate Dashboard
-
-Create a beautiful dashboard with cards, charts, tables, and summaries.
-
-Show these sections:
-
-A. Project Summary
-
- Project name
-
- Plot size
-
- Total floor area
-
- Number of floors
-
- Estimated total construction cost
-
- Cost per square foot / square meter
-
- Approximate completion time
-
-B. Civil Work Estimate
-
- Earthwork
-
- Excavation
-
- Foundation
-
- Footing
-
- Column
-
- Beam
-
- Slab
-
- Roof casting
-
- Masonry work
-
- Plaster work
-
-C. Material Estimate
-
- Cement bags
-
- Sand (cft / m³)
-
- Stone chips
-
- Bricks / blocks
-
- Steel rods
-
- Water requirement
-
- Paint
-
- Tiles
-
- Electrical items
-
- Plumbing items
-
- Doors
-
- Windows
-
- Glass
-
- Grill/railing
-
-D. Labor Estimate
-
- Mason
-
- Rod binder
-
- Carpenter
-
- Electrician
-
- Plumber
-
- Painter
-
- Tiles worker
-
- General labor
-
-E. Finishing Estimate
-
- Floor finish
-
- Wall finish
-
- Ceiling finish
-
- Kitchen finish
-
- Bathroom finish
-
- Exterior paint
-
- Interior paint
-
- Wood polish
-
- False ceiling (optional)
-
-F. Utility Estimate
-
- Electrical wiring points
-
- Switches
-
- DB box
-
- Plumbing pipe length
-
- Water tank size suggestion
-
- Sanitary fittings count
-
-G. Room-wise Details
-For each room, show:
-
- Room name
-
- Length
-
- Width
-
- Area
-
- Floor finish
-
- Wall area
-
- Paint estimate
-
- Number of doors/windows
-
-5. Detailed Cost Breakdown
-
-Create a section with:
-
- Item name
-
- Unit
-
- Quantity
-
- Rate
-
- Total amount
-
-Also show:
-
- Subtotal
-
- Transport cost
-
- Labor cost
-
- Contractor overhead
-
- Contingency cost
-
- Engineering/design charge
-
- Total estimated budget
-
-Include sliders or input boxes for:
-
- Material price adjustment
-
- Labor rate adjustment
-
- Location factor
-
- Inflation factor
-
- Waste percentage
-
-6. Smart AI Suggestions
-
-The AI should provide:
-
- Cost-saving suggestions
-
- Material optimization tips
-
- Structural caution notes
-
- Better room layout suggestions
-
- Ventilation suggestions
-
- Lighting suggestions
-
- Water line planning suggestion
-
- Future extension possibility
-
- Roof usage suggestion
-
- Stair design suggestion
-
-Example:
-
- “Your current layout may increase wall construction cost.”
-
- “Reducing corridor area can lower total cost.”
-
- “Premium tiles significantly increase finishing cost.”
-
- “A 10-inch external wall and 5-inch internal wall combination may optimize cost.”
-
-7. Report Generation
-
-Generate downloadable:
-
- PDF Estimate Report
-
- Print-friendly view
-
-PDF should include:
-
- Project summary
-
- Uploaded design preview
-
- Area breakdown
-
- Quantity breakdown
-
- Cost estimate
-
- Room-wise details
-
- Material table
-
- Notes and disclaimer
-
- Generated date
-
-User Panel Features
-
-Create a user system with:
-
- Sign up / Login
-
- Dashboard
-
- My Projects
-
- Saved Estimates
-
- Download Reports
-
- Edit Inputs
-
- Recalculate Estimate
-
- Compare Projects
-
- Profile Settings
-
-User can:
-
- Upload multiple designs
-
- Save estimate history
-
- Duplicate a project
-
- Update material rates
-
- Track versions
-
-Admin Panel Features
-
-Create hidden admin access from footer text:
-© Smart House Estimate AI
-When clicked multiple times or long-pressed, admin login opens.
-
-Admin panel features:
-
- Dashboard overview
-
- Total users
-
- Total projects
-
- Total reports generated
-
- Material price management
-
- Labor rate management
-
- Location factor management
-
- Estimate formula settings
-
- Category management
-
- User management
-
- Project management
-
- Delete/edit estimates
-
- PDF report settings
-
- Announcement management
-
- Contact message management
-
-Calculation Logic
-
-The system should support approximate calculation logic like:
+Item
+Description
+Unit
+Quantity
+Rate
+Amount
+
+Formula:
+
+Amount = Quantity × Rate
+
+---
+
+🔩 BBS — Bar Bending Schedule
+
+CivilOS AI supports a dedicated BBS workflow.
+
+Supported members:
+
+- Columns
+- Beams
+- Slabs
+- Footings
+- Stirrups
+- Ties
+
+Generate:
+
+- Bar Mark
+- Member
+- Diameter
+- Number of Bars
+- Cutting Length
+- Total Length
+- Unit Weight
+- Total Weight
+
+Export:
+
+- PDF
+- Excel
+- CSV
+
+«BBS generated from incomplete drawings is preliminary and must be verified by a qualified engineer.»
+
+---
+
+💰 Construction Cost Estimation
+
+Generate a complete preliminary project budget.
+
+Cost Components
+
+- Material Cost
+- Labor Cost
+- Equipment Cost
+- Transportation
+- Contractor Overhead
+- Engineering/Consultancy
+- Contingency
+- Applicable Taxes/VAT
+
+Cost Summary
+
+Total Project Cost
+Cost per Sq Ft
+Cost per Sq Meter
+Material Cost
+Labor Cost
+Finishing Cost
+Electrical Cost
+Plumbing Cost
+Contingency
+
+---
+
+🏠 Room-Wise Estimation
+
+For each room:
+
+- Room name
+- Length
+- Width
+- Area
+- Perimeter
+- Wall area
+- Floor area
+- Ceiling area
+- Doors
+- Windows
+- Flooring
+- Paint
+- Electrical points
+- Plumbing requirements
+
+---
+
+🧮 Engineering Calculators
+
+CivilOS AI provides engineering calculators including:
+
+- Area Calculator
+- Volume Calculator
+- Concrete Calculator
+- Brick Calculator
+- Mortar Calculator
+- Plaster Calculator
+- Steel Weight Calculator
+- Bar Length Calculator
+- RCC Calculator
+- Excavation Calculator
+- Tile Calculator
+- Paint Calculator
+- Stair Calculator
+- Percentage Calculator
+- Construction Cost Calculator
+- Unit Converter
+
+---
+
+🔄 Unit Converter
+
+Supported units include:
+
+Length
+
+mm
+cm
+m
+inch
+ft
 
 Area
 
- Total built-up area = sum of all room areas
+sq ft
+sq m
 
- Floor area = length × width
+Volume
 
-Brickwork
+CFT
+m³
 
- Wall length × wall height × wall thickness = wall volume
+Weight
 
- Estimate bricks based on standard brick size
+kg
+ton
 
-Cement, Sand, Stone
+Common conversions:
 
-Use common civil engineering approximation formulas for:
+1 inch = 25.4 mm
 
- PCC
+1 ft = 12 inch
 
- RCC
+1 m = 3.28084 ft
 
- Mortar
+1 m² = 10.7639 sq ft
 
- Plaster
+1 m³ = 35.3147 CFT
 
-Steel
+---
 
-Estimate based on:
+📁 Project Management
 
- Column size
+Users can create and manage multiple construction projects.
 
- Beam size
+Each project can contain:
 
- Slab area
+- Drawings
+- AI Analysis
+- Quantity Takeoff
+- BOQ
+- Estimate
+- BBS
+- Materials
+- Labor
+- Reports
+- Documents
+- Team Members
+- Activity History
 
- Building type
+Project Status
 
-Paint
+Planning
+Design
+Estimation
+Tender
+Construction
+Completed
+Archived
 
- Wall area minus door/window area
+---
 
- Interior and exterior separately
+👥 Team Collaboration
 
-Tiles
+Project owners can invite team members.
 
- Floor area + wastage percentage
+Roles
 
-Electrical
+- Owner
+- Admin
+- Engineer
+- Estimator
+- Viewer
 
-Estimate based on:
+Project access should always be protected by role-based permissions.
 
- Room count
+---
 
- Point count
+📄 Professional Reports
 
- Fan/light/socket allocation
+Generate professional construction reports containing:
 
-Plumbing
+- Project information
+- Client information
+- Drawing preview
+- Design analysis
+- Room schedule
+- Quantity takeoff
+- Material estimate
+- Labor estimate
+- BOQ
+- BBS
+- Cost summary
+- Assumptions
+- Exclusions
+- Engineering disclaimer
+- Report version
+- Generated date
 
-Estimate based on:
+Export
 
- Bathroom count
+- PDF
+- Excel
+- CSV
+- Print
 
- Kitchen count
+---
 
- Water line and drainage line assumption
+💵 Rate Management
 
-Add a note:
-“Final structural design and BOQ should be verified by a licensed civil engineer.”
+Manage engineering rates for:
 
-UI/UX Requirements
+Materials
 
-Design must be:
+- Cement
+- Sand
+- Stone
+- Brick
+- Steel
+- Tiles
+- Paint
+- Electrical
+- Plumbing
+- Doors
+- Windows
 
- Premium
+Labor
 
- Modern
+- Mason
+- Helper
+- Rod Binder
+- Carpenter
+- Electrician
+- Plumber
+- Painter
+- Tile Worker
+- Welder
+- General Labor
 
- Colorful but professional
+Rates may include:
 
- Mobile responsive
+Item
+Unit
+Rate
+Location
+Effective Date
+Source
+Last Updated
 
- Fast loading
+«Market rates can vary by location and time. Rates should be verified against current local sources.»
 
- User friendly
+---
 
- Card-based dashboard
+💡 Smart Budget Planner
 
- Clean typography
+Users can define a target budget.
 
- Smooth animations
+Example:
 
- Professional icons
+Budget: ৳30,00,000
 
- Engineering-style data layout
+CivilOS AI compares:
 
-Suggested Color Style
+Estimated Cost
+Target Budget
+Difference
+Budget Utilization
 
- Primary: Deep Blue
+It can then provide non-structural cost optimization suggestions.
 
- Secondary: White
+---
 
- Accent: Orange or Green
+🔍 Design Comparison
 
- Soft gray backgrounds
+Compare two building designs based on:
 
- Professional gradient hero section
+- Built-up area
+- Room count
+- Wall length
+- Material quantity
+- Estimated cost
+- Cost per sq ft
+- Finishing cost
+- Estimated duration
 
-Extra Smart Features
+---
 
-Add these advanced features:
+📅 Construction Schedule
 
- Compare two house designs
+Create a preliminary construction timeline:
 
- Estimate based on budget limit
+1. Site Preparation
+2. Earthwork
+3. Foundation
+4. Plinth
+5. Column
+6. Beam
+7. Slab
+8. Masonry
+9. Plaster
+10. Electrical
+11. Plumbing
+12. Flooring
+13. Painting
+14. Doors & Windows
+15. Final Finishing
 
- Suggest cheaper alternatives
+---
 
- Cost per room
+🌐 Bangla + English
 
- Multi-floor estimate
+CivilOS AI supports:
 
- Unit converter (sq ft / sq m)
+🇧🇩 বাংলা
 
- Bangla + English language toggle
+🇬🇧 English
 
- Dark/light mode
+The interface can be switched between languages.
 
- Search estimate history
+---
 
- Share report link
+🌙 Dark Mode
 
- Print estimate
+Supported modes:
 
- Save as draft
+- Light
+- Dark
+- System
 
-Technology Stack
+---
 
-Use:
+🔐 Authentication & Security
 
- React / Next.js frontend
+The platform supports:
 
- Firebase Authentication
+- Sign Up
+- Login
+- Logout
+- Password Reset
+- Email Verification
+- Profile Management
+- Session Management
 
- Firestore database
+Security principles:
 
- Firebase Storage for uploads
+- Authentication checks
+- Authorization
+- Project ownership
+- Role-based access
+- Secure storage
+- Input validation
+- Protected admin routes
 
- PDF generation
+Private project files should not be publicly accessible by default.
 
- OCR or image parsing support
+---
 
- AI analysis layer for design understanding
+🛠️ Admin Dashboard
 
- Responsive dashboard
+Administrative features include:
 
- Chart visualization
+- User Management
+- Project Management
+- Material Rate Management
+- Labor Rate Management
+- Location Factors
+- Formula Settings
+- BOQ Categories
+- Reports
+- Announcements
+- Contact Messages
+- System Settings
+- Audit Logs
 
-Firebase Collections Structure
+---
 
-Use these collections:
+🖥️ CivilOS AI Desktop App
+
+CivilOS AI is designed to support desktop workflows in addition to the web application.
+
+The desktop application is intended for:
+
+- Windows
+- macOS
+
+The desktop app can provide a more convenient experience for engineering workflows and future local integrations.
+
+---
+
+🪟 Windows Installation
+
+Option 1 — One-Command Installation
+
+The easiest installation method is PowerShell.
+
+Open PowerShell and run:
+
+irm https://civilosai.pro.bd/install.ps1 | iex
+
+The installer will:
+
+1. Check Windows compatibility
+2. Check the latest CivilOS AI version
+3. Download the latest installer
+4. Verify the downloaded package
+5. Install CivilOS AI
+6. Create application shortcuts
+7. Launch CivilOS AI
+
+Expected flow
+
+CivilOS AI Installer
+
+✓ Checking Windows...
+✓ Checking latest version...
+✓ Downloading CivilOS AI...
+✓ Verifying installer...
+✓ Installing...
+✓ Creating shortcuts...
+✓ Installation complete
+
+Launching CivilOS AI...
+
+CMD Installation
+
+If you prefer Command Prompt, run:
+
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://civilosai.pro.bd/install.ps1 | iex"
+
+«Only use the official CivilOS AI installation URL. For production releases, installers should be distributed through trusted HTTPS endpoints and verified before execution.»
+
+---
+
+🪟 Windows Installer (.exe)
+
+Users can also install CivilOS AI using the graphical installer.
+
+Steps
+
+1. Open the official CivilOS AI website.
+2. Go to Download / Windows.
+3. Download the latest "CivilOS-AI-Setup.exe".
+4. Run the installer.
+5. Follow the installation wizard.
+6. Launch CivilOS AI from the Desktop or Start Menu.
+
+Official website:
+
+https://civilosai.pro.bd
+
+---
+
+🔄 Windows Updates
+
+CivilOS AI Windows releases can be distributed through GitHub Releases.
+
+Release example:
+
+v1.0.0
+v1.1.0
+v1.2.0
+
+The installer can detect the latest release and install/update the application.
+
+Example:
+
+irm https://civilosai.pro.bd/install.ps1 | iex
+
+---
+
+🍎 macOS Installation
+
+CivilOS AI supports macOS desktop distribution through a signed application package when a macOS release is available.
+
+Option 1 — Official macOS Installer
+
+1. Visit:
+   
+   https://civilosai.pro.bd
+
+2. Open the Download section.
+
+3. Select macOS.
+
+4. Download the latest CivilOS AI package.
+
+5. Open the downloaded file.
+
+6. Drag CivilOS AI into the Applications folder.
+
+7. Open:
+
+Applications → CivilOS AI
+
+8. Sign in with your CivilOS AI account.
+
+---
+
+Option 2 — macOS Terminal Installation
+
+For users who prefer Terminal-based installation, a future official installer can support:
+
+curl -fsSL https://civilosai.pro.bd/install.sh | bash
+
+The installer should:
+
+Check macOS
+       ↓
+Detect Apple Silicon / Intel
+       ↓
+Download correct build
+       ↓
+Verify package
+       ↓
+Install CivilOS AI
+       ↓
+Launch Application
+
+«The Terminal installer should only be enabled once the official macOS installation script and signed release packages are available.»
+
+---
+
+🍎 Apple Silicon & Intel
+
+macOS builds should support:
+
+Apple Silicon
+
+M1
+M2
+M3
+M4
+
+Intel
+
+x86_64
+
+Where practical, provide either:
+
+- Universal build
+
+or
+
+- Separate Apple Silicon and Intel builds.
+
+---
+
+💻 Local Development
+
+Requirements
+
+Install:
+
+- Node.js
+- npm
+- Git
+
+Optional:
+
+- Firebase project
+- AI API credentials
+- Required third-party service credentials
+
+---
+
+📥 Clone Repository
+
+git clone https://github.com/zobaerio/CivilOS-AI.git
+
+Enter the project:
+
+cd CivilOS-AI
+
+---
+
+📦 Install Dependencies
+
+npm install
+
+---
+
+⚙️ Environment Variables
+
+Create the appropriate environment file:
+
+.env
+
+or:
+
+.env.local
+
+Configure the required project credentials according to the application's current configuration.
+
+Never commit:
+
+.env
+.env.local
+API keys
+Private credentials
+Service account files
+
+Add sensitive files to ".gitignore".
+
+---
+
+▶️ Run Development Server
+
+npm run dev
+
+Then open the local URL shown by the development server.
+
+A common local address is:
+
+http://localhost:5173
+
+---
+
+🏗️ Production Build
+
+Build:
+
+npm run build
+
+Preview:
+
+npm run preview
+
+Before deployment, verify:
+
+- Authentication
+- Database rules
+- Storage rules
+- Environment variables
+- API credentials
+- Production URLs
+- Error handling
+- Security rules
+
+---
+
+🖥️ Desktop Development
+
+If the desktop application is implemented using Tauri, the development workflow can be:
+
+npm install
+npm run tauri:dev
+
+Production build:
+
+npm run tauri:build
+
+The exact commands depend on the current desktop configuration.
+
+---
+
+🚀 Release Architecture
+
+CivilOS AI desktop releases can follow this structure:
+
+GitHub Repository
+       │
+       ▼
+Create Version Tag
+       │
+       ▼
+GitHub Actions
+       │
+       ├── Build Web
+       │
+       ├── Build Windows
+       │
+       ├── Build macOS
+       │
+       ├── Generate Checksums
+       │
+       └── Create GitHub Release
+                     │
+                     ▼
+              Release Assets
+
+Example:
+
+CivilOS-AI-Setup.exe
+CivilOS-AI-Windows-x64.exe
+CivilOS-AI-macOS-arm64.dmg
+CivilOS-AI-macOS-x64.dmg
+
+---
+
+🔄 Automatic Release Workflow
+
+A production release can be created by pushing a version tag:
+
+git tag v1.0.0
+git push origin v1.0.0
+
+GitHub Actions can then:
+
+1. Build the application.
+2. Build desktop packages.
+3. Generate checksums.
+4. Create the GitHub Release.
+5. Upload release assets.
+
+---
+
+🏛️ System Architecture
+
+                    ┌─────────────────────┐
+                    │   CivilOS AI Web    │
+                    │ civilosai.pro.bd    │
+                    └──────────┬──────────┘
+                               │
+                         Secure API
+                               │
+             ┌─────────────────┼─────────────────┐
+             │                 │                 │
+             ▼                 ▼                 ▼
+      ┌────────────┐    ┌────────────┐    ┌────────────┐
+      │   AI       │    │ Database   │    │  Storage   │
+      │  Engine    │    │ Firestore  │    │   Files    │
+      └────────────┘    └────────────┘    └────────────┘
+             │
+             ▼
+      ┌──────────────────────┐
+      │ Engineering Engine   │
+      │                      │
+      │ Quantity             │
+      │ BOQ                  │
+      │ Estimate             │
+      │ BBS                  │
+      │ Calculators          │
+      └──────────────────────┘
+
+                    Desktop Layer
+                         │
+             ┌───────────┴───────────┐
+             ▼                       ▼
+        Windows App             macOS App
+
+---
+
+🧮 Engineering Calculation Engine
+
+Engineering calculations should be separated from the presentation layer.
+
+Core functions may include:
+
+calculateArea()
+
+calculateWallVolume()
+
+calculateBrickQuantity()
+
+calculateMortar()
+
+calculateConcrete()
+
+calculateSteel()
+
+calculatePlaster()
+
+calculatePaint()
+
+calculateTiles()
+
+calculateLabor()
+
+calculateBOQ()
+
+calculateEstimate()
+
+calculateContingency()
+
+Calculation results should include:
+
+Quantity
+Unit
+Formula
+Assumption
+Confidence
+Warnings
+
+---
+
+🤖 AI Analysis Pipeline
+
+Upload Drawing
+      ↓
+File Validation
+      ↓
+Secure Storage
+      ↓
+OCR / Image Processing
+      ↓
+Dimension Detection
+      ↓
+Room Detection
+      ↓
+Design Interpretation
+      ↓
+Missing Input Detection
+      ↓
+User Confirmation
+      ↓
+Quantity Calculation
+      ↓
+Estimate Generation
+      ↓
+AI Engineering Explanation
+      ↓
+Report Generation
+
+---
+
+📂 Project Structure
+
+A typical structure:
+
+CivilOS-AI/
+│
+├── .github/
+│   └── workflows/
+│
+├── installer/
+│   ├── install.ps1
+│   ├── uninstall.ps1
+│   └── config.json
+│
+├── public/
+│
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── layouts/
+│   ├── hooks/
+│   ├── services/
+│   ├── lib/
+│   ├── utils/
+│   ├── calculations/
+│   ├── ai/
+│   ├── features/
+│   │   ├── projects/
+│   │   ├── drawings/
+│   │   ├── boq/
+│   │   ├── estimates/
+│   │   ├── bbs/
+│   │   ├── reports/
+│   │   └── calculators/
+│   ├── types/
+│   └── config/
+│
+├── package.json
+├── README.md
+└── LICENSE
+
+The exact structure may evolve with the project.
+
+---
+
+🗄️ Core Data Model
+
+Core entities include:
 
 users
-
- uid
-
- name
-
- email
-
- phone
-
- role
-
- createdAt
-
 projects
-
- projectId
-
- userId
-
- projectName
-
- fileUrl
-
- fileType
-
- plotSize
-
- floorCount
-
- qualityType
-
- locationFactor
-
- estimateStatus
-
- createdAt
-
+project_members
+drawings
 design_analysis
-
- analysisId
-
- projectId
-
- extractedRooms
-
- totalArea
-
- wallLength
-
- slabArea
-
- detectedDimensions
-
- missingInputs
-
- aiNotes
-
+rooms
+quantity_takeoffs
+boq_items
 estimates
-
- estimateId
-
- projectId
-
- materialEstimate
-
- laborEstimate
-
- finishingEstimate
-
- electricalEstimate
-
- plumbingEstimate
-
- totalCost
-
- costPerSqft
-
- generatedAt
-
 material_rates
-
- materialId
-
- materialName
-
- unit
-
- rate
-
- lastUpdated
-
 labor_rates
-
- laborId
-
- laborName
-
- unit
-
- rate
-
- lastUpdated
-
+bbs
 reports
-
- reportId
-
- projectId
-
- pdfUrl
-
- generatedAt
-
+documents
+notifications
+activity_logs
 contact_messages
+announcements
+settings
+formula_settings
+rate_history
+audit_logs
 
- id
+---
 
- name
+🔐 Security Principles
 
- email
+CivilOS AI should follow these principles:
 
- subject
+- Secure authentication
+- Role-based authorization
+- Project-level access control
+- Secure file storage
+- Input validation
+- Protected admin routes
+- API authentication
+- Sensitive environment variables
+- HTTPS
+- Release verification
+- Audit logging
 
- message
+Never expose private API keys in frontend code.
 
- createdAt
+Never store secrets directly in GitHub.
 
-Pages Structure
+---
 
-Create these pages:
+⚡ Performance
 
- Home
+The application aims to use:
 
- Upload Design
+- Lazy loading
+- Code splitting
+- Efficient database queries
+- Pagination
+- Caching
+- Image optimization
+- Compressed assets
+- Optimized file handling
 
- Estimate Result
+---
 
- My Projects
+📱 Responsive Design
 
- Project Details
+CivilOS AI is designed for:
 
- Compare Estimates
+- 📱 Mobile
+- 📱 Tablet
+- 💻 Laptop
+- 🖥️ Desktop
+- 🪟 Windows
+- 🍎 macOS
 
- Pricing
+The mobile UI should use dedicated responsive layouts instead of simply shrinking desktop components.
 
- About
+---
 
- Contact
+🎨 Design System
 
- FAQ
+CivilOS AI uses an engineering-focused visual language.
 
- Login
+Brand Colors
 
- Register
+Primary:   #2563EB
+Secondary: #06B6D4
+Accent:    #F97316
+
+Design Goals
 
- User Dashboard
+- Premium
+- Minimal
+- Technical
+- Clean
+- Professional
+- Data-driven
+- Trustworthy
 
- Admin Dashboard
+---
 
- Report View
+🗺️ Roadmap
 
-SEO Requirements
+Phase 1 — Foundation
 
-Add full SEO optimization.
+- [x] Project setup
+- [x] Branding
+- [x] Web application
+- [x] Landing page
+- [x] Authentication
+- [x] Dashboard
+- [x] Project management
 
-Meta Title
+Phase 2 — Engineering Core
 
-Smart House Estimate AI | Upload Design and Get Full Construction Estimate
+- [ ] Drawing upload
+- [ ] Drawing analysis
+- [ ] Quantity takeoff
+- [ ] BOQ
+- [ ] Estimation engine
+- [ ] Material database
+- [ ] Labor database
 
-Meta Description
+Phase 3 — Advanced Engineering
 
-Upload your house design, floor plan, or blueprint and get instant construction estimate, material calculation, room-wise details, labor cost, and full project budget with AI.
+- [ ] BBS
+- [ ] Advanced calculators
+- [ ] Design comparison
+- [ ] Budget planner
+- [ ] Construction schedule
+- [ ] AI project assistant
 
-Keywords
+Phase 4 — Desktop
 
- house estimate AI
+- [ ] Windows application
+- [ ] Windows one-command installer
+- [ ] Windows auto-update
+- [ ] macOS application
+- [ ] macOS signed distribution
+- [ ] Desktop notifications
 
- construction estimate app
+Phase 5 — Collaboration
 
- building material calculator
+- [ ] Team management
+- [ ] Role permissions
+- [ ] Project sharing
+- [ ] Notifications
+- [ ] Activity logs
+- [ ] Version control
 
- floor plan estimate
+Phase 6 — Advanced AI
 
- civil engineering estimate
+- [ ] Advanced drawing understanding
+- [ ] OCR improvements
+- [ ] AI quantity takeoff
+- [ ] AI BOQ generation
+- [ ] AI cost optimization
+- [ ] Construction intelligence
 
- house design cost calculator
+Phase 7 — Professional Integrations
 
- room wise construction estimate
+- [ ] AutoCAD integration
+- [ ] DWG/DXF workflows
+- [ ] AutoLISP generation
+- [ ] Excel automation
+- [ ] Advanced document processing
+- [ ] Local desktop engineering workflows
 
- AI house planning
+---
 
- building cost estimator
+🧪 Quality Standards
 
- house budget planner
+Before a feature is considered complete, verify:
 
-Footer Content
+- Authentication
+- Authorization
+- Data persistence
+- Error handling
+- Loading states
+- Empty states
+- Mobile responsiveness
+- Accessibility
+- Browser compatibility
+- Desktop compatibility
+- Console errors
+- Security rules
+- File handling
+- Export functionality
 
- About
+CivilOS AI should never present fake functionality as working functionality.
 
- Terms
+If a feature is not implemented, it should be clearly marked as:
 
- Privacy Policy
+Coming Soon
 
- Contact
+---
 
- FAQ
+🤝 Contributing
 
- Admin Access
+Contributions are welcome.
 
- Copyright
+Before opening a pull request:
 
-Footer text:
-© 2026 Smart House Estimate AI. All rights reserved.
+1. Create a feature branch.
+2. Keep changes focused.
+3. Follow the existing architecture.
+4. Test the feature.
+5. Check mobile responsiveness.
+6. Check console errors.
+7. Update documentation when necessary.
 
-Final Instruction to AI Builder
+---
 
-Build this project as a fully functional, polished, production-style application.
-It must not look like a simple demo.
-It should look like a real SaaS-grade estimation platform for civil engineering and house construction planning.
+🐛 Bug Reports
 
-Focus on:
+If you find a bug, open a GitHub Issue.
 
- Accurate-looking engineering dashboard
+Please include:
 
- Smooth upload flow
+- Bug description
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Browser/device
+- Screenshots when possible
+- Relevant console errors
 
- User-friendly inputs
+---
 
- Beautiful estimate visualization
+🔒 Security Issues
 
- Clean tables and charts
+For security vulnerabilities, please do not publish sensitive details in a public GitHub issue.
 
- Downloadable report
+Contact the project maintainer privately.
 
- Strong admin control
+---
 
- Professional UI in both Bangla and English
+📜 License
 
-Also add demo sample project data so the platform looks complete even before first upload.   Devoloped by Md Zobaer Hasan
+This project is licensed under the MIT License.
 
-This project was built with [Lovable](https://lovable.dev).
+See:
 
-**Live app**: https://civilosai.pro.bd
+LICENSE
 
-## Build with Lovable
+for details.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/fba1f912-34ab-4b2e-810e-d677202bf086).
+---
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+👨‍💻 Developer
 
-## Development
+Md Zobaer Hasan
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Civil Engineering Student & Developer
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+Links
+
+🌐 Portfolio
+https://zobaer.vercel.app/
+
+💻 GitHub
+https://github.com/zobaerio
+
+🔵 Facebook
+https://facebook.com/zobaerio
+
+💼 LinkedIn
+https://linkedin.com/in/zobaerio
+
+▶️ YouTube
+https://www.youtube.com/@zobaerio
+
+---
+
+🌍 CivilOS AI
+
+AI Operating System 
