@@ -80,6 +80,7 @@ export function PwaProvider({ children }: { children: ReactNode }) {
         updateReady,
         offlineReady,
         applyUpdate: applyPwaUpdate,
+        checkForUpdate: checkForPwaUpdate,
         dismissUpdate: dismissPwaUpdate,
       }}
     >
