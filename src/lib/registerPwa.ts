@@ -6,6 +6,7 @@ type PwaUpdateState = { updateReady: boolean; offlineReady: boolean };
 
 let state: PwaUpdateState = { updateReady: false, offlineReady: false };
 let updateSW: ((reload?: boolean) => Promise<void>) | null = null;
+let swRegistration: ServiceWorkerRegistration | null = null;
 const listeners = new Set<(next: PwaUpdateState) => void>();
 
 function emit(next: Partial<PwaUpdateState>) {
@@ -29,6 +30,25 @@ export async function applyPwaUpdate() {
 
 export function dismissPwaUpdate() {
   emit({ updateReady: false });
+}
+
+/** Manually poll the service worker for a newer deployment. Resolves true when one is waiting. */
+export async function checkForPwaUpdate(): Promise<boolean> {
+  if (state.updateReady) return true;
+  if (!("serviceWorker" in navigator)) return false;
+  const registration = swRegistration ?? (await navigator.serviceWorker.getRegistration(APP_SW_PATH)) ?? null;
+  if (!registration) return false;
+  swRegistration = registration;
+  try {
+    await registration.update();
+  } catch {
+    return state.updateReady;
+  }
+  if (registration.waiting || registration.installing) {
+    await new Promise((resolve) => window.setTimeout(resolve, 1200));
+  }
+  if (registration.waiting) emit({ updateReady: true });
+  return state.updateReady;
 }
 
 async function removeAppWorker() {
