@@ -92,6 +92,7 @@ export async function registerCivilOsPwa() {
     },
     onRegisteredSW(_swUrl, registration) {
       if (!registration) return;
+      swRegistration = registration;
       const check = () => { void registration.update(); };
       window.setInterval(check, 60 * 60 * 1000);
       document.addEventListener("visibilitychange", () => {
