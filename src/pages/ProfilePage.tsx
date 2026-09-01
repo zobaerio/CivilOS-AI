@@ -117,6 +117,19 @@ const ProfilePage = () => {
               {saving ? "Saving…" : "Save changes"}
             </Button>
           </div>
+
+          <div className="bg-card rounded-xl shadow-card p-6 space-y-3">
+            <div>
+              <h2 className="font-heading text-lg font-semibold">App version</h2>
+              <p className="text-sm text-muted-foreground">
+                Check whether a newer build of CivilOS AI has been deployed and reload instantly.
+              </p>
+            </div>
+            <Button variant="outline" className="w-full" onClick={runUpdateCheck} disabled={checkingUpdate}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${checkingUpdate ? "animate-spin" : ""}`} />
+              {checkingUpdate ? "Checking for updates…" : "Check for updates"}
+            </Button>
+          </div>
         </div>
       </main>
       <Footer />
