@@ -14,6 +14,7 @@ import { Loader2, RefreshCw, Upload } from "lucide-react";
 
 const ProfilePage = () => {
   const { user, loading: authLoading } = useAuth();
+  const { checkForUpdate, applyUpdate } = usePwaInstall();
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [displayName, setDisplayName] = useState("");
@@ -21,6 +22,25 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+
+  const runUpdateCheck = async () => {
+    setCheckingUpdate(true);
+    try {
+      const hasUpdate = await checkForUpdate();
+      if (hasUpdate) {
+        toast.success("New version found — reloading…");
+        await applyUpdate();
+      } else {
+        toast.info("You're already on the latest version.");
+      }
+    } catch {
+      toast.error("Couldn't check for updates. Check your connection and try again.");
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
