@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/auth";
+import { usePwaInstall } from "@/lib/pwa";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2, RefreshCw, Upload } from "lucide-react";
 
 const ProfilePage = () => {
   const { user, loading: authLoading } = useAuth();
+  const { checkForUpdate, applyUpdate } = usePwaInstall();
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [displayName, setDisplayName] = useState("");
@@ -20,6 +22,25 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+
+  const runUpdateCheck = async () => {
+    setCheckingUpdate(true);
+    try {
+      const hasUpdate = await checkForUpdate();
+      if (hasUpdate) {
+        toast.success("New version found — reloading…");
+        await applyUpdate();
+      } else {
+        toast.info("You're already on the latest version.");
+      }
+    } catch {
+      toast.error("Couldn't check for updates. Check your connection and try again.");
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -94,6 +115,19 @@ const ProfilePage = () => {
             </div>
             <Button onClick={save} disabled={saving} className="w-full">
               {saving ? "Saving…" : "Save changes"}
+            </Button>
+          </div>
+
+          <div className="bg-card rounded-xl shadow-card p-6 space-y-3">
+            <div>
+              <h2 className="font-heading text-lg font-semibold">App version</h2>
+              <p className="text-sm text-muted-foreground">
+                Check whether a newer build of CivilOS AI has been deployed and reload instantly.
+              </p>
+            </div>
+            <Button variant="outline" className="w-full" onClick={runUpdateCheck} disabled={checkingUpdate}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${checkingUpdate ? "animate-spin" : ""}`} />
+              {checkingUpdate ? "Checking for updates…" : "Check for updates"}
             </Button>
           </div>
         </div>

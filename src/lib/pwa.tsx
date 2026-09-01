@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { applyPwaUpdate, dismissPwaUpdate, subscribePwaUpdates } from "@/lib/registerPwa";
+import { applyPwaUpdate, checkForPwaUpdate, dismissPwaUpdate, subscribePwaUpdates } from "@/lib/registerPwa";
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -14,6 +14,7 @@ interface PwaContextValue {
   updateReady: boolean;
   offlineReady: boolean;
   applyUpdate: () => Promise<void>;
+  checkForUpdate: () => Promise<boolean>;
   dismissUpdate: () => void;
 }
 
@@ -25,6 +26,7 @@ const PwaContext = createContext<PwaContextValue>({
   updateReady: false,
   offlineReady: false,
   applyUpdate: async () => {},
+  checkForUpdate: async () => false,
   dismissUpdate: () => {},
 });
 
@@ -78,6 +80,7 @@ export function PwaProvider({ children }: { children: ReactNode }) {
         updateReady,
         offlineReady,
         applyUpdate: applyPwaUpdate,
+        checkForUpdate: checkForPwaUpdate,
         dismissUpdate: dismissPwaUpdate,
       }}
     >
