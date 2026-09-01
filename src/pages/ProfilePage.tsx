@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/auth";
+import { usePwaInstall } from "@/lib/pwa";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2, RefreshCw, Upload } from "lucide-react";
 
 const ProfilePage = () => {
   const { user, loading: authLoading } = useAuth();
