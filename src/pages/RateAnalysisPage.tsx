@@ -348,7 +348,21 @@ export default function RateAnalysisPage() {
     else toast.info("No saved rate set — using current");
   };
 
+  // ---------- flat rows for universal export ----------
+  const exportRows = (a: Analysis) =>
+    (["materials", "labour", "equipment"] as const).flatMap(kind =>
+      a[kind].map(r => ({
+        "ধরন / Type": kind,
+        "বিবরণ / Description": r.name,
+        "পরিমাণ / Qty": r.qty,
+        "একক / Unit": r.unit,
+        "রেট (৳)": r.rate,
+        "মোট (৳)": Math.round(r.qty * r.rate),
+      })),
+    );
+
   // ---------- PDF ----------
+
   const exportPDF = () => {
     const pdf = new jsPDF({ unit: "pt", format: "a4" });
     pdf.setFontSize(16).text("CivilOS AI — Rate Analysis Report", 40, 40);
