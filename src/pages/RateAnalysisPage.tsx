@@ -22,6 +22,8 @@ import {
 } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { ExportButtons } from "@/components/ExportButtons";
+
 
 type Row = { name: string; qty: number; unit: string; rate: number };
 type Analysis = {
