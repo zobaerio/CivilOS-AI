@@ -543,6 +543,14 @@ export default function RateAnalysisPage() {
                           onRemove={i => removeRow(kind, i)}
                         />
                       ))}
+
+                      <ExportButtons
+                        data={exportRows(a)}
+                        sheetName="Rate Analysis"
+                        fileName={`RateAnalysis_${a.type.replace(/\s+/g, "_")}`}
+                        title={`Rate Analysis — ${a.type} (per ${a.unit})`}
+                      />
+
                     </TabsContent>
                   ))}
                 </Tabs>
