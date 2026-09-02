@@ -22,3 +22,6 @@ requestAnimationFrame(() => {
 });
 
 void registerCivilOsPwa();
+
+// Firebase Analytics (production only)
+import("./lib/firebase").then((m) => void m.initFirebaseAnalytics());
