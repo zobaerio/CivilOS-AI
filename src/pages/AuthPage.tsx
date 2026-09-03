@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth";
-import { isManagedOAuthHost, LOVABLE_SIGNIN_ORIGIN } from "@/lib/oauthHost";
+import { isManagedOAuthHost } from "@/lib/oauthHost";
 
 import { toast } from "sonner";
 import { Building2 } from "lucide-react";
