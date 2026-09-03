@@ -107,12 +107,24 @@ const AuthPage = () => {
             onClick={async () => {
               const redirect = safeRedirect(params.get("redirect"));
               if (!isManagedOAuthHost()) {
-                // Managed Google sign-in is only served on Lovable-hosted origins.
-                // Send the user to the secure CivilOS domain to finish sign-in there.
-                toast.info("Google সাইন-ইন সিকিউর CivilOS ডোমেইনে সম্পন্ন হবে…");
-                window.location.assign(
-                  `${LOVABLE_SIGNIN_ORIGIN}/auth?redirect=${encodeURIComponent(redirect)}`,
-                );
+                // Vercel / custom domains: use direct Supabase OAuth with the
+                // project's own Google Client ID/Secret (BYOC), configured in
+                // Cloud Auth Settings. Session returns to this same origin.
+                setLoading(true);
+                try {
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                      redirectTo: `${window.location.origin}/auth?redirect=${encodeURIComponent(redirect)}`,
+                      queryParams: { prompt: "select_account" },
+                    },
+                  });
+                  if (error) throw error;
+                  return; // browser is navigating to Google
+                } catch (err: any) {
+                  toast.error(err?.message || "Google sign-in failed");
+                  setLoading(false);
+                }
                 return;
               }
               setLoading(true);
