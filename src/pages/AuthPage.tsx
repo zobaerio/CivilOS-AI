@@ -24,7 +24,12 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) navigate(safeRedirect(params.get("redirect")), { replace: true });
+    if (!user) return;
+    // After OAuth round-trip the ?redirect param may be gone; fall back to the
+    // stashed destination saved before the browser left for Google.
+    const stashed = sessionStorage.getItem("civilos.auth.redirect");
+    sessionStorage.removeItem("civilos.auth.redirect");
+    navigate(safeRedirect(params.get("redirect") || stashed), { replace: true });
   }, [user, navigate, params]);
 
   const submit = async (e: React.FormEvent) => {
