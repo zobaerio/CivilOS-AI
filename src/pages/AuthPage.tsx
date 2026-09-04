@@ -24,7 +24,12 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) navigate(safeRedirect(params.get("redirect")), { replace: true });
+    if (!user) return;
+    // After OAuth round-trip the ?redirect param may be gone; fall back to the
+    // stashed destination saved before the browser left for Google.
+    const stashed = sessionStorage.getItem("civilos.auth.redirect");
+    sessionStorage.removeItem("civilos.auth.redirect");
+    navigate(safeRedirect(params.get("redirect") || stashed), { replace: true });
   }, [user, navigate, params]);
 
   const submit = async (e: React.FormEvent) => {
@@ -117,8 +122,11 @@ const AuthPage = () => {
               }
               setLoading(true);
               try {
+                // Keep the OAuth redirect_uri clean (no query params) — Google
+                // rejects unregistered URIs with redirect_uri_mismatch otherwise.
+                sessionStorage.setItem("civilos.auth.redirect", redirect);
                 const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: `${window.location.origin}/auth?redirect=${encodeURIComponent(redirect)}`,
+                  redirect_uri: `${window.location.origin}/auth`,
                   extraParams: { prompt: "select_account" },
                 });
                 if (result.error) throw result.error;
