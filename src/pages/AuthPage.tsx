@@ -122,8 +122,11 @@ const AuthPage = () => {
               }
               setLoading(true);
               try {
+                // Keep the OAuth redirect_uri clean (no query params) — Google
+                // rejects unregistered URIs with redirect_uri_mismatch otherwise.
+                sessionStorage.setItem("civilos.auth.redirect", redirect);
                 const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: `${window.location.origin}/auth?redirect=${encodeURIComponent(redirect)}`,
+                  redirect_uri: `${window.location.origin}/auth`,
                   extraParams: { prompt: "select_account" },
                 });
                 if (result.error) throw result.error;
