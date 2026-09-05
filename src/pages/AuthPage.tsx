@@ -66,9 +66,7 @@ const AuthPage = () => {
       <main className="flex-1 flex items-center justify-center py-12">
         <div className="w-full max-w-md mx-auto bg-card rounded-2xl shadow-card p-8 space-y-6">
           <div className="text-center space-y-2">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
-              <Building2 className="h-6 w-6 text-accent" />
-            </div>
+            <CivilOSLogo variant="full" size="lg" showTagline className="justify-center" />
             <h1 className="font-heading text-2xl font-bold">
               {mode === "signin" ? "Sign in to your account" : "Create your account"}
             </h1>

@@ -14,7 +14,7 @@ import {
   topNav, bottomNav, constructionTools, analyticsNav, settingsNav,
   findActiveCategory, type NavCategory,
 } from "@/lib/navigation";
-import aiLogo from "@/assets/ai-logo.png";
+import CivilOSLogo from "@/components/CivilOSLogo";
 import InstallCivilOS from "@/components/InstallCivilOS";
 
 function CategoryGroup({
@@ -82,7 +82,7 @@ export function DashboardSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b">
         <div className="flex items-center gap-2 px-2 py-2">
-          <img src={aiLogo} alt="CivilOS AI" className="h-8 w-8 shrink-0" />
+          <CivilOSLogo variant="icon" size="sm" />
           {!collapsed && (
             <div className="min-w-0 flex-1">
               <p className="font-heading text-sm font-bold leading-tight truncate">CivilOS AI</p>
