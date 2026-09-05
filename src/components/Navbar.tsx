@@ -6,7 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import ThemeToggle from "@/components/ThemeToggle";
 import LiveUsers from "@/components/LiveUsers";
-import aiLogo from "@/assets/ai-logo.png";
+import CivilOSLogo from "@/components/CivilOSLogo";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -30,9 +30,8 @@ const Navbar = () => {
     <>
     <nav className="sticky top-0 z-50 glass border-b">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-heading text-lg font-bold text-primary">
-          <img src={aiLogo} alt="CivilOS AI logo" width={48} height={48} className="h-12 w-12 drop-shadow-md" />
-          <span className="hidden sm:inline">CivilOS AI</span>
+        <Link to="/" aria-label="CivilOS AI home" className="flex items-center">
+          <CivilOSLogo variant="compact" size="lg" />
         </Link>
         <div className="hidden lg:flex"><LiveUsers compact /></div>
 

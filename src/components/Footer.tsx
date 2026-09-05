@@ -1,4 +1,5 @@
-import { Building2, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
+import CivilOSLogo from "@/components/CivilOSLogo";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 
@@ -9,10 +10,7 @@ const Footer = () => {
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
-            <div className="flex items-center gap-2 font-heading text-lg font-bold">
-              <Building2 className="h-5 w-5 text-accent" />
-              CivilOS AI
-            </div>
+            <CivilOSLogo variant="full" theme="dark" size="md" />
             <p className="text-[11px] text-accent/90 font-medium">The AI Operating System for Civil Engineers</p>
             <p className="text-sm text-primary-foreground/70">{t("footer.desc")}</p>
             <p className="text-xs text-primary-foreground/50">
