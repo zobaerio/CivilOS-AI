@@ -7,4 +7,4 @@ Disallow: /share/
 Disallow: /profile
 Disallow: /settings/
 
-Sitemap: https://estimateai.pro.bd/sitemap.xml
+Sitemap: https://civilosai.lovable.app/sitemap.xml
