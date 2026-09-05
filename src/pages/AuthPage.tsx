@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/auth";
 import { isManagedOAuthHost, LOVABLE_SIGNIN_ORIGIN } from "@/lib/oauthHost";
 
 import { toast } from "sonner";
-import { Building2 } from "lucide-react";
+import CivilOSLogo from "@/components/CivilOSLogo";
 
 const AuthPage = () => {
   const navigate = useNavigate();
