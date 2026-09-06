@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import LiveUsers from "@/components/LiveUsers";
 
+const BRAND_ICON = "/branding/civilos-ai-icon-512.png";
+const BRAND_ICON_LARGE = "/branding/civilos-ai-icon-1024.png";
+
 const HeroSection = () => {
   const { t } = useI18n();
   return (
-    <section className="bg-hero relative overflow-hidden min-h-[100svh] flex items-center">
+    <section className="bg-hero relative overflow-hidden min-h-[calc(100svh-4rem)] flex items-center">
       {/* Decorative grid + blobs */}
       <div className="absolute inset-0 bg-grid opacity-40" />
       <div className="absolute inset-0">
@@ -17,12 +20,31 @@ const HeroSection = () => {
         <div className="absolute top-1/3 left-1/2 w-[20rem] h-[20rem] bg-accent-glow/20 rounded-full blur-3xl animate-blob" style={{ animationDelay: "8s" }} />
       </div>
 
-      <div className="container relative py-16 sm:py-20 lg:py-36 w-full">
-        <div className="max-w-4xl mx-auto text-center space-y-7">
+      <div className="container relative py-10 sm:py-14 lg:py-20 w-full">
+        <div className="max-w-4xl mx-auto text-center space-y-5 sm:space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7 }}
+            className="flex justify-center"
+          >
+            <img
+              src={BRAND_ICON}
+              srcSet={`${BRAND_ICON} 512w, ${BRAND_ICON_LARGE} 1024w`}
+              sizes="(max-width: 640px) 152px, (max-width: 1024px) 190px, 220px"
+              width={512}
+              height={512}
+              alt="CivilOS AI — AI operating system for civil engineers"
+              fetchPriority="high"
+              decoding="async"
+              className="brand-hero-logo h-auto w-36 sm:w-44 lg:w-52"
+            />
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.08 }}
             className="flex justify-center"
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/20 backdrop-blur-md">
@@ -34,8 +56,8 @@ const HeroSection = () => {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-gradient-hero text-5xl md:text-6xl lg:text-7xl font-heading font-bold leading-[1.05] tracking-tight"
+            transition={{ duration: 0.7, delay: 0.16 }}
+            className="text-gradient-hero text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold leading-[1.05]"
           >
             {t("hero.title")}
           </motion.h1>
@@ -44,7 +66,7 @@ const HeroSection = () => {
             className="text-primary-foreground/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.24 }}
           >
             {t("hero.subtitle")}
           </motion.p>
@@ -53,7 +75,7 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
+            transition={{ duration: 0.6, delay: 0.34 }}
           >
             <Button variant="hero" size="lg" asChild className="shadow-glow-accent animate-pulse-glow">
               <Link to="/upload">
