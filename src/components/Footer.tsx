@@ -45,7 +45,7 @@ const Footer = () => {
           <div>
             <h4 className="font-heading font-semibold mb-3">{t("footer.contactTitle")}</h4>
             <div className="space-y-2 text-sm text-primary-foreground/70">
-              <p>support@smarthouseai.com</p>
+              <p>support@civilosai.com</p>
               <a href="https://wa.me/8801832313998" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent">
                 <Phone className="h-3.5 w-3.5" /> +880 1832-313998 (WhatsApp)
               </a>
