@@ -46,6 +46,7 @@ export const constructionTools: NavCategory[] = [
     icon: Calculator,
     items: [
       { title: "Building Estimate", url: "/upload", icon: Upload },
+      { title: "Create Your Own Plan", url: "/plan-generator", icon: Building2 },
       { title: "BOQ Hub", url: "/boq-hub", icon: Calculator },
       { title: "BOQ Generator (Lite)", url: "/boq", icon: Calculator },
       { title: "Rate Analysis", url: "/rate-analysis", icon: ClipboardList },
