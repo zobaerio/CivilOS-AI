@@ -68,6 +68,7 @@ export const constructionTools: NavCategory[] = [
     label: "Site Management",
     icon: HardHat,
     items: [
+      { title: "Site Geo & Survey", url: "/site-geo", icon: Ruler },
       { title: "Site Diary", url: "/site-diary", icon: Hammer },
       { title: "Progress Reports", url: "/progress-reports", icon: ClipboardCheck },
       { title: "Inspections", url: "/inspections", icon: ClipboardCheck },
