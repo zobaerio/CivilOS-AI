@@ -66,7 +66,7 @@ function CameraRig({ view, size }: { view: string; size: number }) {
   const last = useRef("");
   if (last.current !== view) {
     last.current = view;
-    const d = size * 2.2;
+    const d = size * (camera instanceof Object && (camera as any).aspect < 1 ? 3.2 : 2.2);
     const pos: Record<string, [number, number, number]> = { iso: [d, d, d], top: [0, d * 1.6, 0.01], front: [0, d * 0.4, d * 1.3], side: [d * 1.3, d * 0.4, 0] };
     camera.position.set(...pos[view]);
     camera.lookAt(0, 0, 0);
