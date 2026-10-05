@@ -27,7 +27,7 @@ Workflow: user says "Continue" → resume from the first unchecked item, in orde
 
 ## TODO — next up, in order
 - [x] P5-F23: Create Your OWN Plan — guided floor-plan generation (plot size, road direction, rooms, floors) + natural language plan input + feasibility check + generated plan UI
-- [ ] P5: BIM Studio 3D (extend Building3D) + Interior Studio (floor plan, furniture library, finishes, camera/presentation)
+- [x] P5: BIM Studio 3D (/bim-studio: 3D model from plan, floors slider, finishes, furniture, camera presets, image export)
 - [ ] P6: Site Geo GIS workspace (map layers, measure distance/area, polygons) + Survey Calculator + GIS import/export
 - [ ] P7: Project Scheduler (WBS, Gantt, FS/SS/FF/SF dependencies) + QA/QC checklists + Live Site Audit
 - [ ] P8: Inventory & Material Management (stock in/out, wastage, low-stock alerts), requisitions, purchase orders, vendors, equipment, invoices, contractor bills, payments, cash-flow
