@@ -57,10 +57,14 @@ export function generatePlan(i: PlanInput): PlanResult {
     const list = reqs.filter((r) => r.zone === z);
     if (!list.length) return;
     const h = (zoneArea[zi] / totalReq) * buildD;
-    const sum = list.reduce((s, r) => s + r.area, 0);
+    // Baths get a fixed practical width so they don't become slivers in deep bands
+    const isBath = (r: Req) => r.name.startsWith("Bath");
+    const bathW = Math.min(7, Math.max(5, 40 / h));
+    const fixed = list.filter(isBath).length * bathW;
+    const sum = list.filter((r) => !isBath(r)).reduce((s, r) => s + r.area, 0) || 1;
     let x = 0;
     list.forEach((r) => {
-      const w = (r.area / sum) * buildW;
+      const w = isBath(r) ? bathW : (r.area / sum) * Math.max(0, buildW - fixed);
       rooms.push({ name: r.name, nameBn: r.nameBn, x, y, w, h, zone: z });
       x += w;
     });
@@ -75,7 +79,7 @@ export function generatePlan(i: PlanInput): PlanResult {
   checks.push(fits
     ? { ok: true, en: `Required ${Math.round(totalReq)} sft fits buildable ${Math.round(footprint)} sft`, bn: `প্রয়োজনীয় ${Math.round(totalReq)} বর্গফুট, নির্মাণযোগ্য ${Math.round(footprint)} বর্গফুটে আঁটে` }
     : { ok: false, en: `Rooms need ~${Math.round(totalReq * 1.12)} sft but only ${Math.round(footprint)} sft buildable — reduce rooms`, bn: `রুমগুলোর জন্য ~${Math.round(totalReq * 1.12)} বর্গফুট দরকার, কিন্তু আছে ${Math.round(footprint)} — রুম কমান` });
-  const small = rooms.filter((r) => { const q = reqs.find((x) => x.name === r.name)!; return r.w * r.h < q.min || Math.min(r.w, r.h) < 6; });
+  const small = rooms.filter((r) => { const q = reqs.find((x) => x.name === r.name)!; return (r.name.startsWith("Bath") ? r.w * r.h < q.min : r.w * r.h < q.min) || Math.min(r.w, r.h) < 6; });
   checks.push(small.length
     ? { ok: false, en: `Undersized: ${small.map((s) => s.name).join(", ")}`, bn: `ছোট রুম: ${small.map((s) => s.nameBn).join(", ")}` }
     : { ok: true, en: "All rooms meet minimum size", bn: "সব রুম ন্যূনতম মাপ পূরণ করে" });

@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { Box } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
@@ -21,7 +23,8 @@ export default function PlanGeneratorPage() {
   const { lang, currency } = useI18n();
   const bn = lang === "bn";
   const L = (en: string, b: string) => (bn ? b : en);
-  const [inp, setInp] = useState<PlanInput>(DEFAULT_INPUT);
+  const [inp, setInp] = useState<PlanInput>(() => { try { return { ...DEFAULT_INPUT, ...JSON.parse(localStorage.getItem("civilos.plan") || "{}") }; } catch { return DEFAULT_INPUT; } });
+  useEffect(() => { localStorage.setItem("civilos.plan", JSON.stringify(inp)); }, [inp]);
   const [prompt, setPrompt] = useState("");
   const plan = useMemo(() => generatePlan(inp), [inp]);
   const set = <K extends keyof PlanInput>(k: K, v: PlanInput[K]) => setInp((p) => ({ ...p, [k]: v }));
@@ -120,7 +123,7 @@ export default function PlanGeneratorPage() {
               <Card className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <p className="font-semibold text-sm">{L("Typical floor plan", "সাধারণ তলার প্ল্যান")} · {L("Road", "রাস্তা")}: {dirs.find((d) => d.v === inp.road)?.[bn ? "bn" : "en"]}</p>
-                  <Button size="sm" variant="outline" onClick={downloadSvg}><Download className="h-4 w-4 mr-1" /> SVG</Button>
+                  <div className="flex gap-2"><Button size="sm" variant="outline" asChild><Link to="/bim-studio"><Box className="h-4 w-4 mr-1" /> 3D</Link></Button><Button size="sm" variant="outline" onClick={downloadSvg}><Download className="h-4 w-4 mr-1" /> SVG</Button></div>
                 </div>
                 <div className="overflow-auto">
                   <svg id="plan-svg" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${W + pad * 2} ${D + pad * 2 + 30}`} className="w-full max-h-[70vh]" style={{ fontFamily: "sans-serif" }}>
