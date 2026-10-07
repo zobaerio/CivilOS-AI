@@ -34,6 +34,7 @@ const SiteDiaryPage = lazy(() => import("./pages/SiteDiaryPage.tsx"));
 const PlanGeneratorPage = lazy(() => import("./pages/PlanGeneratorPage.tsx"));
 const BimStudioPage = lazy(() => import("./pages/BimStudioPage.tsx"));
 const SiteGeoPage = lazy(() => import("./pages/SiteGeoPage.tsx"));
+const SchedulerPage = lazy(() => import("./pages/SchedulerPage.tsx"));
 const ComingSoonPage = lazy(() => import("./pages/ComingSoonPage.tsx"));
 const AIEngineerPage = lazy(() => import("./pages/AIEngineerPage.tsx"));
 const BOQHubPage = lazy(() => import("./pages/BOQHubPage.tsx"));
@@ -90,6 +91,7 @@ const App = () => (
               <Route path="/plan-generator" element={<PlanGeneratorPage />} />
               <Route path="/bim-studio" element={<BimStudioPage />} />
               <Route path="/site-geo" element={<SiteGeoPage />} />
+              <Route path="/scheduler" element={<SchedulerPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/sponsor" element={<SponsorPage />} />
               <Route path="/admin" element={<AdminPage />} />
