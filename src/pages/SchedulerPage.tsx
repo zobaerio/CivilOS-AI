@@ -1,3 +1,4 @@
+import { useAuth } from "@/lib/auth";
 import { useCloudState } from "@/lib/cloudState";
 import { useEffect, useMemo, useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -17,6 +18,7 @@ import { QA_TEMPLATE, schedule, TEMPLATE, type DepType, type QAItem, type Task }
 
 export default function SchedulerPage() {
   const { lang } = useI18n();
+  const { user } = useAuth();
   const bn = lang === "bn";
   const T = (en: string, b: string) => (bn ? b : en);
   const [tasks, setTasks] = useCloudState<Task[]>("civilos.schedule", TEMPLATE);
@@ -41,7 +43,11 @@ export default function SchedulerPage() {
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + head + body], { type: "text/csv" })); a.download = "civilos-schedule.csv"; a.click();
   };
 
-  const dayW = Math.max(3, Math.min(12, 680 / Math.max(total, 1)));
+  const [vw, setVw] = useState(() => (typeof window === "undefined" ? 1280 : window.innerWidth));
+  useEffect(() => { const f = () => setVw(window.innerWidth); window.addEventListener("resize", f); return () => window.removeEventListener("resize", f); }, []);
+  const nameW = vw < 640 ? 112 : 220;
+  const chartW = vw < 640 ? Math.max(160, vw - nameW - 72) : 680;
+  const dayW = Math.max(vw < 640 ? 0.8 : 3, Math.min(12, chartW / Math.max(total, 1)));
   const stages = [...new Set(qa.map((q) => q.stage))];
 
   return (
@@ -74,10 +80,10 @@ export default function SchedulerPage() {
                     <div className="flex gap-3 text-xs items-center"><span className="inline-block w-3 h-3 rounded-sm bg-destructive" />{T("Critical path", "ক্রিটিক্যাল পাথ")}<span className="inline-block w-3 h-3 rounded-sm bg-primary" />{T("Has float", "সময় হাতে আছে")}</div>
                     <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" />CSV / Excel</Button>
                   </div>
-                  <div style={{ minWidth: 220 + total * dayW + 20 }}>
+                  <div style={{ minWidth: nameW + total * dayW + 8 }}>
                     {rows.map((r) => (
                       <div key={r.id} className="flex items-center h-8 border-b border-border/50">
-                        <div className="w-[220px] shrink-0 text-xs truncate pr-2"><span className="text-muted-foreground mr-1">{r.wbs}</span>{bn ? r.nameBn : r.name}</div>
+                        <div className="shrink-0 text-xs truncate pr-2" style={{ width: nameW }}><span className="text-muted-foreground mr-1">{r.wbs}</span>{bn ? r.nameBn : r.name}</div>
                         <div className="relative h-full flex-1">
                           <div className={`absolute top-1.5 h-5 rounded ${r.critical ? "bg-destructive/80" : "bg-primary/80"}`} style={{ left: r.es * dayW, width: Math.max(2, r.duration * dayW) }} title={`${date(r.es)} → ${date(r.ef)}`}>
                             <div className="h-full rounded bg-foreground/30" style={{ width: `${r.progress}%` }} />
@@ -154,7 +160,7 @@ export default function SchedulerPage() {
                 <Button size="sm" variant="outline" className="mt-3" onClick={() => setQa(QA_TEMPLATE)}><RotateCcw className="h-4 w-4 mr-1" />{T("Reset checklist", "চেকলিস্ট রিসেট")}</Button>
               </TabsContent>
             </Tabs>
-            <p className="text-xs text-muted-foreground">{T("Saved on this device.", "এই ডিভাইসে সংরক্ষিত।")}</p>
+            <p className="text-xs text-muted-foreground">{(user ? T("Saved to your account — available on all your devices.", "আপনার অ্যাকাউন্টে সংরক্ষিত — সব ডিভাইসে দেখা যাবে।") : T("Saved on this device. Sign in to keep it in your account.", "এই ডিভাইসে সংরক্ষিত। অ্যাকাউন্টে রাখতে লগইন করুন।"))}</p>
           </main>
         </div>
       </div>
