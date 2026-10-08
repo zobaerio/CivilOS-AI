@@ -15,6 +15,13 @@
       "when": 1791429415142,
       "tag": "0001_agent_core",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791430444690,
+      "tag": "0002_migration",
+      "breakpoints": true
     }
   ]
 }
