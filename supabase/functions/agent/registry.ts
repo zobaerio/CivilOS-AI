@@ -29,6 +29,7 @@ export const FEATURES: { key: string; name: string; bn: string; url: string; pla
   { key: "interior_studio", name: "Interior Studio", bn: "ইন্টেরিয়র স্টুডিও", url: "", aliases: ["interior"], status: "coming_soon" },
   { key: "site_geo", name: "Site Geo & Survey", bn: "সাইট ম্যাপ ও সার্ভে", url: "/site-geo", aliases: ["site geo", "map", "survey"] },
   { key: "scheduler", name: "Project Scheduler", bn: "প্রজেক্ট সময়সূচি", url: "/scheduler", aliases: ["scheduler", "schedule", "gantt"] },
+  { key: "inventory", name: "Inventory & Materials", bn: "মালামাল ও স্টক", url: "/inventory", aliases: ["inventory", "stock", "material", "materials", "store"] },
   { key: "qa_qc", name: "QA/QC", bn: "কিউএ/কিউসি", url: "/scheduler", aliases: ["qa", "qc", "quality"] },
   { key: "live_site_audit", name: "Live Site Audit", bn: "লাইভ সাইট অডিট", url: "", aliases: ["site audit", "audit"], status: "coming_soon" },
   { key: "team_workspace", name: "Team Workspace", bn: "টিম ওয়ার্কস্পেস", url: "/projects", aliases: ["team", "workspace", "project workspace"] },

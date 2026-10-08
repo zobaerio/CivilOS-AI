@@ -77,7 +77,7 @@ export function DashboardSidebar() {
   const [hidden, setHidden] = useState<string[]>([]);
   useEffect(() => {
     if (!user) { setHidden([]); return; }
-    const URLS: Record<string, string> = { boq: "/boq-hub", cost_estimator: "/upload", rate_analysis: "/rate-analysis", plan_generator: "/plan-generator", bim_studio: "/bim-studio", site_geo: "/site-geo", scheduler: "/scheduler", tender: "/tender", ai_writer: "/ai-writer", analytics: "/analytics" };
+    const URLS: Record<string, string> = { boq: "/boq-hub", cost_estimator: "/upload", rate_analysis: "/rate-analysis", plan_generator: "/plan-generator", bim_studio: "/bim-studio", site_geo: "/site-geo", scheduler: "/scheduler", inventory: "/inventory", tender: "/tender", ai_writer: "/ai-writer", analytics: "/analytics" };
     supabase.from("user_feature_settings").select("feature_key").eq("user_id", user.id).eq("enabled", false)
       .then(({ data }) => setHidden((data || []).map((r) => URLS[r.feature_key]).filter(Boolean)));
   }, [user, pathname]);
