@@ -17,6 +17,7 @@ import AgentConsole, { callAgent, STATUS_TONE } from "@/components/agent/AgentCo
 
 type Task = { id: string; agent_type: string; objective: string; status: string; risk_level: string; created_at: string; result: string | null; error: string | null };
 type Step = { id: string; task_id: string; agent_type: string; kind: string; tool: string | null; target: string | null; risk_level: string | null; status: string; error: string | null; created_at: string; input_summary: unknown; result_summary: unknown };
+type Automation = { id: string; name: string; kind: string; frequency: string; enabled: boolean; next_run_at: string; last_run_at: string | null; last_status: string | null; fail_count: number };
 type Approval = { id: string; task_id: string; tool: string; tool_input: Record<string, unknown>; risk_level: string; reason: string | null; status: string; created_at: string };
 
 const time = (s: string) => new Date(s).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -32,6 +33,7 @@ export default function AdminAgentPage() {
   const [health, setHealth] = useState<Record<string, any> | null>(null);
   const [q, setQ] = useState("");
   const [deciding, setDeciding] = useState<string | null>(null);
+  const [autos, setAutos] = useState<Automation[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -39,6 +41,7 @@ export default function AdminAgentPage() {
   }, [user]);
 
   const load = useCallback(async () => {
+    supabase.from("agent_automations").select("id, name, kind, frequency, enabled, next_run_at, last_run_at, last_status, fail_count").order("created_at").then(({ data }) => setAutos((data as Automation[]) || []));
     const [t, a, s] = await Promise.all([
       supabase.from("agent_tasks").select("id, agent_type, objective, status, risk_level, created_at, result, error").order("created_at", { ascending: false }).limit(50),
       supabase.from("agent_approvals").select("*").eq("status", "pending").order("created_at", { ascending: false }),
@@ -152,8 +155,23 @@ export default function AdminAgentPage() {
               </TabsContent>
 
               <TabsContent value="automation">
-                <Card className="p-6 text-sm text-muted-foreground flex items-start gap-3"><Activity className="h-5 w-5 text-primary shrink-0" />
-                  <div>Scheduled and event-triggered automations (daily health check, error-rate alerts, milestone notifications) are planned for the next phase. They will run on the server without needing this page open, each with an owner, on/off switch, retry limit and history.</div>
+                <Card className="p-4 space-y-3">
+                  <div className="flex items-start gap-3 text-sm text-muted-foreground"><Activity className="h-5 w-5 text-primary shrink-0" />
+                    <div>Automations run on the server every hour, even when this page is closed. Create one from the Command Center, e.g. <span className="font-medium text-foreground">"প্রতিদিন health check চালু করো"</span> or <span className="font-medium text-foreground">"weekly failed task report দাও"</span>. Results arrive in Notifications. An automation that fails 3 times in a row turns itself off.</div>
+                  </div>
+                  {autos.length === 0 ? <p className="text-sm text-muted-foreground">No automations yet.</p> : (
+                    <div className="overflow-x-auto"><table className="w-full text-xs">
+                      <thead className="text-muted-foreground text-left"><tr><th className="py-2 pr-3">Name</th><th className="pr-3">Every</th><th className="pr-3">State</th><th className="pr-3">Last run</th><th className="pr-3">Next run</th></tr></thead>
+                      <tbody>{autos.map((a) => (
+                        <tr key={a.id} className="border-t border-border">
+                          <td className="py-2 pr-3 font-medium">{a.name}</td>
+                          <td className="pr-3">{a.frequency}</td>
+                          <td className="pr-3"><Badge variant={a.enabled ? "default" : "secondary"} className="text-[10px]">{a.enabled ? "On" : "Off"}</Badge> {a.last_status && <span className="text-muted-foreground ml-1">{a.last_status}</span>}</td>
+                          <td className="pr-3 whitespace-nowrap">{a.last_run_at ? time(a.last_run_at) : "—"}</td>
+                          <td className="pr-3 whitespace-nowrap">{a.enabled ? time(a.next_run_at) : "—"}</td>
+                        </tr>))}</tbody>
+                    </table></div>
+                  )}
                 </Card>
               </TabsContent>
             </Tabs>

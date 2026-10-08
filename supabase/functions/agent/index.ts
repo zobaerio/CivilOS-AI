@@ -5,7 +5,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { streamText, tool, stepCountIs } from "npm:ai@5";
 import { z } from "npm:zod@3";
 import { createLovableAiGatewayProvider } from "../_shared/gateway.ts";
-import { toolsFor, TOOLS, type AgentType, type Ctx, type AgentTool } from "./registry.ts";
+import { toolsFor, TOOLS, runAutomation, type AgentType, type Ctx, type AgentTool } from "./registry.ts";
 
 const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
@@ -70,6 +70,21 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
     const url = Deno.env.get("SUPABASE_URL")!;
+    // ---------- Scheduler entry (pg_cron) — authenticated by a server-only key ----------
+    const cronKey = req.headers.get("x-cron-key");
+    if (cronKey) {
+      const sdb = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+      const { data: k } = await sdb.from("agent_cron_key").select("key").eq("id", 1).maybeSingle();
+      if (!k || k.key !== cronKey) return json({ error: "Forbidden" }, 403);
+      const { data: due } = await sdb.from("agent_automations").select("*").eq("enabled", true).lte("next_run_at", new Date().toISOString()).limit(20);
+      const results = [];
+      for (const a of due || []) {
+        const { data: ok } = await sdb.rpc("has_role", { _user_id: a.owner_id, _role: "admin" });
+        if (!ok) { await sdb.from("agent_automations").update({ enabled: false, last_status: "error", last_result: { error: "owner is no longer an admin" } }).eq("id", a.id); continue; }
+        results.push({ id: a.id, ...(await runAutomation(sdb, a)) });
+      }
+      return json({ ran: results.length, results });
+    }
     const authHeader = req.headers.get("Authorization") || "";
     const anon = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
     const { data: { user } } = await anon.auth.getUser(authHeader.replace("Bearer ", ""));

@@ -222,6 +222,23 @@ export const TOOLS: AgentTool[] = [
       return { deleted: i.user_id, reason: i.reason };
     },
     verify: async (ctx, i) => { const { data } = await ctx.db.auth.admin.getUserById(i.user_id); return !data?.user; } },
+  // ---- Scheduled automations (admin) ----
+  { name: "list_automations", description: "List scheduled automations with on/off state, next and last run.", agentTypes: ["admin"], input: z.object({}), risk: "LOW", requiresApproval: false,
+    handler: async (ctx) => { const { data } = await ctx.db.from("agent_automations").select("id, name, kind, frequency, enabled, next_run_at, last_run_at, last_status, fail_count").order("created_at"); return { automations: data || [], kinds: AUTOMATION_KINDS }; } },
+  { name: "create_automation", description: `Create a scheduled automation. kind: health_check (checks database and failed tasks, alerts you only if something is wrong) or failed_tasks_report (sends you a summary of failed agent tasks). frequency: hourly, daily or weekly. Results arrive as notifications to you.`, agentTypes: ["admin"], input: z.object({ kind: z.enum(["health_check", "failed_tasks_report"]), frequency: z.enum(["hourly", "daily", "weekly"]), name: z.string().max(80).optional() }), risk: "MEDIUM", requiresApproval: false, target: (i) => i.kind,
+    handler: async (ctx, i) => {
+      const { data: dup } = await ctx.db.from("agent_automations").select("id").eq("kind", i.kind).eq("frequency", i.frequency).eq("owner_id", ctx.userId).eq("enabled", true).maybeSingle();
+      if (dup) return { already_exists: true, id: dup.id };
+      const { data, error } = await ctx.db.from("agent_automations").insert({ owner_id: ctx.userId, kind: i.kind, frequency: i.frequency, name: i.name || `${i.frequency} ${i.kind.replace(/_/g, " ")}`, next_run_at: nextRun(i.frequency) }).select("id").single();
+      if (error) throw new Error(error.message);
+      return { id: data.id };
+    },
+    verify: async (ctx, _i, r) => { const { data } = await ctx.db.from("agent_automations").select("id").eq("id", r?.id).maybeSingle(); return !!data; } },
+  { name: "set_automation_enabled", description: "Turn a scheduled automation on or off by id.", agentTypes: ["admin"], input: z.object({ id: z.string(), enabled: z.boolean() }), risk: "MEDIUM", requiresApproval: false, target: (i) => i.id,
+    handler: async (ctx, i) => { const { data, error } = await ctx.db.from("agent_automations").update({ enabled: i.enabled, ...(i.enabled ? { fail_count: 0 } : {}) }).eq("id", i.id).select("id"); if (error) throw new Error(error.message); if (!data?.length) throw new Error("Automation not found"); return { id: i.id, enabled: i.enabled }; },
+    verify: async (ctx, i) => { const { data } = await ctx.db.from("agent_automations").select("enabled").eq("id", i.id).maybeSingle(); return data?.enabled === i.enabled; } },
+  { name: "run_automation_now", description: "Run one scheduled automation immediately (for testing). Sends its notification to you.", agentTypes: ["admin"], input: z.object({ id: z.string() }), risk: "MEDIUM", requiresApproval: false, target: (i) => i.id,
+    handler: async (ctx, i) => { const { data: a } = await ctx.db.from("agent_automations").select("*").eq("id", i.id).maybeSingle(); if (!a) throw new Error("Automation not found"); return await runAutomation(ctx.db, a); } },
   // ---- Agent memory (per user, per agent type) ----
   ...(["user", "admin"] as AgentType[]).flatMap((at): AgentTool[] => [
     { name: `${at}_remember`, description: "Save a short fact or preference the user asked you to remember (e.g. preferred language, default district). Overwrites the same key.", agentTypes: [at], input: z.object({ key: z.string().min(1).max(60), value: z.string().min(1).max(500) }), risk: "LOW", requiresApproval: false, target: (i) => i.key,
@@ -236,3 +253,41 @@ export const TOOLS: AgentTool[] = [
 ];
 
 export const toolsFor = (t: AgentType) => TOOLS.filter((x) => x.agentTypes.includes(t));
+
+// ---------- Automation runner (shared by tools and the scheduler) ----------
+export const AUTOMATION_KINDS = ["health_check", "failed_tasks_report"] as const;
+export const nextRun = (f: string, from = new Date()) => new Date(from.getTime() + (f === "hourly" ? 3600e3 : f === "weekly" ? 7 * 864e5 : 864e5)).toISOString();
+export async function runAutomation(db: SupabaseClient, a: any) {
+  const since = new Date(Date.now() - (a.frequency === "hourly" ? 3600e3 : a.frequency === "weekly" ? 7 * 864e5 : 864e5)).toISOString();
+  let status = "ok", title = "", message = "", notify = false, summary: Record<string, unknown> = {};
+  try {
+    const t0 = Date.now();
+    const { error: dbErr } = await db.from("plans").select("id").limit(1);
+    const { count: failed } = await db.from("agent_tasks").select("*", { count: "exact", head: true }).eq("status", "failed").gte("created_at", since);
+    const { count: pending } = await db.from("agent_approvals").select("*", { count: "exact", head: true }).eq("status", "pending");
+    summary = { database_ok: !dbErr, response_ms: Date.now() - t0, failed_tasks: failed || 0, pending_approvals: pending || 0 };
+    if (a.kind === "health_check") {
+      const issues = [dbErr && "database unreachable", (failed || 0) > 0 && `${failed} failed agent task(s)`, (pending || 0) > 0 && `${pending} approval(s) waiting`].filter(Boolean);
+      status = dbErr || (failed || 0) > 0 ? "warning" : "ok";
+      notify = issues.length > 0;
+      title = "CivilOS health check: attention needed";
+      message = `Issues since last check: ${issues.join(", ")}.`;
+    } else {
+      const { data: rows } = await db.from("agent_tasks").select("objective, error, created_at").eq("status", "failed").gte("created_at", since).order("created_at", { ascending: false }).limit(5);
+      notify = true;
+      title = `Agent report: ${failed || 0} failed task(s)`;
+      message = (rows || []).length ? rows!.map((r) => `• ${String(r.objective).slice(0, 60)} — ${String(r.error || "").slice(0, 60)}`).join("\n") : "No failed agent tasks in this period.";
+      summary.recent = rows?.length || 0;
+    }
+    if (notify) {
+      const { error } = await db.from("notifications").insert({ user_id: a.owner_id, type: "automation", title, message: message.slice(0, 1000) });
+      if (error) throw new Error(error.message);
+    }
+  } catch (e) { status = "error"; summary.error = e instanceof Error ? e.message : String(e); }
+  const fails = status === "error" ? (a.fail_count || 0) + 1 : 0;
+  await db.from("agent_automations").update({ last_run_at: new Date().toISOString(), next_run_at: nextRun(a.frequency), last_status: status, last_result: { ...summary, notified: notify }, fail_count: fails, ...(fails >= 3 ? { enabled: false } : {}) }).eq("id", a.id);
+  // Audit trail
+  const { data: task } = await db.from("agent_tasks").insert({ agent_type: "admin", user_id: a.owner_id, objective: `Scheduled: ${a.name}`, status: status === "error" ? "failed" : "completed", result: notify ? title : "No issues — no notification sent.", error: status === "error" ? String(summary.error) : null, started_at: new Date().toISOString(), completed_at: new Date().toISOString() }).select("id").single();
+  if (task) await db.from("agent_steps").insert({ task_id: task.id, agent_type: "admin", actor_user_id: a.owner_id, kind: "automation", tool: a.kind, target: a.id, risk_level: "LOW", result_summary: summary, status: status === "error" ? "error" : "ok", error: status === "error" ? String(summary.error) : null });
+  return { status, notified: notify, ...summary, disabled_after_failures: fails >= 3 };
+}
