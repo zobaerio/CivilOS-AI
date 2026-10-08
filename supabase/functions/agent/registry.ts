@@ -222,6 +222,17 @@ export const TOOLS: AgentTool[] = [
       return { deleted: i.user_id, reason: i.reason };
     },
     verify: async (ctx, i) => { const { data } = await ctx.db.auth.admin.getUserById(i.user_id); return !data?.user; } },
+  // ---- Agent memory (per user, per agent type) ----
+  ...(["user", "admin"] as AgentType[]).flatMap((at): AgentTool[] => [
+    { name: `${at}_remember`, description: "Save a short fact or preference the user asked you to remember (e.g. preferred language, default district). Overwrites the same key.", agentTypes: [at], input: z.object({ key: z.string().min(1).max(60), value: z.string().min(1).max(500) }), risk: "LOW", requiresApproval: false, target: (i) => i.key,
+      handler: async (ctx, i) => { const { error } = await ctx.db.from("agent_memory").upsert({ user_id: ctx.userId, agent_type: at, key: i.key.trim().toLowerCase(), value: i.value.trim(), updated_at: new Date().toISOString() }, { onConflict: "user_id,agent_type,key" }); if (error) throw new Error(error.message); return { saved: i.key }; },
+      verify: async (ctx, i) => { const { data } = await ctx.db.from("agent_memory").select("value").eq("user_id", ctx.userId).eq("agent_type", at).eq("key", i.key.trim().toLowerCase()).maybeSingle(); return data?.value === i.value.trim(); } },
+    { name: `${at}_recall`, description: "List everything remembered for this user. Call at the start when preferences may matter.", agentTypes: [at], input: z.object({}), risk: "LOW", requiresApproval: false,
+      handler: async (ctx) => { const { data } = await ctx.db.from("agent_memory").select("key, value, updated_at").eq("user_id", ctx.userId).eq("agent_type", at).order("updated_at", { ascending: false }).limit(50); return { memories: data || [] }; } },
+    { name: `${at}_forget`, description: "Delete one remembered item by key, or key 'all' to clear everything.", agentTypes: [at], input: z.object({ key: z.string() }), risk: "MEDIUM", requiresApproval: false, target: (i) => i.key,
+      handler: async (ctx, i) => { let q = ctx.db.from("agent_memory").delete().eq("user_id", ctx.userId).eq("agent_type", at); if (i.key !== "all") q = q.eq("key", i.key.trim().toLowerCase()); const { error } = await q; if (error) throw new Error(error.message); return { forgotten: i.key }; },
+      verify: async (ctx, i) => { let q = ctx.db.from("agent_memory").select("id").eq("user_id", ctx.userId).eq("agent_type", at); if (i.key !== "all") q = q.eq("key", i.key.trim().toLowerCase()); const { data } = await q; return !data?.length; } },
+  ]),
 ];
 
 export const toolsFor = (t: AgentType) => TOOLS.filter((x) => x.agentTypes.includes(t));
