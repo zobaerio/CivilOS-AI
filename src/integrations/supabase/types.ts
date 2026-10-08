@@ -841,6 +841,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_workspace: {
+        Row: {
+          key: string
+          updated_at: string
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          user_id: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          user_id?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       withdrawals: {
         Row: {
           account_number: string
