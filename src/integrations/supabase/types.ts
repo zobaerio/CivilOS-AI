@@ -64,6 +64,66 @@ export type Database = {
           },
         ]
       }
+      agent_automations: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          fail_count: number
+          frequency: string
+          id: string
+          kind: string
+          last_result: Json | null
+          last_run_at: string | null
+          last_status: string | null
+          name: string
+          next_run_at: string
+          owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          fail_count?: number
+          frequency: string
+          id?: string
+          kind: string
+          last_result?: Json | null
+          last_run_at?: string | null
+          last_status?: string | null
+          name: string
+          next_run_at?: string
+          owner_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          fail_count?: number
+          frequency?: string
+          id?: string
+          kind?: string
+          last_result?: Json | null
+          last_run_at?: string | null
+          last_status?: string | null
+          name?: string
+          next_run_at?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
+      agent_cron_key: {
+        Row: {
+          id: number
+          key: string
+        }
+        Insert: {
+          id?: number
+          key?: string
+        }
+        Update: {
+          id?: number
+          key?: string
+        }
+        Relationships: []
+      }
       agent_memory: {
         Row: {
           agent_type: string
