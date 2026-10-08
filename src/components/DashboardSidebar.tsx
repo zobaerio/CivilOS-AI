@@ -73,6 +73,16 @@ export function DashboardSidebar() {
       .then(({ data }) => setIsAdmin(!!data));
   }, [user]);
 
+  // Features the user turned off (e.g. via the AI Agent) are hidden from the menu.
+  const [hidden, setHidden] = useState<string[]>([]);
+  useEffect(() => {
+    if (!user) { setHidden([]); return; }
+    const URLS: Record<string, string> = { boq: "/boq-hub", cost_estimator: "/upload", rate_analysis: "/rate-analysis", plan_generator: "/plan-generator", bim_studio: "/bim-studio", site_geo: "/site-geo", scheduler: "/scheduler", tender: "/tender", ai_writer: "/ai-writer", analytics: "/analytics" };
+    supabase.from("user_feature_settings").select("feature_key").eq("user_id", user.id).eq("enabled", false)
+      .then(({ data }) => setHidden((data || []).map((r) => URLS[r.feature_key]).filter(Boolean)));
+  }, [user, pathname]);
+  const visibleTools = constructionTools.map((c) => ({ ...c, items: c.items.filter((i) => !hidden.includes(i.url)) })).filter((c) => c.items.length);
+
   const locked = (feature?: string) => !!feature && !hasFeature(feature);
   const toolsActive = findActiveCategory(pathname) !== null;
   const [toolsOpen, setToolsOpen] = useState(toolsActive);
@@ -133,7 +143,7 @@ export function DashboardSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
                     <SidebarMenu className={collapsed ? "" : "ml-2 border-l pl-1"}>
-                      {constructionTools.map((cat) => (
+                      {visibleTools.map((cat) => (
                         <CategoryGroup key={cat.label} cat={cat} collapsed={collapsed} pathname={pathname} locked={locked} />
                       ))}
                     </SidebarMenu>
