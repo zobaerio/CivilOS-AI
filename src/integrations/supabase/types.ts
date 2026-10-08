@@ -14,6 +14,163 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_approvals: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          reason: string | null
+          requested_by: string
+          risk_level: string
+          status: string
+          task_id: string
+          tool: string
+          tool_input: Json
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          reason?: string | null
+          requested_by: string
+          risk_level: string
+          status?: string
+          task_id: string
+          tool: string
+          tool_input: Json
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          reason?: string | null
+          requested_by?: string
+          risk_level?: string
+          status?: string
+          task_id?: string
+          tool?: string
+          tool_input?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_approvals_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "agent_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_steps: {
+        Row: {
+          actor_user_id: string
+          agent_type: string
+          created_at: string
+          error: string | null
+          id: string
+          input_summary: Json | null
+          kind: string
+          result_summary: Json | null
+          risk_level: string | null
+          status: string
+          target: string | null
+          task_id: string
+          tool: string | null
+        }
+        Insert: {
+          actor_user_id: string
+          agent_type: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          input_summary?: Json | null
+          kind: string
+          result_summary?: Json | null
+          risk_level?: string | null
+          status?: string
+          target?: string | null
+          task_id: string
+          tool?: string | null
+        }
+        Update: {
+          actor_user_id?: string
+          agent_type?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          input_summary?: Json | null
+          kind?: string
+          result_summary?: Json | null
+          risk_level?: string | null
+          status?: string
+          target?: string | null
+          task_id?: string
+          tool?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_steps_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "agent_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_tasks: {
+        Row: {
+          agent_type: string
+          approval_required: boolean
+          completed_at: string | null
+          created_at: string
+          error: string | null
+          id: string
+          interpreted_intent: string | null
+          messages: Json
+          objective: string
+          result: string | null
+          risk_level: string
+          started_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          agent_type: string
+          approval_required?: boolean
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          interpreted_intent?: string | null
+          messages?: Json
+          objective: string
+          result?: string | null
+          risk_level?: string
+          started_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          agent_type?: string
+          approval_required?: boolean
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          interpreted_intent?: string | null
+          messages?: Json
+          objective?: string
+          result?: string | null
+          risk_level?: string
+          started_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           admin_reply: string | null
@@ -815,6 +972,27 @@ export type Database = {
           projects?: number
           reports?: number
           storage_mb?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_feature_settings: {
+        Row: {
+          enabled: boolean
+          feature_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          enabled?: boolean
+          feature_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          enabled?: boolean
+          feature_key?: string
           updated_at?: string
           user_id?: string
         }

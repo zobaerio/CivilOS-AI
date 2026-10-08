@@ -3,7 +3,7 @@ import {
   Sparkles, Calculator, FileText, HardHat, ShoppingCart, Wallet, BarChart3,
   Bot, FileSearch, PenTool, Ruler, ClipboardList, Camera, ClipboardCheck,
   Package, Truck, Receipt, TrendingUp, Lightbulb, FileBarChart, User,
-  Building2, Shield, Upload, Hammer,
+  Building2, Shield, Upload, Hammer, Cpu,
 } from "lucide-react";
 
 export type NavLeaf = {
@@ -33,6 +33,7 @@ export const constructionTools: NavCategory[] = [
     label: "AI Tools",
     icon: Sparkles,
     items: [
+      { title: "AI Agent", url: "/agent", icon: Cpu },
       { title: "AI Engineering Assistant", url: "/ai-engineer", icon: Bot },
       { title: "AI Engineer Chat", url: "/ai-assistant", icon: Bot },
       { title: "File AI Analyzer", url: "/file-assistant", icon: FileSearch },
@@ -119,6 +120,7 @@ export const settingsNav: NavCategory = {
     { title: "All Modules", url: "/modules", icon: Wrench },
     { title: "Admin Dashboard", url: "/admin", icon: Shield, adminOnly: true },
     { title: "Admin · Payments", url: "/admin/billing", icon: CreditCard, adminOnly: true },
+    { title: "Admin · AI Agent", url: "/admin/ai-agent", icon: Cpu, adminOnly: true },
   ],
 };
 
