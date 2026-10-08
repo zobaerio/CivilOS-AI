@@ -42,4 +42,5 @@ Workflow: user says "Continue" → resume from the first unchecked item, in orde
 - [x] Plan, site map & schedule saved to user account (cross-device)
 - [ ] Team sharing of schedule/site map (per project)
 - [x] AI Agent Phase 1: User Agent (/agent) + Admin Control Center (/admin/ai-agent), approvals, audit
-- [ ] AI Agent Phase 2: delete/update user, subscription tools, scheduled automations, agent memory
+- [x] AI Agent Phase 2a: update user, change subscription, delete user (approval-gated)
+- [ ] AI Agent Phase 2b: scheduled automations, agent memory

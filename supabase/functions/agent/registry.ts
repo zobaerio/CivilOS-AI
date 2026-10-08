@@ -182,6 +182,46 @@ export const TOOLS: AgentTool[] = [
       return { notification_id: data.id };
     },
     verify: async (ctx, _i, r) => { const { data } = await ctx.db.from("notifications").select("id").eq("id", r?.notification_id).maybeSingle(); return !!data; } },
+  // ---- Phase 2 admin tools (all approval-gated) ----
+  { name: "update_user_profile", description: "Change one user's display name. Requires admin approval.", agentTypes: ["admin"], input: z.object({ user_id: z.string(), display_name: z.string().min(1).max(80) }), risk: "HIGH", requiresApproval: true, target: (i) => i.user_id,
+    handler: async (ctx, i) => {
+      const { data: before } = await ctx.db.from("profiles").select("display_name").eq("id", i.user_id).maybeSingle();
+      if (!before) throw new Error("User profile not found");
+      const { error } = await ctx.db.from("profiles").update({ display_name: i.display_name.trim() }).eq("id", i.user_id);
+      if (error) throw new Error(error.message);
+      return { previous: before.display_name, display_name: i.display_name.trim() };
+    },
+    verify: async (ctx, i) => { const { data } = await ctx.db.from("profiles").select("display_name").eq("id", i.user_id).maybeSingle(); return data?.display_name === i.display_name.trim(); } },
+  { name: "change_user_subscription", description: "Set a user's plan (by plan name, e.g. 'Starter', 'Professional', or 'Free' to cancel). Does not charge money. Requires admin approval.", agentTypes: ["admin"], input: z.object({ user_id: z.string(), plan_name: z.string(), billing_cycle: z.enum(["monthly", "yearly"]).optional() }), risk: "CRITICAL", requiresApproval: true, target: (i) => i.user_id,
+    handler: async (ctx, i) => {
+      const { data: active } = await ctx.db.from("subscriptions").select("id, plan_id").eq("user_id", i.user_id).eq("status", "active");
+      if (/^free$/i.test(i.plan_name.trim())) {
+        if (active?.length) { const { error } = await ctx.db.from("subscriptions").update({ status: "cancelled", cancelled_at: new Date().toISOString() }).eq("user_id", i.user_id).eq("status", "active"); if (error) throw new Error(error.message); }
+        return { plan: "Free", cancelled: active?.length || 0 };
+      }
+      const { data: plan } = await ctx.db.from("plans").select("id, name").ilike("name", i.plan_name.trim()).maybeSingle();
+      if (!plan) throw new Error(`Plan '${i.plan_name}' not found`);
+      if (active?.length) await ctx.db.from("subscriptions").update({ status: "cancelled", cancelled_at: new Date().toISOString() }).eq("user_id", i.user_id).eq("status", "active");
+      const cycle = i.billing_cycle || "monthly";
+      const renew = new Date(); renew.setMonth(renew.getMonth() + (cycle === "yearly" ? 12 : 1));
+      const { data, error } = await ctx.db.from("subscriptions").insert({ user_id: i.user_id, plan_id: plan.id, status: "active", billing_cycle: cycle, payment_provider: "admin", renewal_date: renew.toISOString() }).select("id").single();
+      if (error) throw new Error(error.message);
+      return { plan: plan.name, plan_id: plan.id, subscription_id: data.id };
+    },
+    verify: async (ctx, i, r) => {
+      const { data } = await ctx.db.from("subscriptions").select("plan_id").eq("user_id", i.user_id).eq("status", "active");
+      return r?.plan === "Free" ? !data?.length : (data?.length === 1 && data[0].plan_id === r?.plan_id);
+    } },
+  { name: "delete_user", description: "Permanently delete a user account and its owned data. Irreversible. Admin accounts cannot be deleted. Requires admin approval.", agentTypes: ["admin"], input: z.object({ user_id: z.string(), reason: z.string().min(3) }), risk: "CRITICAL", requiresApproval: true, target: (i) => i.user_id,
+    handler: async (ctx, i) => {
+      if (i.user_id === ctx.userId) throw new Error("You cannot delete your own account via the agent");
+      const { data: isAdm } = await ctx.db.rpc("has_role", { _user_id: i.user_id, _role: "admin" });
+      if (isAdm) throw new Error("Admin accounts cannot be deleted");
+      const { error } = await ctx.db.auth.admin.deleteUser(i.user_id);
+      if (error) throw new Error(error.message);
+      return { deleted: i.user_id, reason: i.reason };
+    },
+    verify: async (ctx, i) => { const { data } = await ctx.db.auth.admin.getUserById(i.user_id); return !data?.user; } },
 ];
 
 export const toolsFor = (t: AgentType) => TOOLS.filter((x) => x.agentTypes.includes(t));
