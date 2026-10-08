@@ -71,7 +71,7 @@ export default function AgentConsole({ agentType, examples, onTask }: { agentTyp
           <div key={i} className="flex justify-end"><div className="max-w-[85%] rounded-2xl rounded-br-sm bg-primary text-primary-foreground px-3.5 py-2 text-sm whitespace-pre-wrap">{m.content}</div></div>
         ) : (
           <div key={i} className="max-w-[92%] space-y-1">
-            <div className="prose prose-sm dark:prose-invert max-w-none text-foreground"><ReactMarkdown>{m.content}</ReactMarkdown></div>
+            <div className="text-sm text-foreground space-y-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-semibold"><ReactMarkdown>{m.content}</ReactMarkdown></div>
             {m.status && <Badge variant="secondary" className={`text-[10px] ${STATUS_TONE[m.status] || ""}`}>{m.status === "awaiting_approval" && <ShieldAlert className="h-3 w-3 mr-1" />}{m.status.replace("_", " ")}</Badge>}
           </div>
         ))}
