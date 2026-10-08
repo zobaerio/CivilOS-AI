@@ -38,10 +38,9 @@ export function useCloudState<T>(key: string, def: T, opts: { merge?: boolean } 
         const { error } = await supabase.from("user_workspace").upsert({ user_id: user.id, key, value: local as never, updated_at: new Date().toISOString() });
         if (!error) localStorage.removeItem(dirtyKey);
       } else if (data) {
-        fromServer.current = true;
         const v = data.value as T;
         const next = merge && v && typeof v === "object" && !Array.isArray(v) ? ({ ...def, ...(v as object) } as T) : v;
-        setValue(next);
+        setValue((prev) => { if (Object.is(prev, next)) return prev; fromServer.current = true; return next; });
         localStorage.setItem(key, JSON.stringify(next));
       } else {
         await supabase.from("user_workspace").upsert({ user_id: user.id, key, value: readLocal(key, def, merge) as never });
