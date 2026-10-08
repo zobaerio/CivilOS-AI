@@ -44,7 +44,7 @@ export default function SchedulerPage() {
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + head + body], { type: "text/csv" })); a.download = "civilos-schedule.csv"; a.click();
   };
 
-  const dayW = Math.max(3, Math.min(12, 900 / Math.max(total, 1)));
+  const dayW = Math.max(3, Math.min(12, 680 / Math.max(total, 1)));
   const stages = [...new Set(qa.map((q) => q.stage))];
 
   return (
