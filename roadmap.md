@@ -39,3 +39,5 @@ Workflow: user says "Continue" → resume from the first unchecked item, in orde
 ## Notes
 - BBS, RA Bill, Material Estimate/Cost Sheet, Gantt routes exist as Coming Soon stubs — replace with real modules when their phase arrives.
 - Verify build + preview after each feature; keep Bengali/English and BDT defaults.
+- [x] Plan, site map & schedule saved to user account (cross-device)
+- [ ] Team sharing of schedule/site map (per project)
