@@ -166,7 +166,7 @@ export default function AdminAgentPage() {
                         <tr key={a.id} className="border-t border-border">
                           <td className="py-2 pr-3 font-medium">{a.name}</td>
                           <td className="pr-3">{a.frequency}</td>
-                          <td className="pr-3"><Tone s={a.enabled ? "completed" : "cancelled"} /> {a.last_status && <span className="text-muted-foreground ml-1">{a.last_status}</span>}</td>
+                          <td className="pr-3"><Badge variant={a.enabled ? "default" : "secondary"} className="text-[10px]">{a.enabled ? "On" : "Off"}</Badge> {a.last_status && <span className="text-muted-foreground ml-1">{a.last_status}</span>}</td>
                           <td className="pr-3 whitespace-nowrap">{a.last_run_at ? time(a.last_run_at) : "—"}</td>
                           <td className="pr-3 whitespace-nowrap">{a.enabled ? time(a.next_run_at) : "—"}</td>
                         </tr>))}</tbody>
