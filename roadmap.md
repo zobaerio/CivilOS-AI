@@ -44,4 +44,4 @@ Workflow: user says "Continue" → resume from the first unchecked item, in orde
 - [x] AI Agent Phase 1: User Agent (/agent) + Admin Control Center (/admin/ai-agent), approvals, audit
 - [x] AI Agent Phase 2a: update user, change subscription, delete user (approval-gated)
 - [x] AI Agent Phase 2b: agent memory (remember/recall/forget)
-- [ ] AI Agent Phase 2c: scheduled automations
+- [x] AI Agent Phase 2c: scheduled automations (hourly server scheduler)
