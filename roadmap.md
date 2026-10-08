@@ -30,7 +30,7 @@ Workflow: user says "Continue" → resume from the first unchecked item, in orde
 - [x] P5: BIM Studio 3D (/bim-studio: 3D model from plan, floors slider, finishes, furniture, camera presets, image export)
 - [x] P6: Site Geo (/site-geo: map search/locate/satellite, distance+area in sft/decimal/katha/bigha, plan overlay on map, GeoJSON export) + Survey Calculator (irregular plot, unit converter, levelling). GIS file import still pending.
 - [x] P7: Project Scheduler (/scheduler: WBS, Gantt, FS/SS/FF/SF + lag, critical path, CSV export, QA/QC checklist). Saved per device; Live Site Audit + cloud sync pending.
-- [~] P8: Inventory (DONE: /inventory stock in/out, wastage, low-stock, vendors, POs; TODO: requisitions page, equipment, invoices, contractor bills, payments, cash-flow) — & Material Management (stock in/out, wastage, low-stock alerts), requisitions, purchase orders, vendors, equipment, invoices, contractor bills, payments, cash-flow
+- [~] P8: Inventory (DONE: /inventory stock in/out, wastage, low-stock, vendors, POs; requisitions, /equipment; TODO: invoices, contractor bills, payments, cash-flow) — & Material Management (stock in/out, wastage, low-stock alerts), requisitions, purchase orders, vendors, equipment, invoices, contractor bills, payments, cash-flow
 - [ ] P9: AI Defect Detection from site photos + AI automation/risk features
 - [ ] P10: Knowledge Library (BNBC/structural/geo/survey categories, search/filter) + Training Corner + professional report builder
 - [ ] P11: Global units system (metric/imperial conversion, unit labels on every numeric field) + floating assistant + project import/export

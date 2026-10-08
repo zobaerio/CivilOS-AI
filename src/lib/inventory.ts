@@ -5,7 +5,9 @@ export type Txn = { id: string; date: string; materialId: string; type: TxnType;
 export type Vendor = { id: string; name: string; phone: string; items: string };
 export type POStatus = "draft" | "ordered" | "received" | "cancelled";
 export type PO = { id: string; no: string; date: string; vendorId: string; materialId: string; qty: number; rate: number; status: POStatus };
-export type Inventory = { materials: Material[]; txns: Txn[]; vendors: Vendor[]; pos: PO[] };
+export type ReqStatus = "pending" | "approved" | "rejected" | "ordered";
+export type Requisition = { id: string; no: string; date: string; materialId: string; qty: number; neededBy: string; requestedBy: string; note: string; status: ReqStatus; poId?: string };
+export type Inventory = { materials: Material[]; txns: Txn[]; vendors: Vendor[]; pos: PO[]; reqs: Requisition[] };
 
 // Sample opening rates in BDT — users should edit to current market prices.
 export const DEFAULT_INVENTORY: Inventory = {
@@ -19,6 +21,7 @@ export const DEFAULT_INVENTORY: Inventory = {
   txns: [],
   vendors: [],
   pos: [],
+  reqs: [],
 };
 
 export const uid = (p: string) => `${p}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
