@@ -96,6 +96,9 @@ const App = () => (
               <Route path="/site-geo" element={<SiteGeoPage />} />
               <Route path="/scheduler" element={<SchedulerPage />} />
               <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/requisitions" element={<InventoryPage />} />
+              <Route path="/purchase-orders" element={<InventoryPage />} />
+              <Route path="/vendors" element={<InventoryPage />} />
               <Route path="/agent" element={<UserAgentPage />} />
               <Route path="/admin/ai-agent" element={<AdminAgentPage />} />
               <Route path="/profile" element={<ProfilePage />} />
@@ -113,7 +116,7 @@ const App = () => (
               {[
                 "ai-writer","ai-drawing","bbs","material-calc",
                 "progress-reports","inspections","site-photos","tender-docs","bid-prep",
-                "requisitions","purchase-orders","vendors","equipment",
+                "equipment",
                 "invoices","contractor-bills","payments","cash-flow",
                 "analytics","ai-insights","reports","company-settings",
               ].map((p) => (

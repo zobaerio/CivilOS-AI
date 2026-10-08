@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { useCloudState } from "@/lib/cloudState";
-import { DEFAULT_INVENTORY, stockSummary, uid, type Inventory, type POStatus, type TxnType } from "@/lib/inventory";
+import { DEFAULT_INVENTORY, stockSummary, uid, type Inventory, type POStatus, type ReqStatus, type TxnType } from "@/lib/inventory";
 
 const tk = (n: number) => `৳${Math.round(n).toLocaleString("en-IN")}`;
 const today = () => new Date().toISOString().slice(0, 10);
@@ -26,6 +27,11 @@ export default function InventoryPage() {
   const bn = lang === "bn";
   const T = (en: string, b: string) => (bn ? b : en);
   const [inv, setInv] = useCloudState<Inventory>("civilos.inventory", DEFAULT_INVENTORY, { merge: true });
+  const reqs = inv.reqs || [];
+  const { pathname } = useLocation();
+  const tabFor = (p: string) => (p === "/requisitions" ? "req" : p === "/purchase-orders" ? "po" : p === "/vendors" ? "vendors" : "stock");
+  const [tab, setTab] = useState(tabFor(pathname));
+  useEffect(() => setTab(tabFor(pathname)), [pathname]);
   const rows = useMemo(() => stockSummary(inv), [inv]);
   const low = rows.filter((r) => r.low);
   const totalValue = rows.reduce((s, r) => s + Math.max(0, r.value), 0);
@@ -77,6 +83,29 @@ export default function InventoryPage() {
     return { ...s, txns, pos: s.pos.map((x) => (x.id === id ? { ...x, status } : x)) };
   });
 
+  const [rq, setRq] = useState({ materialId: "m1", qty: "", neededBy: "", requestedBy: "", note: "" });
+  const [reqVendor, setReqVendor] = useState<Record<string, string>>({});
+  const addReq = () => {
+    if (!(+rq.qty > 0)) return toast.error(T("Enter a quantity", "পরিমাণ লিখুন"));
+    setInv((s) => { const list = s.reqs || []; return { ...s, reqs: [{ id: uid("r"), no: `MR-${String(list.length + 1).padStart(3, "0")}`, date: today(), materialId: rq.materialId, qty: +rq.qty, neededBy: rq.neededBy, requestedBy: rq.requestedBy, note: rq.note, status: "pending" }, ...list] }; });
+    setRq({ ...rq, qty: "", note: "" });
+    toast.success(T("Requisition submitted", "আবেদন জমা হয়েছে"));
+  };
+  const setReqStatus = (id: string, status: ReqStatus) => setInv((s) => ({ ...s, reqs: (s.reqs || []).map((r) => (r.id === id ? { ...r, status } : r)) }));
+  const reqToPo = (id: string) => {
+    const vendorId = reqVendor[id];
+    if (!vendorId) return toast.error(T("Select a vendor", "সরবরাহকারী নির্বাচন করুন"));
+    setInv((s) => {
+      const r = (s.reqs || []).find((x) => x.id === id); if (!r || r.status !== "approved") return s;
+      const m = s.materials.find((x) => x.id === r.materialId);
+      const poId = uid("p");
+      return { ...s, pos: [{ id: poId, no: `PO-${String(s.pos.length + 1).padStart(3, "0")}`, date: today(), vendorId, materialId: r.materialId, qty: r.qty, rate: m?.rate || 0, status: "draft" }, ...s.pos],
+        reqs: (s.reqs || []).map((x) => (x.id === id ? { ...x, status: "ordered", poId } : x)) };
+    });
+    toast.success(T("Purchase order created", "ক্রয় আদেশ তৈরি হয়েছে"));
+  };
+  const reqLabel: Record<ReqStatus, string> = { pending: T("Pending", "অপেক্ষমাণ"), approved: T("Approved", "অনুমোদিত"), rejected: T("Rejected", "বাতিল"), ordered: T("PO created", "অর্ডার হয়েছে") };
+
   const exportCsv = () => {
     const head = "Material,Unit,Rate (BDT),Received,Used,Wastage,Wastage %,In stock,Min stock,Value (BDT),Status\n";
     const body = rows.map((r) => [`"${bn ? r.nameBn : r.name}"`, r.unit, r.rate, r.received, r.used, r.wasted, r.wastagePct.toFixed(1), r.stock, r.minStock, Math.round(r.value), r.low ? "LOW" : "OK"].join(",")).join("\n");
@@ -113,10 +142,11 @@ export default function InventoryPage() {
               </Card>
             )}
 
-            <Tabs defaultValue="stock">
+            <Tabs value={tab} onValueChange={setTab}>
               <TabsList className="flex-wrap h-auto">
                 <TabsTrigger value="stock">{T("Stock", "স্টক")}</TabsTrigger>
                 <TabsTrigger value="entries">{T("In / Out", "আসা / ব্যবহার")}</TabsTrigger>
+                <TabsTrigger value="req">{T("Requisitions", "চাহিদাপত্র")}{reqs.filter((r) => r.status === "pending").length ? ` (${reqs.filter((r) => r.status === "pending").length})` : ""}</TabsTrigger>
                 <TabsTrigger value="po">{T("Purchase orders", "ক্রয় আদেশ")}</TabsTrigger>
                 <TabsTrigger value="vendors">{T("Vendors", "সরবরাহকারী")}</TabsTrigger>
               </TabsList>
@@ -171,6 +201,41 @@ export default function InventoryPage() {
                           <td className="p-1"><Badge variant={t.type === "in" ? "default" : t.type === "wastage" ? "destructive" : "secondary"} className="text-[10px]">{typeLabel[t.type]}</Badge></td>
                           <td className="p-1 whitespace-nowrap">{t.qty} {mUnit(t.materialId)}</td><td className="p-1 text-muted-foreground">{t.note}</td>
                           <td className="p-1">{!t.poId && <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => setInv((s) => ({ ...s, txns: s.txns.filter((x) => x.id !== t.id) }))}><Trash2 className="h-4 w-4" /></Button>}</td>
+                        </tr>))}</tbody>
+                    </table>)}
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="req" className="space-y-3">
+                <Card className="p-3 grid grid-cols-2 md:grid-cols-6 gap-2 items-end">
+                  <div className="col-span-2"><Label className="text-xs">{T("Material", "মালামাল")}</Label>
+                    <Select value={rq.materialId} onValueChange={(v) => setRq({ ...rq, materialId: v })}><SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                      <SelectContent>{inv.materials.map((m) => <SelectItem key={m.id} value={m.id}>{bn ? m.nameBn : m.name}</SelectItem>)}</SelectContent></Select></div>
+                  <div><Label className="text-xs">{T("Qty", "পরিমাণ")} ({mUnit(rq.materialId)})</Label><Input className="h-9" type="number" min={0} value={rq.qty} onChange={(e) => setRq({ ...rq, qty: e.target.value })} /></div>
+                  <div><Label className="text-xs">{T("Needed by", "কবে লাগবে")}</Label><Input className="h-9" type="date" value={rq.neededBy} onChange={(e) => setRq({ ...rq, neededBy: e.target.value })} /></div>
+                  <div><Label className="text-xs">{T("Requested by", "আবেদনকারী")}</Label><Input className="h-9" value={rq.requestedBy} onChange={(e) => setRq({ ...rq, requestedBy: e.target.value })} placeholder={T("Site engineer", "সাইট ইঞ্জিনিয়ার")} /></div>
+                  <Button className="h-9" onClick={addReq}><Plus className="h-4 w-4 mr-1" />{T("Submit", "জমা দিন")}</Button>
+                </Card>
+                <Card className="p-3 overflow-x-auto">
+                  {reqs.length === 0 ? <p className="text-sm text-muted-foreground">{T("No requisitions yet. Site staff request material here; approve it, then turn it into a purchase order.", "এখনো কোনো চাহিদাপত্র নেই। সাইট থেকে এখানে মাল চাওয়া হয়; অনুমোদন দিয়ে তারপর ক্রয় আদেশ বানান।")}</p> : (
+                    <table className="w-full text-sm min-w-[680px]">
+                      <thead><tr className="text-xs text-muted-foreground text-left"><th className="p-1">MR</th><th className="p-1">{T("Material", "মালামাল")}</th><th className="p-1">{T("Qty", "পরিমাণ")}</th><th className="p-1">{T("Needed by", "কবে লাগবে")}</th><th className="p-1">{T("By", "আবেদনকারী")}</th><th className="p-1">{T("Status / action", "অবস্থা / কাজ")}</th></tr></thead>
+                      <tbody>{reqs.map((r) => (
+                        <tr key={r.id} className="border-t align-middle">
+                          <td className="p-1 whitespace-nowrap">{r.no}<div className="text-[10px] text-muted-foreground">{r.date}</div></td>
+                          <td className="p-1">{mName(r.materialId)}</td><td className="p-1 whitespace-nowrap">{r.qty} {mUnit(r.materialId)}</td>
+                          <td className="p-1 whitespace-nowrap">{r.neededBy || "—"}</td><td className="p-1">{r.requestedBy || "—"}</td>
+                          <td className="p-1">
+                            {r.status === "pending" ? (
+                              <div className="flex gap-1"><Button size="sm" className="h-8" onClick={() => setReqStatus(r.id, "approved")}>{T("Approve", "অনুমোদন")}</Button><Button size="sm" variant="outline" className="h-8" onClick={() => setReqStatus(r.id, "rejected")}>{T("Reject", "বাতিল")}</Button></div>
+                            ) : r.status === "approved" ? (
+                              <div className="flex gap-1 items-center">
+                                <Select value={reqVendor[r.id] || ""} onValueChange={(v) => setReqVendor({ ...reqVendor, [r.id]: v })}><SelectTrigger className="h-8 w-32"><SelectValue placeholder={T("Vendor", "সরবরাহকারী")} /></SelectTrigger>
+                                  <SelectContent>{inv.vendors.map((v) => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}</SelectContent></Select>
+                                <Button size="sm" className="h-8" onClick={() => reqToPo(r.id)}>{T("Make PO", "অর্ডার দিন")}</Button>
+                              </div>
+                            ) : <Badge variant={r.status === "ordered" ? "default" : "secondary"} className="text-[10px]">{reqLabel[r.status]}</Badge>}
+                          </td>
                         </tr>))}</tbody>
                     </table>)}
                 </Card>
