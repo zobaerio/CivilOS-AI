@@ -49,7 +49,7 @@ export function useCloudState<T>(key: string, def: T, opts: { merge?: boolean } 
     localStorage.setItem(key, JSON.stringify(value));
     if (!user || !ready.current) return;
     const t = setTimeout(() => {
-      supabase.from("user_workspace").upsert({ user_id: user.id, key, value: value as never, updated_at: new Date().toISOString() });
+      supabase.from("user_workspace").upsert({ user_id: user.id, key, value: value as never, updated_at: new Date().toISOString() }).then(({ error }) => { if (error) console.warn("cloud save failed", error.message); });
     }, 800);
     return () => clearTimeout(t);
   }, [value, key, user]);
