@@ -53,6 +53,13 @@ export default function SiteGeoPage() {
     return () => { m.remove(); map.current = null; };
   }, []);
 
+  const centered = useRef(false);
+  useEffect(() => {
+    if (centered.current || !map.current || pts.length === 0) return;
+    centered.current = true;
+    map.current.fitBounds(L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number])), { padding: [40, 40], maxZoom: 19 });
+  }, [pts]);
+
   useEffect(() => {
     const m = map.current, t = tiles.current; if (!m || !t) return;
     if (satellite) { m.removeLayer(t.street); t.sat.addTo(m); } else { m.removeLayer(t.sat); t.street.addTo(m); }

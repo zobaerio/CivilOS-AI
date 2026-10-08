@@ -1,3 +1,4 @@
+import { useCloudState } from "@/lib/cloudState";
 import { Suspense, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Canvas, useThree } from "@react-three/fiber";
@@ -78,9 +79,7 @@ export default function BimStudioPage() {
   const { lang } = useI18n();
   const bn = lang === "bn";
   const L = (en: string, b: string) => (bn ? b : en);
-  const inp: PlanInput = useMemo(() => {
-    try { return { ...DEFAULT_INPUT, ...JSON.parse(localStorage.getItem("civilos.plan") || "{}") }; } catch { return DEFAULT_INPUT; }
-  }, []);
+  const [inp] = useCloudState<PlanInput>("civilos.plan", DEFAULT_INPUT, { merge: true });
   const plan = useMemo(() => generatePlan(inp), [inp]);
   const [shown, setShown] = useState(Math.min(inp.floors, 3));
   const [fin, setFin] = useState<FinishKey>("white");
