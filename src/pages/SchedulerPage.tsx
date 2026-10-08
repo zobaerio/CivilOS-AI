@@ -1,3 +1,4 @@
+import { useCloudState } from "@/lib/cloudState";
 import { useEffect, useMemo, useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
@@ -13,18 +14,14 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useI18n } from "@/lib/i18n";
 import { QA_TEMPLATE, schedule, TEMPLATE, type DepType, type QAItem, type Task } from "@/lib/scheduler";
 
-const load = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
 
 export default function SchedulerPage() {
   const { lang } = useI18n();
   const bn = lang === "bn";
   const T = (en: string, b: string) => (bn ? b : en);
-  const [tasks, setTasks] = useState<Task[]>(() => load("civilos.schedule", TEMPLATE));
-  const [qa, setQa] = useState<QAItem[]>(() => load("civilos.qa", QA_TEMPLATE));
-  const [start, setStart] = useState(() => load("civilos.scheduleStart", new Date().toISOString().slice(0, 10)));
-  useEffect(() => { localStorage.setItem("civilos.schedule", JSON.stringify(tasks)); }, [tasks]);
-  useEffect(() => { localStorage.setItem("civilos.qa", JSON.stringify(qa)); }, [qa]);
-  useEffect(() => { localStorage.setItem("civilos.scheduleStart", JSON.stringify(start)); }, [start]);
+  const [tasks, setTasks] = useCloudState<Task[]>("civilos.schedule", TEMPLATE);
+  const [qa, setQa] = useCloudState<QAItem[]>("civilos.qa", QA_TEMPLATE);
+  const [start, setStart] = useCloudState<string>("civilos.scheduleStart", new Date().toISOString().slice(0, 10));
 
   const { rows, total, cycle } = useMemo(() => schedule(tasks), [tasks]);
   const date = (d: number) => { const x = new Date(start); x.setDate(x.getDate() + d); return x.toLocaleDateString(bn ? "bn-BD" : "en-GB", { day: "2-digit", month: "short" }); };
