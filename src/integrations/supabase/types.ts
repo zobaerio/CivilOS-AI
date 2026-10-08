@@ -64,6 +64,36 @@ export type Database = {
           },
         ]
       }
+      agent_memory: {
+        Row: {
+          agent_type: string
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          user_id: string
+          value: string
+        }
+        Insert: {
+          agent_type: string
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          user_id: string
+          value: string
+        }
+        Update: {
+          agent_type?: string
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          user_id?: string
+          value?: string
+        }
+        Relationships: []
+      }
       agent_steps: {
         Row: {
           actor_user_id: string
