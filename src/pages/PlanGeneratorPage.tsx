@@ -1,3 +1,4 @@
+import { useCloudState } from "@/lib/cloudState";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Box } from "lucide-react";
@@ -23,8 +24,7 @@ export default function PlanGeneratorPage() {
   const { lang, currency } = useI18n();
   const bn = lang === "bn";
   const L = (en: string, b: string) => (bn ? b : en);
-  const [inp, setInp] = useState<PlanInput>(() => { try { return { ...DEFAULT_INPUT, ...JSON.parse(localStorage.getItem("civilos.plan") || "{}") }; } catch { return DEFAULT_INPUT; } });
-  useEffect(() => { localStorage.setItem("civilos.plan", JSON.stringify(inp)); }, [inp]);
+  const [inp, setInp] = useCloudState<PlanInput>("civilos.plan", DEFAULT_INPUT, { merge: true });
   const [prompt, setPrompt] = useState("");
   const plan = useMemo(() => generatePlan(inp), [inp]);
   const set = <K extends keyof PlanInput>(k: K, v: PlanInput[K]) => setInp((p) => ({ ...p, [k]: v }));

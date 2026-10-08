@@ -1,3 +1,4 @@
+import { useCloudState } from "@/lib/cloudState";
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -29,15 +30,13 @@ export default function SiteGeoPage() {
   const drawLayer = useRef<L.LayerGroup | null>(null);
   const planLayer = useRef<L.LayerGroup | null>(null);
   const [mode, setMode] = useState<Mode>("area");
-  const [pts, setPts] = useState<LatLng[]>([]);
+  const [pts, setPts] = useCloudState<LatLng[]>("civilos.sitePts", []);
   const [satellite, setSatellite] = useState(false);
   const [query, setQuery] = useState("");
   const tiles = useRef<{ street: L.TileLayer; sat: L.TileLayer } | null>(null);
   const modeRef = useRef(mode); modeRef.current = mode;
 
-  const inp: PlanInput = useMemo(() => {
-    try { return { ...DEFAULT_INPUT, ...JSON.parse(localStorage.getItem("civilos.plan") || "{}") }; } catch { return DEFAULT_INPUT; }
-  }, []);
+  const [inp] = useCloudState<PlanInput>("civilos.plan", DEFAULT_INPUT, { merge: true });
 
   useEffect(() => {
     if (!mapEl.current || map.current) return;
@@ -53,6 +52,13 @@ export default function SiteGeoPage() {
     setTimeout(() => m.invalidateSize(), 200);
     return () => { m.remove(); map.current = null; };
   }, []);
+
+  const centered = useRef(false);
+  useEffect(() => {
+    if (centered.current || !map.current || pts.length === 0) return;
+    centered.current = true;
+    map.current.fitBounds(L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number])), { padding: [40, 40], maxZoom: 19 });
+  }, [pts]);
 
   useEffect(() => {
     const m = map.current, t = tiles.current; if (!m || !t) return;
