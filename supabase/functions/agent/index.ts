@@ -54,7 +54,7 @@ async function execute(ctx: Ctx, taskId: string, agentType: AgentType, t: AgentT
     }
     let verified: boolean | undefined;
     if (t.verify) verified = await t.verify(ctx, input, result);
-    await logStep(ctx, taskId, agentType, { kind: "tool", tool: t.name, target: t.target?.(input), risk_level: t.risk, input_summary: input, result_summary: JSON.parse(JSON.stringify(result ?? null)).constructor === Array ? { rows: (result as unknown[]).length } : result, status: verified === false ? "error" : "ok", error: verified === false ? "verification failed" : null });
+    await logStep(ctx, taskId, agentType, { kind: "tool", tool: t.name, target: t.target?.(input), risk_level: t.risk, input_summary: input, result_summary: Array.isArray(result) ? { rows: result.length } : (result ?? null), status: verified === false ? "error" : "ok", error: verified === false ? "verification failed" : null });
     return verified === undefined ? result : { ...result, verified };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
