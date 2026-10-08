@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n";
 import AgentConsole from "@/components/agent/AgentConsole";
 
 export default function UserAgentPage() {
-  const { user, loading } = useAuth() as any;
+  const { user, loading } = useAuth();
   const { lang } = useI18n();
   const T = (en: string, bn: string) => (lang === "bn" ? bn : en);
   if (!loading && !user) return <Navigate to="/auth" replace />;

@@ -12,6 +12,7 @@ const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { sta
 const Body = z.union([
   z.object({ action: z.literal("run"), agent_type: z.enum(["admin", "user"]), message: z.string().min(1).max(4000), history: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(8000) })).max(20).optional() }),
   z.object({ action: z.enum(["approve", "reject"]), approval_id: z.string().uuid() }),
+  z.object({ action: z.literal("health") }),
 ]);
 
 const SYSTEM = (t: AgentType) => `You are the CivilOS AI ${t === "admin" ? "Admin Agent (operations control for administrators)" : "User Agent (helps one signed-in user manage their own CivilOS AI account)"}.
@@ -78,6 +79,12 @@ Deno.serve(async (req) => {
     const parsed = Body.safeParse(await req.json());
     if (!parsed.success) return json({ error: "Invalid request" }, 400);
     const body = parsed.data;
+
+    // ---------- Direct read-only health check (no AI) ----------
+    if (body.action === "health") {
+      if (!ctx.isAdmin) return json({ error: "Admins only" }, 403);
+      return json(await TOOLS.find((t) => t.name === "get_system_health")!.handler(ctx, {}));
+    }
 
     // ---------- Approval engine ----------
     if (body.action === "approve" || body.action === "reject") {
