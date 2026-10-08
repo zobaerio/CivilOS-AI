@@ -52,6 +52,7 @@ const InviteAcceptPage = lazy(() => import("./pages/InviteAcceptPage.tsx"));
 const ModulesPage = lazy(() => import("./pages/ModulesPage.tsx"));
 const BillingPage = lazy(() => import("./pages/BillingPage.tsx"));
 const AdminBillingPage = lazy(() => import("./pages/AdminBillingPage.tsx"));
+const FinancePage = lazy(() => import("./pages/FinancePage.tsx"));
 
 
 
@@ -101,6 +102,10 @@ const App = () => (
               <Route path="/purchase-orders" element={<InventoryPage />} />
               <Route path="/vendors" element={<InventoryPage />} />
               <Route path="/equipment" element={<EquipmentPage />} />
+              <Route path="/invoices" element={<FinancePage />} />
+              <Route path="/contractor-bills" element={<FinancePage />} />
+              <Route path="/payments" element={<FinancePage />} />
+              <Route path="/cash-flow" element={<FinancePage />} />
               <Route path="/agent" element={<UserAgentPage />} />
               <Route path="/admin/ai-agent" element={<AdminAgentPage />} />
               <Route path="/profile" element={<ProfilePage />} />
@@ -119,7 +124,6 @@ const App = () => (
                 "ai-writer","ai-drawing","bbs","material-calc",
                 "progress-reports","inspections","site-photos","tender-docs","bid-prep",
                 
-                "invoices","contractor-bills","payments","cash-flow",
                 "analytics","ai-insights","reports","company-settings",
               ].map((p) => (
                 <Route key={p} path={`/${p}`} element={<ComingSoonPage />} />
