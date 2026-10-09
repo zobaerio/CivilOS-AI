@@ -31,7 +31,7 @@ Workflow: user says "Continue" → resume from the first unchecked item, in orde
 - [x] P6: Site Geo (/site-geo: map search/locate/satellite, distance+area in sft/decimal/katha/bigha, plan overlay on map, GeoJSON export) + Survey Calculator (irregular plot, unit converter, levelling). GIS file import still pending.
 - [x] P7: Project Scheduler (/scheduler: WBS, Gantt, FS/SS/FF/SF + lag, critical path, CSV export, QA/QC checklist). Saved per device; Live Site Audit + cloud sync pending.
 - [x] P8: Inventory & Material Management — /inventory, requisitions, POs, vendors, /equipment, invoices, contractor bills, payments, cash-flow (/invoices etc. via FinancePage)
-- [ ] P9: AI Defect Detection from site photos + AI automation/risk features
+- [x] P9: AI Defect Detection (/defect-detection, photo → defects, severity, actions, saved reports, CSV) from site photos + AI automation/risk features
 - [ ] P10: Knowledge Library (BNBC/structural/geo/survey categories, search/filter) + Training Corner + professional report builder
 - [ ] P11: Global units system (metric/imperial conversion, unit labels on every numeric field) + floating assistant + project import/export
 - [ ] P12: Admin governance extras: announcements, audit logs, system health, usage analytics, rate limiting
