@@ -1,5 +1,5 @@
 import { useState } from "react";
-import DashboardSidebar from "@/components/DashboardSidebar";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -38,7 +38,7 @@ function shrink(file: File, max: number, q = 0.82): Promise<string> {
 }
 
 export default function DefectDetectionPage() {
-  const { lang } = useI18n() as any;
+  const { lang } = useI18n();
   const bn = lang === "bn";
   const T = (b: string, e: string) => (bn ? b : e);
   const [reports, setReports] = useCloudState<Report[]>("civilos.defects", []);
